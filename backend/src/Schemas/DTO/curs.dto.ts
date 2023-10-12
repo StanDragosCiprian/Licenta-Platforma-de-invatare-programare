@@ -1,10 +1,10 @@
-import { IsArray } from 'class-validator';
 import { Types } from 'mongoose';
-import { VideoDto } from './video.dto';
-
+import { IVideo } from '../Entity/IVideo';
+import { IPdf } from '../Entity/IPdf';
+import { ICompilators } from '../Entity/ICompilators';
 export class CursDto {
   _id: Types.ObjectId;
-
-  @IsArray()
-  curs: (VideoDto | null)[];
+  studentId: Types.ObjectId[];
+  colaborationId: Types.ObjectId[];
+  curs: [IVideo | IPdf | ICompilators];
 }

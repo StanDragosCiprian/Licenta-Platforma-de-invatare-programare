@@ -27,7 +27,8 @@
     "class-validator": "^0.14.0",
     "mongoose": "^7.6.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "ts-transformer-keys": "^0.4.4"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

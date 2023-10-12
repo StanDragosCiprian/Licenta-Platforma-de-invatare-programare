@@ -1,5 +1,4 @@
-import { Document } from 'mongoose';
-export interface IVideo extends Document {
+export interface IVideo {
   videoPath: string;
   title: string;
   descrition: string;
