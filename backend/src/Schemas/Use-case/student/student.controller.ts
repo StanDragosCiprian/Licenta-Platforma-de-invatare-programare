@@ -1,26 +1,18 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseInterceptors } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { StudentDto } from '../../DTO/student.dto';
+import { ErrorInterceptor } from '../Excetion';
+import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 
 @Controller('student')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
+  private resp = new ResponseStatus();
   @Post('/new')
+  @UseInterceptors(ErrorInterceptor)
   async createStudent(@Res() response, @Body() createStudentDto: StudentDto) {
-    try {
-      const newStudent =
-        await this.studentService.createStudent(createStudentDto);
-      return response.status(HttpStatus.CREATED).json({
-        message: 'Student has been created successfully',
-        newStudent,
-      });
-    } catch (err) {
-      console.log(err);
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        statusCode: 400,
-        message: 'Error: Student not created!',
-        error: 'Bad Request',
-      });
-    }
+    const newStudent =
+      await this.studentService.createStudent(createStudentDto);
+    return this.resp.goodResponse(response, newStudent);
   }
 }
