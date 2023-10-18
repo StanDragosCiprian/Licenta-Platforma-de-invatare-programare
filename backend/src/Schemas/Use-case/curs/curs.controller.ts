@@ -2,7 +2,7 @@ import { Body, Controller, Post, Res, UseInterceptors } from '@nestjs/common';
 import { CursDto } from 'src/Schemas/DTO/curs.dto';
 import { CursService } from './curs.service';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
-import { ErrorInterceptor } from '../Excetion';
+import { ErrorInterceptor } from '../ErrorInterceptor';
 import { IPdf } from 'src/Schemas/Entity/IPdf';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';

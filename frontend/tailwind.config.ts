@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens:{
+        'desktop':'1280px',
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -15,6 +18,7 @@ const config: Config = {
       },
       colors: {
         "navbar-color": "hsl(215, 57%, 28%)",
+        
       },
     },
   },

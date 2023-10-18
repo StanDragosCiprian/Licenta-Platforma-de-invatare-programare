@@ -16,10 +16,10 @@ export class ResponseStatus {
   public hasSameKeys(obj: any, mykeys: (keyof any)[]): boolean {
     return mykeys.every((key) => key in obj);
   }
-  public goodResponse(response: any, test: any) {
+  public goodResponse(response: any, user: any) {
     return response.status(HttpStatus.CREATED).json({
       message: 'Request made with success',
-      newStudent: test,
+      entity: user,
     });
   }
   public badResponse(response: any) {

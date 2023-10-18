@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Res, UseInterceptors } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
-import { ErrorInterceptor } from '../Excetion';
+import { ErrorInterceptor } from '../ErrorInterceptor';
 import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 @Controller('professor')
 export class ProfessorController {
