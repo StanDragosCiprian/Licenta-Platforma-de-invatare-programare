@@ -1,7 +1,9 @@
+import { LogIn } from "./login";
+
 export default function Log() {
   return (
     <>
-      <h1>Sall</h1>
+      <LogIn />
     </>
   );
 };

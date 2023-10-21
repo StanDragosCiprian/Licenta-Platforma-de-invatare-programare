@@ -10,4 +10,14 @@ export class StudentService {
     const newStudent = await new this.studentModel(createStudentDto);
     return newStudent.save();
   }
+  async logUser(email: string, password: string): Promise<string> {
+    const user = await this.studentModel.findOne({
+      email: email,
+      password: password,
+    });
+    if (user === null) {
+      return 'No_Student';
+    }
+    return user._id.toString();
+  }
 }

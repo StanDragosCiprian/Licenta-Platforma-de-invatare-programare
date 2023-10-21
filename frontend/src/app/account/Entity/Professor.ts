@@ -1,28 +1,28 @@
 import { sendToServer, url } from "../../UserServer/ServerRequest";
-import { IStudent } from "../core/IStudent";
+import { IProfessor } from "../core/IProfessor";
 import { IUser } from "../core/IUser";
 
-export class Student implements IStudent {
-  enroleCourse: any = [];
-  finishCourse: any = [];
+export class Professor implements IProfessor {
+  studentList: any = [];
+  colaborationId: any = [];
+  coursesId: any = [];
   username: string = "";
   email: string = "";
   password: string = "";
   profileImage: string = "";
-  role: string = "student";
-
+  role: string = "proffessor";
   constructor(user: IUser) {
     this.username = user.username;
     this.email = user.email;
     this.password = user.password;
   }
-  public NewStudent = async (): Promise<string> => {
-    const response = await fetch(`${url}student/new`, sendToServer(this));
+  public NewProfessor = async (): Promise<string> => {
+    const response = await fetch(`${url}professor/new`, sendToServer(this));
     const data = await response.json();
     return data.entity._id;
   };
-  public logStudent = async (): Promise<string> => {
-    const response = await fetch(`${url}student/log`, sendToServer(this));
+  public logProfessor = async (): Promise<string> => {
+    const response = await fetch(`${url}professor/log`, sendToServer(this));
     const data = await response.text();
 
     return data;

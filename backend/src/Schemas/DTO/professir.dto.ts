@@ -1,13 +1,11 @@
 import { UserDto } from './user.dto';
-import { IsJSON } from 'class-validator';
+import { IsArray } from 'class-validator';
 import { Types } from 'mongoose';
 export class ProfessorDto extends UserDto {
-  @IsJSON()
-  studentEvaluate: JSON;
-  @IsJSON()
-  studentList: JSON;
-  @IsJSON()
-  colaborationId: JSON;
+  @IsArray()
+  studentList: [];
+  @IsArray()
+  colaborationId: [];
 
   coursesId: Types.ObjectId[];
 }

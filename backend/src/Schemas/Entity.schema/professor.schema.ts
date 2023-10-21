@@ -5,12 +5,10 @@ import { Types } from 'mongoose';
 
 @Schema()
 class Professor extends User {
-  @Prop({ type: JSON })
-  studentEvaluate: JSON;
-  @Prop({ type: JSON })
-  studentList: JSON;
-  @Prop({ type: JSON })
-  colaborationId: JSON;
+  @Prop()
+  studentList: [];
+  @Prop()
+  colaborationId: [];
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }] })
   coursesId: Types.ObjectId[];
 }

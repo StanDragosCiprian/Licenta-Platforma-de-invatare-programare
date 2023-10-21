@@ -2,13 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { cookies } from 'next/headers';
 
-
-export const Account = ({ imageUrl }: any) => {
-    console.log(imageUrl);
+export const Account = () => {
+    console.log(cookies().get('id'));
     const autentificstion=['/account/sign']
   return (
     <>
-      <Link href={cookies().get('id')!=null ? '/':autentificstion[0]}>
+      <Link href={cookies().get('id')!=undefined ? '/':autentificstion[0]}>
         <div className="bottom-img flex items-center  mb-5">
           <Image
             src="http://localhost:3000/default/img"

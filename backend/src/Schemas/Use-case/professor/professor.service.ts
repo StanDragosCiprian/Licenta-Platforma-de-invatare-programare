@@ -9,8 +9,18 @@ export class ProfessorService {
   constructor(
     @InjectModel('Professor') private professorModel: Model<IProfessor>,
   ) {}
-  async createStudent(createProfessorDto: ProfessorDto): Promise<IProfessor> {
+  async createProfessor(createProfessorDto: ProfessorDto): Promise<IProfessor> {
     const newProfessor = await new this.professorModel(createProfessorDto);
     return newProfessor.save();
+  }
+  async logUser(email: string, password: string): Promise<string> {
+    const user = await this.professorModel.findOne({
+      email: email,
+      password: password,
+    });
+    if (user === null) {
+      return 'No_Professor';
+    }
+    return user._id.toString();
   }
 }
