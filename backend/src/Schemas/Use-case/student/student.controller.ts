@@ -1,7 +1,8 @@
 import {
   Body,
   Controller,
-  // Get,
+  Get,
+  Param,
   Post,
   Res,
   UseInterceptors,
@@ -11,6 +12,7 @@ import { StudentDto } from '../../DTO/student.dto';
 import { ErrorInterceptor } from '../ErrorInterceptor';
 import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 import { LogDto } from 'src/Schemas/DTO/log.dto';
+import { IStudent } from 'src/Schemas/Entity/IStudent';
 
 @Controller('student')
 export class StudentController {
@@ -27,5 +29,11 @@ export class StudentController {
   async logStudent(@Body() log: LogDto): Promise<string> {
     const logStudent = this.studentService.logUser(log.email, log.password);
     return logStudent;
+  }
+  @Get('get/:id')
+  @UseInterceptors(ErrorInterceptor)
+  async getStudent(@Param('id') id: string): Promise<IStudent> {
+    const student = this.studentService.getStudent(id);
+    return student;
   }
 }

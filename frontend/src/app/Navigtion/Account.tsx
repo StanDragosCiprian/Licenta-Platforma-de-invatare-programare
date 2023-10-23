@@ -1,10 +1,25 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from 'next/headers';
+import { url } from "../UserServer/ServerRequest";
 
-export const Account = () => {
-    console.log(cookies().get('id'));
-    const autentificstion=['/account/sign']
+async function getUser() {
+  const id:any=cookies().get('id')?.value;
+  if(id!==undefined){
+    const res = await fetch(`${url}student/get/${id}`,{method:"GET"});
+    if(res===undefined){
+      const res = await fetch(`${url}professor/get/${id}`,{method:"GET"});
+    }else
+    return res.json ()
+  }
+const user=JSON.parse(JSON.stringify({username:"Account"}));
+  return user;
+  }
+export  const Account = async () => {
+  const repo:any=await getUser();
+    console.log(repo);
+    const autentificstion=['/account/sign'];
+    
   return (
     <>
       <Link href={cookies().get('id')!=undefined ? '/':autentificstion[0]}>
@@ -17,7 +32,7 @@ export const Account = () => {
             height={24}
           />
           <span className=" hidden group-hover:block hover:opacity-100 self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-            Account
+          <p>{repo.username}</p>
           </span>
         </div>{" "}
       </Link>

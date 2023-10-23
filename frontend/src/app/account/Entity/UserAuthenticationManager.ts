@@ -9,7 +9,8 @@ export class UserAuthenticationManager {
   private expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   private isId(id: string) {
     setCookie("id", id);
-    this.rout.push("/");
+    this.rout.push("/")
+    this.rout.refresh();
   }
   private async verifyStudentLog(user: any): Promise<string> {
     this.entity = new Student(user);
