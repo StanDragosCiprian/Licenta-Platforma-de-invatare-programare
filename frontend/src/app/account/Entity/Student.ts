@@ -16,15 +16,14 @@ export class Student implements IStudent {
     this.email = user.email;
     this.password = user.password;
   }
-  public NewStudent = async (): Promise<string> => {
+  public NewStudent = async (): Promise<any> => {
     const response = await fetch(`${url}student/new`, sendToServer(this));
     const data = await response.json();
-    return data.entity._id;
+    return data.access_token;
   };
-  public logStudent = async (): Promise<string> => {
+  public logStudent = async (): Promise<any> => {
     const response = await fetch(`${url}student/log`, sendToServer(this));
-    const data = await response.text();
-
-    return data;
+    const data = await response.json();
+    return data.access_token;
   };
 }

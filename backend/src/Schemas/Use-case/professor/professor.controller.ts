@@ -1,42 +1,50 @@
-import {
-  Body,
-  Controller,
-  Param,
-  Post,
-  Get,
-  Res,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Post, Get, UseInterceptors } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { ErrorInterceptor } from '../ErrorInterceptor';
 import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 import { LogDto } from 'src/Schemas/DTO/log.dto';
-import { IProfessor } from 'src/Schemas/Entity/IProfessor';
+import { JwtService } from '@nestjs/jwt';
+import { Cookies } from 'src/Cookie/cookie';
 @Controller('professor')
 export class ProfessorController {
-  constructor(private readonly professorService: ProfessorService) {}
+  constructor(
+    private readonly professorService: ProfessorService,
+    private jwtService: JwtService,
+  ) {}
   private resp = new ResponseStatus();
   @Post('/new')
   @UseInterceptors(ErrorInterceptor)
-  async createProfessor(
-    @Res() response,
+  async createStudent(
     @Body() createProfessorDto: ProfessorDto,
-  ) {
+  ): Promise<{ access_token: string }> {
     const newProfessor =
       await this.professorService.createProfessor(createProfessorDto);
-    return this.resp.goodResponse(response, newProfessor);
+    console.log(newProfessor);
+    const payload = { sub: newProfessor._id };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
   @Post('/log')
   @UseInterceptors(ErrorInterceptor)
-  async logProfessor(@Body() log: LogDto) {
-    const logProfessor = this.professorService.logUser(log.email, log.password);
-    return logProfessor;
+  async logProfessor(@Body() log: LogDto): Promise<{ access_token: string }> {
+    console.log(log);
+    const user = await this.professorService.logUser(log.email, log.password);
+    console.log(user);
+    const payload = { sub: user._id };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
-  @Get('get/:id')
+  @Get('/get')
   @UseInterceptors(ErrorInterceptor)
-  async getStudent(@Param('id') id: string): Promise<IProfessor> {
-    const professor = this.professorService.getProfessor(id);
+  async getProfessor(@Cookies('id') id: string): Promise<any> {
+    const decodedToken = this.jwtService.verify(id);
+    const professor = this.professorService.getProfessor(decodedToken.sub);
+    if (professor === undefined) {
+      return 'No_Professor';
+    }
     return professor;
   }
 }

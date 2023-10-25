@@ -18,21 +18,18 @@ export class ProfessorService implements OnModuleInit {
       console.log(change);
     });
   }
-  async logUser(email: string, password: string): Promise<string> {
+  async logUser(email: string, password: string): Promise<IProfessor> {
+    console.log(email, password);
     const user = await this.professorModel.findOne({
       email: email,
       password: password,
     });
-    if (user === null) {
-      return 'No_Professor';
-    }
-    return user._id.toString();
+    return user;
   }
   async getProfessor(id: string): Promise<IProfessor> {
     const professor = await this.professorModel.findOne({
       _id: id,
     });
-    console.log(professor);
     return professor;
   }
 }

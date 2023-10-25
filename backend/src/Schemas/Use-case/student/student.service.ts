@@ -15,21 +15,17 @@ export class StudentService implements OnModuleInit {
       console.log(change);
     });
   }
-  async logUser(email: string, password: string): Promise<string> {
+  async logUser(email: string, password: string): Promise<IStudent> {
     const user = await this.studentModel.findOne({
       email: email,
       password: password,
     });
-    if (user === null) {
-      return 'No_Student';
-    }
-    return user._id.toString();
+    return user;
   }
   async getStudent(id: string): Promise<IStudent> {
     const student = await this.studentModel.findOne({
       _id: id,
     });
-    console.log(student);
     return student;
   }
 }

@@ -1,28 +1,47 @@
 import Link from "next/link";
 import Image from "next/image";
-import { cookies } from 'next/headers';
+import { cookies } from "next/headers";
 import { url } from "../UserServer/ServerRequest";
-
 async function getUser() {
-  const id:any=cookies().get('id')?.value;
-  if(id!==undefined){
-    const res = await fetch(`${url}student/get/${id}`,{method:"GET"});
-    if(res===undefined){
-      const res = await fetch(`${url}professor/get/${id}`,{method:"GET"});
-    }else
-    return res.json ()
+  const id: any = cookies().get("id")?.value;
+  let res: any = null;
+  if (id !== undefined) {
+    res = await fetch(`${url}student/get`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `id=${id}`,
+      },
+    });
+    const text = await res.text();
+    if (text !== "No_Student") {
+      return JSON.parse(text);
+    } else {
+      if (res !== undefined) {
+        res = await fetch(`${url}professor/get`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Cookie: `id=${id}`,
+          },
+        });
+        return res.json();
+      }
+    }
   }
-const user=JSON.parse(JSON.stringify({username:"Account"}));
-  return user;
-  }
-export  const Account = async () => {
-  const repo:any=await getUser();
-    console.log(repo);
-    const autentificstion=['/account/sign'];
-    
+
+  res = JSON.parse(JSON.stringify({ username: "Account" }));
+  return res;
+}
+
+export const Account = async () => {
+  const repo: any = await getUser();
+
+  const autentificstion = ["/account/sign"];
+
   return (
     <>
-      <Link href={cookies().get('id')!=undefined ? '/':autentificstion[0]}>
+      <Link href={cookies().get("id") != undefined ? "/" : autentificstion[0]}>
         <div className="bottom-img flex items-center  mb-5">
           <Image
             src="http://localhost:3000/default/img"
@@ -32,7 +51,7 @@ export  const Account = async () => {
             height={24}
           />
           <span className=" hidden group-hover:block hover:opacity-100 self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-          <p>{repo.username}</p>
+            <p>{repo.username}</p>
           </span>
         </div>{" "}
       </Link>
