@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AccountCard } from "../CardInputComponents/AccountCard";
-import { SelectRole } from "../CardInputComponents/SelectRole";
 import { Submit } from "../CardInputComponents/Submit";
 import { TextBox } from "../CardInputComponents/TextBox";
 import { RedirectComponents } from "../CardInputComponents/RedirectComponents";
@@ -22,8 +21,8 @@ export const SignComponents = () => {
     email: "",
     password: "",
     profileImage: "z",
-    role: "",
   });
+
   return (
       <AccountCard name="Sign In">
         <TextBox
@@ -32,12 +31,6 @@ export const SignComponents = () => {
           setUser={setUser}
           user={user}
         >
-          <SelectRole
-            registerType={[]}
-            reg={null}
-            setUser={setUser}
-            user={user}
-          />
           <RedirectComponents
             redirectHref={"/account/log"}
             name={"Do you have a account?"}
@@ -47,8 +40,7 @@ export const SignComponents = () => {
             reg={null}
             setUser={setUser}
             user={user}
-            handleUser={handleUser}
-            isEmail={isEmail}
+            handleUser={()=>{isEmail===true ? handleUser(user):null}}
           />
         </TextBox>
       </AccountCard>

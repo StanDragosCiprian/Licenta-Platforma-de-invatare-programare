@@ -8,6 +8,8 @@ export class Curs {
   _id: mongoose.Types.ObjectId;
   @Prop({ type: mongoose.Types.ObjectId })
   studentId: mongoose.Types.ObjectId[];
+  @Prop()
+  Name: string;
   @Prop({ type: mongoose.Types.ObjectId })
   colaborationId: mongoose.Types.ObjectId[];
   @Prop()

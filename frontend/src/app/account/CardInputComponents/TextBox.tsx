@@ -21,6 +21,7 @@ export const TextBox: React.FC<Register> = ({
             registerType={[]}
             setUser={setUser}
             user={undefined}
+            
           />
         </div>
       ))}

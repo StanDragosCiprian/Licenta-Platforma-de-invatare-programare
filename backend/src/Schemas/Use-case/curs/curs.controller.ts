@@ -6,15 +6,19 @@ import { ErrorInterceptor } from '../ErrorInterceptor';
 import { IPdf } from 'src/Schemas/Entity/IPdf';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
+import { Cookies } from 'src/Cookie/cookie';
 @Controller('curs')
 export class CursController {
   constructor(private cursService: CursService) {}
   private resp = new ResponseStatus();
   @Post('/new')
   @UseInterceptors(ErrorInterceptor)
-  async createCurs(@Res() response, @Body() createCursDto: CursDto) {
-    const newCurs = await this.cursService.createCurs(createCursDto);
-    return this.resp.goodResponse(response, newCurs);
+  async createCurs(
+    @Cookies('id') id: any,
+    @Body() createCursDto: CursDto,
+  ): Promise<any> {
+    const newCurs = await this.cursService.createNewCourse(createCursDto, id);
+    return newCurs;
   }
 
   @Post('/new/video')

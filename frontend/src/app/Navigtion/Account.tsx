@@ -1,44 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
-import { url } from "../UserServer/ServerRequest";
-async function getUser() {
-  const id: any = cookies().get("id")?.value;
-  let res: any = null;
-  if (id !== undefined) {
-    res = await fetch(`${url}student/get`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: `id=${id}`,
-      },
-    });
-    const text = await res.text();
-    if (text !== "No_Student") {
-      return JSON.parse(text);
-    } else {
-      if (res !== undefined) {
-        res = await fetch(`${url}professor/get`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Cookie: `id=${id}`,
-          },
-        });
-        return res.json();
-      }
-    }
-  }
-
-  res = JSON.parse(JSON.stringify({ username: "Account" }));
-  return res;
-}
+import { UserRecever } from "../account/Entity/UserRecever";
 
 export const Account = async () => {
-  const repo: any = await getUser();
-
+  const userManager: any =new UserRecever();
+  const repo:any=await userManager.getUser("Account");
+  console.log('repo: ', repo);
   const autentificstion = ["/account/sign"];
-
   return (
     <>
       <Link href={cookies().get("id") != undefined ? "/" : autentificstion[0]}>

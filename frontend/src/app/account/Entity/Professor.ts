@@ -19,7 +19,6 @@ export class Professor implements IProfessor {
   public NewProfessor = async (): Promise<any> => {
     const response = await fetch(`${url}professor/new`, sendToServer(this));
     const data = await response.json();
-    console.log(data);
     return data.access_token;
   };
   public logProfessor = async (): Promise<string> => {

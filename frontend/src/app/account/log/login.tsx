@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AccountCard } from "../CardInputComponents/AccountCard";
 import { Submit } from "../CardInputComponents/Submit";
 import { TextBox } from "../CardInputComponents/TextBox";
@@ -16,7 +16,16 @@ export const LogIn = () => {
   });
   let [isEmail, setIsEmail]: any = useState(false);
   const userAuthentication = new UserAuthenticationManager();
-
+  useEffect(() => {
+    const handleEmail = () => {
+      if(user.email===''){
+        setIsEmail(true);
+      }else{
+        setIsEmail(false);
+      }
+    };
+    handleEmail();
+  }, [user,isEmail]);
   const handleUser = (user: any) => {
     if (userAuthentication.isEmailVerify(user.email)) {
       userAuthentication.logUser(user);
@@ -35,15 +44,14 @@ export const LogIn = () => {
         >
           <RedirectComponents
             redirectHref={"/account/sign"}
-            name={"You don't have an account?"}
+            name={"You have an account?"}
           />
           <Submit
             registerType={[]}
             reg={null}
             setUser={setUser}
             user={user}
-            handleUser={handleUser}
-            isEmail={isEmail}
+            handleUser={()=>{isEmail===false?handleUser(user):null}}
           />
         </TextBox>
       </AccountCard>

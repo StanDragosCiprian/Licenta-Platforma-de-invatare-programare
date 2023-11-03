@@ -4,6 +4,7 @@ import { IPdf } from '../Entity/IPdf';
 import { ICompilators } from '../Entity/ICompilators';
 export class CursDto {
   _id: Types.ObjectId;
+  Name: string;
   studentId: Types.ObjectId[];
   colaborationId: Types.ObjectId[];
   curs: [IVideo | IPdf | ICompilators];
