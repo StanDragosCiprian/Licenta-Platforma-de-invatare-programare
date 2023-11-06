@@ -23,10 +23,10 @@ export class AdminsService {
     return user;
   }
   async getAdmin(id: string): Promise<IAdmin> {
-    const professor = await this.adminModel.findOne({
+    const admin = await this.adminModel.findOne({
       _id: id,
     });
-    return professor;
+    return admin;
   }
   async decriptJwt(id: string) {
     const decodedToken = this.jwtService.verify(id);

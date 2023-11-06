@@ -21,7 +21,6 @@ export class ProfessorController {
   @Post('/log')
   @UseInterceptors(ErrorInterceptor)
   async logProfessor(@Body() log: LogDto): Promise<{ access_token: string }> {
-    console.log(log);
     const user = await this.professorService.logUser(log.email, log.password);
     return this.professorService.makeJwt(user);
   }
@@ -30,9 +29,8 @@ export class ProfessorController {
   async getProfessor(@Cookies('id') id: string): Promise<any> {
     const decodedToken = await this.professorService.decriptJwt(id);
     const professor = await this.professorService.getProfessor(decodedToken);
-    console.log(professor);
     if (professor === null) {
-      return 'No_Professor';
+      return ' ';
     }
     return professor;
   }

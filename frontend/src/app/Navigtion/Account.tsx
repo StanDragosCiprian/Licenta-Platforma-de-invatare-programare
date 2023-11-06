@@ -6,7 +6,6 @@ import { UserRecever } from "../account/Entity/UserRecever";
 export const Account = async () => {
   const userManager: any =new UserRecever();
   const repo:any=await userManager.getUser("Account");
-  console.log('repo: ', repo);
   const autentificstion = ["/account/sign"];
   return (
     <>

@@ -42,7 +42,7 @@ export class ProfessorService implements OnModuleInit {
       };
     }
     return {
-      access_token: 'No_Professor',
+      access_token: ' ',
     };
   }
 

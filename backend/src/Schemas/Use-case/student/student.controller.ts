@@ -20,7 +20,6 @@ export class StudentController {
   ): Promise<{ access_token: string }> {
     const newStudent =
       await this.studentService.createStudent(createStudentDto);
-    console.log(newStudent);
     const payload = { sub: newStudent._id };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -39,28 +38,17 @@ export class StudentController {
       };
     }
     return {
-      access_token: 'No_Student',
+      access_token: ' ',
     };
   }
   @Get('get')
   @UseInterceptors(ErrorInterceptor)
   async getStudent(@Cookies('id') id: string): Promise<any> {
     const decodedToken = this.jwtService.verify(id);
-    console.log(decodedToken);
     const student = await this.studentService.getStudent(decodedToken.sub);
-    console.log(student);
     if (student === null) {
-      return 'No_Student';
+      return ' ';
     }
     return student;
-  }
-
-  @Get('test')
-  @UseInterceptors(ErrorInterceptor)
-  async test(@Cookies('id') id: string): Promise<any> {
-    const cookies = id;
-
-    console.log(cookies);
-    return 'cookies';
   }
 }

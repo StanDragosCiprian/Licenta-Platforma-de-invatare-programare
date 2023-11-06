@@ -21,16 +21,16 @@ export class AdminsController {
       };
     }
     return {
-      access_token: 'No_Admin',
+      access_token: ' ',
     };
   }
   @Get('/get')
   async getProfessor(@Cookies('id') id: string): Promise<any> {
     const decodedToken = await this.adminService.decriptJwt(id);
-    const professor = this.adminService.getAdmin(decodedToken);
-    if (professor === undefined) {
-      return 'No_Professor';
+    const admin = this.adminService.getAdmin(decodedToken);
+    if (admin === null) {
+      return ' ';
     }
-    return professor;
+    return admin;
   }
 }

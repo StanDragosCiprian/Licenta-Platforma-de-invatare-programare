@@ -11,36 +11,25 @@ export class UserRecever {
   }
   private async getProfessor() {
     this.res = await fetch(`${url}professor/get`, getUserFromServer(this.id));
-    return this.res.json();
+    const text = await this.res.text();
+    return text;
   }
   private async getAdmin(): Promise<any> {
     this.res = await fetch(`${url}admin/get`, getUserFromServer(this.id));
-    return this.res.json();
+    const text = await this.res.text();
+    return text;
   }
+  private userArray = [this.getStudent, this.getProfessor, this.getAdmin];
   public async getUser(notUser: string) {
     if (this.id !== undefined) {
-      const student = await this.getStudent();
-      console.log('student: ', student);
-      if (student !== "No_Student") {
-        return JSON.parse(student);
-      } else {
-        if (this.res !== undefined) {
-          const professor = await this.getProfessor();
-          console.log('professor: ', professor);
-          if (professor !== "No_Professor") {
-            return professor;
-          } else {
-            const admin = await this.getAdmin();
-            console.log('admin: ', admin);
-            if (admin !== "No_Admin") {
-              return admin;
-            }
-          }
+      for (let user of this.userArray) {
+        const result = await user.call(this);
+        if (result !== " ") {
+          return JSON.parse(result);
         }
       }
     }
     this.res = JSON.parse(JSON.stringify({ username: notUser }));
     return this.res;
   }
-  
 }

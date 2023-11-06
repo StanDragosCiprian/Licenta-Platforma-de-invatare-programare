@@ -44,35 +44,20 @@ export class UserAuthenticationManager {
       this.isId(id);
     } catch (err) {}
   }
-
-  public async logUser(user: any) {
-    this.verifyStudentLog(user)
-      .then((id: string) => {
-        console.log('id: ', id);
-        if (id != "No_Student") {
-          this.isId(id);
-        } else {
-          this.verifyProfessorLog(user)
-            .then((id: string) => {
-              console.log('id: ', id);
-              if (id != "No_Professor") {
-                this.isId(id);
-              } else {
-                this.verifyAdminLog(user).then((id: string) => {
-                  console.log('id: ', id);
-                  if (id != "No_Admin") {
-                    this.isId(id);
-                  }
-                });
-              }
-            })
-            .catch((error) => {
-              error;
-            });
-        }
-      })
-      .catch((error) => {
-        error;
-      });
+  private async verifyUser(user: any): Promise<any> {
+    return [
+      this.verifyStudentLog(user),
+      this.verifyProfessorLog(user),
+      this.verifyAdminLog(user),
+    ];
   }
+  public async logUser(user: any) {
+    for (let userLog of await this.verifyUser(user)) {
+      const id = await userLog;
+      if (id !== ' ') {
+        this.isId(id);
+        break;
+      }
+    }
+   }
 }

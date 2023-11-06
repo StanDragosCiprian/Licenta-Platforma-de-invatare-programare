@@ -16,7 +16,6 @@ export class Admin implements IUser {
     const response = await fetch(`${url}admin/log`, sendToServer(this));
     const data = await response.json();
     const myData:string=data.access_token;
-    console.log('myData: ', myData);
     return myData;
   };
 }
