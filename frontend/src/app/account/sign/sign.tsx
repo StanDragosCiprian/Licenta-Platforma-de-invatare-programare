@@ -7,15 +7,14 @@ import { RedirectComponents } from "../CardInputComponents/RedirectComponents";
 import { UserAuthenticationManager } from "../Entity/UserAuthenticationManager";
 
 export const SignComponents = () => {
-  let [isEmail, setIsEmail]: any = useState(false);
   const userAutentification = new UserAuthenticationManager();
   const handleUser = (user: any) => {
-    if (userAutentification.isEmailVerify(user.email)) {
+  if (userAutentification.isEmailVerify(user.email)) {
       userAutentification.signUser(user);
-    } else {
-      setIsEmail(true);
     }
-  };
+}
+    
+
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -40,9 +39,10 @@ export const SignComponents = () => {
             reg={null}
             setUser={setUser}
             user={user}
-            handleUser={()=>{isEmail===true ? handleUser(user):null}}
+            handleUser={()=>handleUser(user)}
           />
         </TextBox>
       </AccountCard>
   );
-};
+
+  };

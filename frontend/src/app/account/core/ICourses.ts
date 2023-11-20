@@ -1,5 +1,6 @@
 interface ICourses{
-    Name: string,
+    name: string,
+    vizibility:boolean,
     studentId: [],
     colaborationId: [],
     curs: [],

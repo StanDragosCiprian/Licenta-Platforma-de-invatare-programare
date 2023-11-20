@@ -1,4 +1,4 @@
-import { sendToServer, url } from "../../UserServer/ServerRequest";
+import { sendToServer, urlBackend } from "../../UserServer/ServerRequest";
 import { IProfessor } from "../core/IProfessor";
 import { IUser } from "../core/IUser";
 
@@ -17,12 +17,12 @@ export class Professor implements IProfessor {
     this.password = user.password;
   }
   public NewProfessor = async (): Promise<any> => {
-    const response = await fetch(`${url}professor/new`, sendToServer(this));
+    const response = await fetch(`${urlBackend}professor/new`, sendToServer(this));
     const data = await response.json();
     return data.access_token;
   };
   public logProfessor = async (): Promise<string> => {
-    const response = await fetch(`${url}professor/log`, sendToServer(this));
+    const response = await fetch(`${urlBackend}professor/log`, sendToServer(this));
     const data = await response.json();
     const myData:string=data.access_token;
     return myData;

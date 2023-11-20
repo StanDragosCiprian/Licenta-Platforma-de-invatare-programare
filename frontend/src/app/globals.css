@@ -13,4 +13,7 @@
   .account-card {
     @apply w-full max-w-sm p-4 bg-white border  rounded-lg shadow sm:p-6 md:p-8;
   }
+  .side-bar-text{
+    @apply hidden group-hover:block hover:opacity-100 self-center text-xl font-semibold whitespace-nowrap dark:text-white;
+  }
 }

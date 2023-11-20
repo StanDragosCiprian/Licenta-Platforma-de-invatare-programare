@@ -1,5 +1,5 @@
-export const url = "http://localhost:3000/";
-
+export const urlBackend = "http://localhost:3000/";
+export const urlFrontend = "http://localhost:3001/";
 export const sendToServer = (bodyContent: any) => {
   return {
     method: "POST",
@@ -9,16 +9,30 @@ export const sendToServer = (bodyContent: any) => {
     body: JSON.stringify(bodyContent),
   };
 };
-export const sendToServerCookies = (bodyContent: any, id: string) => {
+export const sendToServerCookies = (
+  bodyContent: any,
+  id: string | undefined
+) => {
   return {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: `id=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NTM4ZjQzMTQ5MmRjZGM3NWUwYTFmYWEiLCJpYXQiOjE2OTg0MTcwMzQsImV4cCI6MTY5ODUwMzQzNH0.Knmayy5Aehxop2Ie87cAib7EOVxaus8A4TZ6ySerxNU`,
-    },
+    credentials: "include" as RequestCredentials,
     body: JSON.stringify(bodyContent),
   };
 };
+
+export const sendFiles = (file: any, id: string) => {
+  const body = new FormData();
+  body.append("file", file);
+  return {
+    method: "POST",
+    credentials: "include" as RequestCredentials,
+    headers: {
+      Cookie: `id=${id}`,
+    },
+    body: body,
+  };
+};
+
 export const getUserFromServer = (id: string) => {
   return {
     method: "GET",
@@ -28,3 +42,12 @@ export const getUserFromServer = (id: string) => {
     },
   };
 };
+export const getFromServer = () => {
+
+  return {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+}

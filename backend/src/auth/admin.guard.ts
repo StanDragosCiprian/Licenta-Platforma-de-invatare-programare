@@ -1,12 +1,12 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { StudentService } from 'src/Schemas/Use-case/student/student.service';
+import { AdminsService } from 'src/Schemas/Use-case/admins/admins.service';
 
 @Injectable()
-export class StudentGuard implements CanActivate {
+export class AdminGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly studentService: StudentService,
+    private readonly studentService: AdminsService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -14,14 +14,13 @@ export class StudentGuard implements CanActivate {
     try {
       const id = request.cookies['id'];
       const decodedToken = this.jwtService.verify(id);
-      const student = await this.studentService.getStudent(decodedToken.sub);
-      if (student?.role === 'student' && student.role !== null) {
+      const admin = await this.studentService.getAdmin(decodedToken.sub);
+      if (admin?.role === 'admin' && admin.role !== null) {
         return true;
-      } else {
-        return false;
       }
     } catch (error) {
       console.error(error);
     }
+    return false;
   }
 }

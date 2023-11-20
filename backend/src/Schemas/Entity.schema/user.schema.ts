@@ -5,7 +5,7 @@ export class User {
   _id: mongoose.Types.ObjectId;
   @Prop()
   username: string;
-  @Prop()
+  @Prop({ unique: true })
   email: string;
   @Prop()
   password: string;

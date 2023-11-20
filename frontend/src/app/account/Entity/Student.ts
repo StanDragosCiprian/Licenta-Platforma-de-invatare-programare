@@ -1,4 +1,4 @@
-import { sendToServer, url } from "../../UserServer/ServerRequest";
+import { sendToServer, urlBackend } from "../../UserServer/ServerRequest";
 import { IStudent } from "../core/IStudent";
 import { IUser } from "../core/IUser";
 
@@ -17,12 +17,12 @@ export class Student implements IStudent {
     this.password = user.password;
   }
   public NewStudent = async (): Promise<any> => {
-    const response = await fetch(`${url}student/new`, sendToServer(this));
+    const response = await fetch(`${urlBackend}student/new`, sendToServer(this));
     const data = await response.json();
     return data.access_token;
   };
   public logStudent = async (): Promise<any> => {
-    const response = await fetch(`${url}student/log`, sendToServer(this));
+    const response = await fetch(`${urlBackend}student/log`, sendToServer(this));
     const data = await response.json();
     return data.access_token;
   };

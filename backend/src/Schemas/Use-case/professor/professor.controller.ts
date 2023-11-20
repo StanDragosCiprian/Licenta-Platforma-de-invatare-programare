@@ -5,6 +5,7 @@ import { ErrorInterceptor } from '../ErrorInterceptor';
 import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 import { LogDto } from 'src/Schemas/DTO/log.dto';
 import { Cookies } from 'src/Cookie/cookie';
+
 @Controller('professor')
 export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
@@ -29,9 +30,21 @@ export class ProfessorController {
   async getProfessor(@Cookies('id') id: string): Promise<any> {
     const decodedToken = await this.professorService.decriptJwt(id);
     const professor = await this.professorService.getProfessor(decodedToken);
+
     if (professor === null) {
       return ' ';
     }
     return professor;
+  }
+
+  @Get('/isProfessor')
+  async verifyAdmin(@Cookies('id') id: string): Promise<boolean> {
+    const decodedToken = await this.professorService.decriptJwt(id);
+    const professor = await this.professorService.getProfessor(decodedToken);
+
+    if (professor === null) {
+      return false;
+    }
+    return true;
   }
 }

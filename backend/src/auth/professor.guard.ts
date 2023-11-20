@@ -1,21 +1,24 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { StudentService } from 'src/Schemas/Use-case/student/student.service';
+import { ProfessorService } from 'src/Schemas/Use-case/professor/professor.service';
 
 @Injectable()
-export class StudentGuard implements CanActivate {
+export class ProfessorGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly studentService: StudentService,
+    private readonly professorService: ProfessorService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     try {
-      const id = request.cookies['id'];
+      const id = 'id' ? request.cookies?.['id'] : request.cookies;
+      console.log('id: ', id);
       const decodedToken = this.jwtService.verify(id);
-      const student = await this.studentService.getStudent(decodedToken.sub);
-      if (student?.role === 'student' && student.role !== null) {
+      const student = await this.professorService.getProfessor(
+        decodedToken.sub,
+      );
+      if (student?.role === 'professor' && student.role !== null) {
         return true;
       } else {
         return false;

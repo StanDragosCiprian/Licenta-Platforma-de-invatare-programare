@@ -21,7 +21,11 @@ export class CursService {
     const professor = await this.professorService.getProfessor(decryptId);
     professor.coursesId.push(newCurs._id);
     professor.save();
-    return 'Ok';
+    return newCurs.name;
+  }
+  async takeName(cursId: string): Promise<string> {
+    const name = await this.cursModel.findById(cursId);
+    return name.name;
   }
   async addVideoToCurs(cursId: string, video: IVideo): Promise<ICurs> {
     const mycurs = await this.cursModel.findById(cursId);

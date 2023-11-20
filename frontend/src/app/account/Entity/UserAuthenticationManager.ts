@@ -27,6 +27,8 @@ export class UserAuthenticationManager {
     return await this.entity.logAdmin();
   }
   private async verifyStudentSign(user: any): Promise<string> {
+
+
     user.role = "Student";
     this.entity = new Student(user);
     return await this.entity.NewStudent();
@@ -39,10 +41,9 @@ export class UserAuthenticationManager {
     return this.expression.test(email);
   }
   public async signUser(user: any): Promise<any> {
-    try {
-      const id = await this.verifyStudentSign(user);
-      this.isId(id);
-    } catch (err) {}
+       await this.verifyStudentSign(user).then((id)=>{
+        this.isId(id);
+       });
   }
   private async verifyUser(user: any): Promise<any> {
     return [

@@ -18,7 +18,7 @@ export const Account = async () => {
             width={24}
             height={24}
           />
-          <span className=" hidden group-hover:block hover:opacity-100 self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+          <span className="side-bar-text">
             <p>{repo.username}</p>
           </span>
         </div>{" "}

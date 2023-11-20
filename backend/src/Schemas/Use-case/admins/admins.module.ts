@@ -4,6 +4,7 @@ import { AdminsService } from './admins.service';
 import { AdminSchema } from 'src/Schemas/Entity.schema/admin.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { ProfessorModule } from '../professor/professor.module';
 
 @Module({
   imports: [
@@ -12,8 +13,11 @@ import { JwtModule } from '@nestjs/jwt';
       secret: 'your-secret-key',
       signOptions: { expiresIn: '24h' },
     }),
+    ProfessorModule,
   ],
+
   controllers: [AdminsController],
   providers: [AdminsService],
+  exports: [AdminsService],
 })
 export class AdminsModule {}

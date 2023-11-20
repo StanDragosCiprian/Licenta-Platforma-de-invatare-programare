@@ -6,6 +6,7 @@ import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 import { LogDto } from 'src/Schemas/DTO/log.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Cookies } from 'src/Cookie/cookie';
+
 @Controller('student')
 export class StudentController {
   constructor(
@@ -20,32 +21,26 @@ export class StudentController {
   ): Promise<{ access_token: string }> {
     const newStudent =
       await this.studentService.createStudent(createStudentDto);
+
     const payload = { sub: newStudent._id };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
   @Post('/log')
+  @UseInterceptors(ErrorInterceptor)
   async logStudent(@Body() log: LogDto): Promise<{ access_token: string }> {
     const logStudent = await this.studentService.logUser(
       log.email,
       log.password,
     );
-    if (logStudent !== null) {
-      const payload = { sub: logStudent._id };
-      return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
-    }
-    return {
-      access_token: ' ',
-    };
+    return this.studentService.makeJwt(logStudent);
   }
   @Get('get')
   @UseInterceptors(ErrorInterceptor)
   async getStudent(@Cookies('id') id: string): Promise<any> {
-    const decodedToken = this.jwtService.verify(id);
-    const student = await this.studentService.getStudent(decodedToken.sub);
+    const decodedToken = await this.studentService.decriptJwt(id);
+    const student = await this.studentService.getStudent(decodedToken);
     if (student === null) {
       return ' ';
     }

@@ -9,7 +9,9 @@ export class Curs {
   @Prop({ type: mongoose.Types.ObjectId })
   studentId: mongoose.Types.ObjectId[];
   @Prop()
-  Name: string;
+  name: string;
+  @Prop()
+  vizibility: boolean;
   @Prop({ type: mongoose.Types.ObjectId })
   colaborationId: mongoose.Types.ObjectId[];
   @Prop()
