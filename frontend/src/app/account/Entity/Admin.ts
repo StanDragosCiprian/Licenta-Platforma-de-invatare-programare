@@ -1,13 +1,13 @@
 import { sendToServer, urlBackend } from "@/app/UserServer/ServerRequest";
-import { IUser } from "../core/IUser";
+import { IAdmin } from "../core/IAdmin";
 
-export class Admin implements IUser {
+export class Admin implements IAdmin {
   username: string = "";
   email: string = "";
   password: string = "";
   profileImage: string = "";
   role: string = "admin";
-  constructor(user: IUser) {
+  constructor(user: IAdmin) {
     this.username = user.username;
     this.email = user.email;
     this.password = user.password;

@@ -18,6 +18,7 @@ import { Express } from 'express';
 import * as Excel from 'exceljs';
 import { Types } from 'mongoose';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
+import { IAdmin } from 'src/Schemas/Entity/IAdmin';
 
 @Controller('admin')
 export class AdminsController {
@@ -41,7 +42,7 @@ export class AdminsController {
   }
   @Get('/get')
   @UseGuards(AdminGuard)
-  async getProfessor(@Cookies('id') id: string): Promise<any> {
+  async getProfessor(@Cookies('id') id: string): Promise<IAdmin | string> {
     const decodedToken = await this.adminService.decriptJwt(id);
     const admin = this.adminService.getAdmin(decodedToken);
     if (admin === null) {

@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      scale: {
+        '103': '1.03',
+      },
       screens:{
         'desktop':'1280px',
       },

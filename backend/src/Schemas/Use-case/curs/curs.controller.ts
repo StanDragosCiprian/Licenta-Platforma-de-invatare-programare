@@ -39,21 +39,14 @@ export class CursController {
 
   @Get('/:coursName')
   async getCoursName(@Param('coursName') coursId: string) {
-    console.log('coursId: ', coursId);
     const name = await this.cursService.takeName(coursId);
     return name;
   }
-  @Post('/new/video')
-  @UseInterceptors(ErrorInterceptor)
-  async createVideoCurs(@Res() response, @Body() video: IVideo) {
-    if (this.resp.hasSameKeys(video, this.resp.videoKeys)) {
-      const newVideo = await this.cursService.addVideoToCurs(
-        '6528206c40e8e31219a642a2',
-        video,
-      );
-      return this.resp.goodResponse(response, newVideo);
-    }
-    return this.resp.badResponse(response);
+  @Post('/:coursName/add/video')
+  @UseGuards(ProfessorGuard)
+  async createTextForVideoCurs(@Param('coursName') coursId: string) {
+    const curs = await this.cursService.takeCours(coursId);
+    console.log(curs);
   }
 
   @Post('/new/pdf')

@@ -13,7 +13,9 @@ export class CursService {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
   constructor(@InjectModel('Curs') private cursModel: Model<ICurs>) {}
-
+  async takeCours(cursName: string) {
+    return await this.cursModel.find({ name: cursName });
+  }
   async createNewCourse(curse: CursDto, professorId: string) {
     const newCurs = await new this.cursModel(curse);
     newCurs.save();
