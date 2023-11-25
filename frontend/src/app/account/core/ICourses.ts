@@ -1,7 +1,9 @@
-interface ICourses{
-    name: string,
-    vizibility:boolean,
-    studentId: [],
-    colaborationId: [],
-    curs: [],
+interface ICourses {
+  name: string;
+  vizibility: boolean;
+  description: string;
+  imagePath: string;
+  studentId: [];
+  colaborationId: [];
+  curs: [];
 }

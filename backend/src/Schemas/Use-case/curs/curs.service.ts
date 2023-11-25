@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CursDto } from 'src/Schemas/DTO/curs.dto';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
@@ -13,9 +13,38 @@ export class CursService {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
   constructor(@InjectModel('Curs') private cursModel: Model<ICurs>) {}
-  async takeCours(cursName: string) {
-    return await this.cursModel.find({ name: cursName });
+  async takeCours(cursName: string): Promise<Types.ObjectId> {
+    return (await this.cursModel.findOne({ name: cursName }))._id;
   }
+  async getProfessorNameForCours(id: string): Promise<string> {
+    return this.professorService.getProfessorName(id);
+  }
+  onModuleInit() {
+    this.cursModel.watch().on('change', (change) => {
+      console.log(change);
+    });
+  }
+  async addVideoToVide(cursId: Types.ObjectId, video: IVideo) {
+    const curs: ICurs = await this.cursModel.findById(cursId);
+    curs.curs.push(video);
+    curs.save();
+    return curs.curs.lastIndexOf;
+  }
+  async getCoursComponent(): Promise<ICurs[]> {
+    const professorCoursId: Set<Types.ObjectId> =
+      await this.professorService.getAllProfessorsCursId();
+
+    const courses: ICurs[] = [];
+    for (const c of professorCoursId) {
+      const cours: ICurs = await this.cursModel.findById(c);
+      console.log('cours: ', cours.vizibility);
+      if (cours?.vizibility === true) {
+        courses.push(cours);
+      }
+    }
+    return courses;
+  }
+
   async createNewCourse(curse: CursDto, professorId: string) {
     const newCurs = await new this.cursModel(curse);
     newCurs.save();

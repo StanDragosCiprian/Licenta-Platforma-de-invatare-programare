@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 
@@ -15,6 +15,19 @@ export class ProfessorService implements OnModuleInit {
     const newProfessor = await new this.professorModel(createProfessorDto);
     return newProfessor.save();
   }
+  async getAllProfessorsCursId(): Promise<Set<Types.ObjectId>> {
+    const professors: IProfessor[] = await this.professorModel.find();
+    const coursId: Set<Types.ObjectId> = professors.reduce((acc, professor) => {
+      if (professor.coursesId.length > 0) {
+        professor.coursesId.forEach((curs: Types.ObjectId) => {
+          acc.add(curs);
+        });
+      }
+      return acc;
+    }, new Set<Types.ObjectId>());
+    return coursId;
+  }
+
   onModuleInit() {
     this.professorModel.watch().on('change', (change) => {
       console.log(change);
@@ -26,6 +39,13 @@ export class ProfessorService implements OnModuleInit {
       password: password,
     });
     return user;
+  }
+  async getProfessorName(jwtId: string): Promise<string> {
+    console.log('jwtId: ', jwtId);
+    const decriptJwt = await this.decriptJwt(jwtId);
+    console.log('decriptJwt: ', decriptJwt);
+    const professor = await this.getProfessor(decriptJwt);
+    return professor.username;
   }
   async getProfessor(id: string): Promise<IProfessor> {
     const professor = await this.professorModel.findOne({

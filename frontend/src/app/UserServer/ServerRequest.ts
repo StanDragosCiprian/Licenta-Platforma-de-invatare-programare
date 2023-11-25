@@ -16,19 +16,22 @@ export const sendToServerCookies = (
   return {
     method: "POST",
     credentials: "include" as RequestCredentials,
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(bodyContent),
   };
 };
 
-export const sendFiles = (file: any, id: string) => {
+export const sendFiles = (file: any) => {
   const body = new FormData();
   body.append("file", file);
   return {
     method: "POST",
     credentials: "include" as RequestCredentials,
-    headers: {
-      Cookie: `id=${id}`,
-    },
+    // headers: {
+    //   Cookie: `id=${id}`,
+    // },
     body: body,
   };
 };
@@ -42,12 +45,18 @@ export const getUserFromServer = (id: string) => {
     },
   };
 };
-export const getFromServer = () => {
-
+export const getFromServerCookie = () => {
   return {
     method: "GET",
+    credentials: "include" as RequestCredentials,
+  };
+};
+export const getFromServer = () => {
+  return {
+    method: "GET",
+    credentials: "include" as RequestCredentials,
     headers: {
       "Content-Type": "application/json",
     },
   };
-}
+};

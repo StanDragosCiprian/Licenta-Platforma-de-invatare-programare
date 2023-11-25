@@ -17,7 +17,13 @@ export class AppController {
       'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Images\\Courses\\uploadVideoImage.jpg',
     );
   }
-
+  //defaultCours1.jpg
+  @Get('default/cours1')
+  defaultCoursImage1(@Res() response) {
+    response.sendFile(
+      'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Images\\Default\\defaultCours1.jpg',
+    );
+  }
   @Get('editcourses/pdfImg')
   addPdfToCoursesImage(@Res() response) {
     response.sendFile(

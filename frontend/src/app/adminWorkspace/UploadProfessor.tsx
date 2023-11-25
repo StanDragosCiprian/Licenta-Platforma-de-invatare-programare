@@ -1,16 +1,13 @@
 "use client"
 import { AccountCard } from "../account/CardInputComponents/AccountCard";
-import { getCookie } from "cookies-next";
 import { AdminsService } from "../account/Entity/AdminService";
 import { useState } from "react";
-import { useCookies } from 'next-client-cookies';
 export const UploadProfessor = () => {
   const [files, setFiles] = useState<File | null>(null);
-  const cookies = useCookies();
+
   const  handleFileChange = async () => {
       const admin = new AdminsService();
-      const id:any=cookies.get('id')
-      await admin.sendProfessor(files,id);
+      await admin.sendProfessor(files);
     
   };
   return (

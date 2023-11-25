@@ -9,11 +9,14 @@ export class HandleProfessorWorkout {
       cookies().get("id") && (await userManager.isRole("admin/isProfessor"))
     );
   };
-  static getDynamicValue = (rout:string) => {
+  static getDynamicValue = () => {
     const headersList = headers();
     let fullUrl = headersList.get("referer") || "";
-    const substring_to_eliminate = `${urlFrontend}professorworkspace/`;
-    fullUrl = fullUrl.replace(substring_to_eliminate, "");
-    return fullUrl.replace(rout,"");
+    fullUrl = fullUrl.replace(`${urlFrontend}professorworkspace/`, "");
+    const dynamicValue = fullUrl.split('/')[0];
+    const text = decodeURIComponent(dynamicValue);
+   console.log('fullUrl: ', text);
+    return text;
   };
+  
 }

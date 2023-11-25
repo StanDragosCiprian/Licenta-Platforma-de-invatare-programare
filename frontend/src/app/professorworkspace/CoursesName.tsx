@@ -6,11 +6,15 @@ import { TextBox } from "../account/CardInputComponents/TextBox";
 import { Courses } from "../account/Entity/Courses";
 import { useRouter } from "next/navigation";
 import { SelectVizibility } from "./SelectRole";
+import { TextareaWithLimit } from "./TextareaWithLimit";
+import { urlBackend } from "../UserServer/ServerRequest";
 
 export const CoursesName = () => {
   const [course, setCours] = useState({
     name: "",
     vizibility: false,
+    description: "",
+    imagePath: `${urlBackend}default/cours1`,
     studentId: [],
     colaborationId: [],
     curs: [],
@@ -36,8 +40,15 @@ export const CoursesName = () => {
           setUser={setNameCours}
           user={nameCours}
         >
+          
           <SelectVizibility
             registerType={["Name"]}
+            reg={null}
+            setUser={setCours}
+            user={course}
+          />
+          <TextareaWithLimit
+            registerType={[]}
             reg={null}
             setUser={setCours}
             user={course}

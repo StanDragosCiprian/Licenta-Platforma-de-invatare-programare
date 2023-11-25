@@ -12,6 +12,10 @@ export class Curs {
   name: string;
   @Prop()
   vizibility: boolean;
+  @Prop()
+  description: string;
+  @Prop()
+  imagePath: string;
   @Prop({ type: mongoose.Types.ObjectId })
   colaborationId: mongoose.Types.ObjectId[];
   @Prop()
