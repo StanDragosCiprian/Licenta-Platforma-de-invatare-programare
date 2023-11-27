@@ -1,4 +1,4 @@
-import { sendToServer, urlBackend } from "../../UserServer/ServerRequest";
+import { sendToServer, urlBackend } from "../UserServer/ServerRequest";
 import { IProfessor } from "../core/IProfessor";
 import { IUser } from "../core/IUser";
 

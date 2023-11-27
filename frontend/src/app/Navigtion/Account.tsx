@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
-import { UserRecever } from "../account/Entity/UserRecever";
+import { UserRecever } from "../Entity/UserRecever";
 
 export const Account = async () => {
   const userManager: any =new UserRecever();

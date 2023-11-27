@@ -2,14 +2,13 @@ import { notFound } from "next/navigation";
 import { EditCard } from "../EditCards";
 import { urlBackend } from "@/app/UserServer/ServerRequest";
 import Link from "next/link";
-import { HandleProfessorWorkout } from "../HandleProfessorWorkout";
+import { HandleProfessorWorkout } from "../../Entity/HandleProfessorWorkout";
 export default async function NewCourse({ params }: any) {
   if (!await HandleProfessorWorkout.getId()) {
     notFound();
   }
   const handleName = (): string => {
     const name=params.name.replace("%20", " ");
-    console.log('name: ', name);
 
     return name;
   };

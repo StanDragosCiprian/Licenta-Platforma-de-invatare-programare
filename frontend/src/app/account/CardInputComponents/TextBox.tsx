@@ -1,5 +1,5 @@
 "use client";
-import { IRegister } from "./IRegister";
+import { IRegister } from "../../core/IRegister";
 import { InputUser } from "./InputUser";
 
 interface Register extends IRegister {

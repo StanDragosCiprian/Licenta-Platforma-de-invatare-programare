@@ -28,7 +28,6 @@ export class Courses implements ICourses {
       `${urlBackend}curs/new`,
       sendToServerCookies(this, id)
     );
-    console.log("req: ", req);
     return req.text();
   }
 }

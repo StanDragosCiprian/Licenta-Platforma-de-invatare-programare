@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AccountCard } from "../account/CardInputComponents/AccountCard";
 import { Submit } from "../account/CardInputComponents/Submit";
 import { TextBox } from "../account/CardInputComponents/TextBox";
-import { Courses } from "../account/Entity/Courses";
+import { Courses } from "../Entity/Courses";
 import { useRouter } from "next/navigation";
 import { SelectVizibility } from "./SelectRole";
 import { TextareaWithLimit } from "./TextareaWithLimit";

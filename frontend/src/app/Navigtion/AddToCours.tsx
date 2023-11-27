@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { UserRecever } from "../account/Entity/UserRecever";
-import { CoursManager } from "../account/Entity/CoursManager";
+import { UserRecever } from "../Entity/UserRecever";
+import { CoursManager } from "../Entity/CoursManager";
 import { SelectCours } from "./SelectCours";
 import { cookies } from "next/headers";
 const getProfessor = async () => {
@@ -20,7 +20,7 @@ const takeCoursesName = async () => {
   
   
 };
-export const EditCours = async () => {
+export const AddToCours = async () => {
   const cours = await takeCoursesName();
   return (
     <>

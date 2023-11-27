@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { IRegister } from "../account/CardInputComponents/IRegister";
+import { IRegister } from "../core/IRegister";
 
 export const SelectVizibility: FC<IRegister> = ({ setUser, user }) => {
   return (

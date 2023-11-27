@@ -1,11 +1,10 @@
 import { CoursCard } from "./CoursCard/CoursCard";
-import { ICursCard } from "./CoursCard/ICursCard";
+import { ICursCard } from "./core/ICursCard";
 import { urlBackend } from "./UserServer/ServerRequest";
 
 async function getData() {
   const courses = await fetch(`${urlBackend}curs/cursPresentation`,{ next: { revalidate: 5 } });
   const cours: any[] = await courses.json();
-  console.log("cours: ", cours);
   return Object.values(cours);
 }
 

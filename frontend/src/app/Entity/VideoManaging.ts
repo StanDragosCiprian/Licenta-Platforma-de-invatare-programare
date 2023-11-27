@@ -22,7 +22,6 @@ export class VideoManaging {
         undefined
       )
     );
-    console.log(`${urlBackend}curs/${this.videoName}/add/video/textInput`);
   }
   private async getProfessorName(): Promise<string> {
     const res = await fetch(

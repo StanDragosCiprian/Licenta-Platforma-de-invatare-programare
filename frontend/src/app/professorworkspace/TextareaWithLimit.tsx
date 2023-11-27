@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useState } from "react";
-import { IRegister } from "../account/CardInputComponents/IRegister";
+import { IRegister } from "../core/IRegister";
 
 export const TextareaWithLimit: FC<IRegister> = ({ setUser, user }) => {
   const maxLength = 100;

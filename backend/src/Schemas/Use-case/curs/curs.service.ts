@@ -37,7 +37,6 @@ export class CursService {
     const courses: ICurs[] = [];
     for (const c of professorCoursId) {
       const cours: ICurs = await this.cursModel.findById(c);
-      console.log('cours: ', cours.vizibility);
       if (cours?.vizibility === true) {
         courses.push(cours);
       }

@@ -35,8 +35,6 @@ export class CursController {
     @Cookies() id,
     @Body() createCursDto: CursDto,
   ): Promise<any> {
-    console.log(id);
-    console.log(createCursDto);
 
     const newCurs = await this.cursService.createNewCourse(
       createCursDto,
@@ -47,7 +45,6 @@ export class CursController {
   @Get('/cursPresentation')
   async cursPresentation() {
     const curses: ICurs[] = await this.cursService.getCoursComponent();
-    console.log('testCors: ', curses);
 
     const courses = curses.map((curs: ICurs) => {
       return {
@@ -97,7 +94,6 @@ export class CursController {
           const newFileName =
             name.split(' ').join('_') + '_' + Date.now() + '.' + fileExtension;
           req.body.filename = newFileName;
-          console.log('newFileName: ', newFileName);
           cb(null, newFileName);
         },
       }),
@@ -131,7 +127,6 @@ export class CursController {
   ) {
     const cursId: Types.ObjectId = await this.cursService.takeCours(coursId);
     const curs = await this.cursService.addVideoToVide(cursId, createCursDto);
-    console.log('curs: ', curs);
   }
 
   @Post('/new/pdf')

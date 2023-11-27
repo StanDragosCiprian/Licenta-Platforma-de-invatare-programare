@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserRecever } from "../account/Entity/UserRecever";
+import { UserRecever } from "../Entity/UserRecever";
 
 export const ProfessorAdder = async () => {
   const userManager = new UserRecever();

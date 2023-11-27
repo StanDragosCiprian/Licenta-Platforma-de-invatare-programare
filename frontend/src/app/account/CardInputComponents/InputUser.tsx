@@ -1,6 +1,6 @@
 "use client";
 import { FC, useState } from "react";
-import { IRegister } from "./IRegister";
+import { IRegister } from "../../core/IRegister";
 
 export const InputUser: FC<IRegister> = ({ reg, setUser, user }) => {
   const[color,setColor]=useState("blue")

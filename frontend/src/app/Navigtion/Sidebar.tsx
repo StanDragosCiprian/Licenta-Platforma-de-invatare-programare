@@ -2,8 +2,8 @@ import { Logo } from "./logo";
 import { Account } from "./Account";
 import { Courses } from "./Courses";
 import { ProfessorAdder } from "./ProfessorAdder";
-import { EditCours } from "./EditCours";
-import { UserRecever } from "../account/Entity/UserRecever";
+import { AddToCours } from "./AddToCours";
+import { UserRecever } from "../Entity/UserRecever";
 import { cookies } from "next/headers";
 const getUser = async () => {
   const id: string | undefined = cookies().get("id")?.value;
@@ -23,7 +23,7 @@ export const Sidebar = async () => {
           <ul>
           {user.role === "professor" ?<Courses />:null}
             {user.role === "admin" ? <ProfessorAdder /> : null}
-            {user.role === "professor" ? <EditCours /> : null}
+            {user.role === "professor" ? <AddToCours /> : null}
           </ul>
           <Account />
         </div>

@@ -1,5 +1,5 @@
 import { cookies, headers } from "next/headers";
-import { UserRecever } from "../account/Entity/UserRecever";
+import { UserRecever } from "./UserRecever";
 import { urlFrontend } from "../UserServer/ServerRequest";
 
 export class HandleProfessorWorkout {
@@ -15,7 +15,6 @@ export class HandleProfessorWorkout {
     fullUrl = fullUrl.replace(`${urlFrontend}professorworkspace/`, "");
     const dynamicValue = fullUrl.split('/')[0];
     const text = decodeURIComponent(dynamicValue);
-   console.log('fullUrl: ', text);
     return text;
   };
   

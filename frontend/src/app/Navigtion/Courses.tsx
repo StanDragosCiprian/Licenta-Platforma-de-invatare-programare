@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { UserRecever } from "../account/Entity/UserRecever";
+import { UserRecever } from "../Entity/UserRecever";
 
 
 

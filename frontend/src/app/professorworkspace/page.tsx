@@ -1,4 +1,4 @@
-import { UserRecever } from "../account/Entity/UserRecever";
+import { UserRecever } from "../Entity/UserRecever";
 import { CoursesName } from "./CoursesName";
 import { notFound } from 'next/navigation'
 import { EditCard } from "./EditCards";

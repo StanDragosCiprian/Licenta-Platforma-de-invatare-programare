@@ -1,6 +1,6 @@
 "use client";
 import { FC } from "react";
-import { IRegister } from "./IRegister";
+import { IRegister } from "../../core/IRegister";
 interface ISubmit extends IRegister {
   handleUser: (user:any) => any;
 }

@@ -4,7 +4,7 @@ import { AccountCard } from "../CardInputComponents/AccountCard";
 import { Submit } from "../CardInputComponents/Submit";
 import { TextBox } from "../CardInputComponents/TextBox";
 import { RedirectComponents } from "../CardInputComponents/RedirectComponents";
-import { UserAuthenticationManager } from "../Entity/UserAuthenticationManager";
+import { UserAuthenticationManager } from "../../Entity/UserAuthenticationManager";
 
 export const LogIn = () => {
   const [user, setUser] = useState({

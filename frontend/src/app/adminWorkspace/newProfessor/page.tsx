@@ -1,4 +1,4 @@
-import { UserRecever } from "@/app/account/Entity/UserRecever";
+import { UserRecever } from "@/app/Entity/UserRecever";
 import { notFound } from "next/navigation";
 import { UploadProfessor } from "../UploadProfessor";
 import { cookies } from "next/headers";

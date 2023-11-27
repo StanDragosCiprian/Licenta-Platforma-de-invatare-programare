@@ -1,6 +1,6 @@
 "use client"
 import { AccountCard } from "../account/CardInputComponents/AccountCard";
-import { AdminsService } from "../account/Entity/AdminService";
+import { AdminsService } from "../Entity/AdminService";
 import { useState } from "react";
 export const UploadProfessor = () => {
   const [files, setFiles] = useState<File | null>(null);

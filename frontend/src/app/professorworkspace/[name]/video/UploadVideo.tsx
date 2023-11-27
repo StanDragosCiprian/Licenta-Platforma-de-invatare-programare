@@ -5,7 +5,7 @@ import { TextareaInput } from "./Components/TextareaInput";
 import { TitileInput } from "./Components/TitleInput";
 import { UploadVideoInput } from "./Components/UploadVideoInput";
 import { VideoCard } from "./VideoCard";
-import { VideoManaging } from "../../VideoManaging";
+import { VideoManaging } from "../../../Entity/VideoManaging";
 import { IName } from "./VideoInterfaces";
 
 export const UploadVideo: FC<IName> = ({ name }) => {
@@ -16,11 +16,6 @@ export const UploadVideo: FC<IName> = ({ name }) => {
   });
   const handeVideo = async () => {
     const videoText: VideoManaging = new VideoManaging(name);
-    console.log(
-      videoDescription.title,
-      videoDescription.description,
-      videoDescription.filePath
-    );
     await videoText.sendText(
       videoDescription.title,
       videoDescription.description,

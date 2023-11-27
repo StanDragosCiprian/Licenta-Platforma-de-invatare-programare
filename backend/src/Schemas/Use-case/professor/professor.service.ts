@@ -41,9 +41,7 @@ export class ProfessorService implements OnModuleInit {
     return user;
   }
   async getProfessorName(jwtId: string): Promise<string> {
-    console.log('jwtId: ', jwtId);
     const decriptJwt = await this.decriptJwt(jwtId);
-    console.log('decriptJwt: ', decriptJwt);
     const professor = await this.getProfessor(decriptJwt);
     return professor.username;
   }
