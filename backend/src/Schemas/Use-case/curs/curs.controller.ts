@@ -35,7 +35,6 @@ export class CursController {
     @Cookies() id,
     @Body() createCursDto: CursDto,
   ): Promise<any> {
-
     const newCurs = await this.cursService.createNewCourse(
       createCursDto,
       id.id,
@@ -65,6 +64,7 @@ export class CursController {
   @Get('/professorName')
   @UseGuards(ProfessorGuard)
   async professorName(@Cookies('id') id: string): Promise<string> {
+    console.log('id: ', id);
     return await this.cursService.getProfessorNameForCours(id);
   }
 
@@ -73,7 +73,27 @@ export class CursController {
     const name = await this.cursService.takeName(coursId);
     return name;
   }
-
+  @Get('/:coursName/:id/videoCurs')
+  async getCours(
+    @Param('coursName') coursName: string,
+    @Param('id') id: string,
+  ) {
+    const name = await this.cursService.takeFullCurs(coursName);
+    console.log('name: ', name);
+    return name.curs[id];
+  }
+  @Get('/:professorName/:cursName/:videoName/:extension/video')
+  async getVideo(
+    @Res() response,
+    @Param('professorName') professorName: string,
+    @Param('cursName') cursName: string,
+    @Param('videoName') videoName: string,
+    @Param('extension') extension: string,
+  ) {
+    response.sendFile(
+      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
+    );
+  }
   @Post('/:professorName/:coursName/add/video/videoInput')
   @UseGuards(ProfessorGuard)
   @UseInterceptors(
@@ -112,12 +132,10 @@ export class CursController {
     }),
   )
   async addVideoForVideoCurs(
-    @Param('professorName') professorName: string,
-    @Param('coursName') coursId: string,
     @Cookies('id') id: string,
     @Body('filename') filename: string,
   ) {
-    return `${professorName}/${coursId}/${filename}`;
+    return `${filename}`;
   }
   @Post('/:coursName/add/video/textInput')
   @UseGuards(ProfessorGuard)

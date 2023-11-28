@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import {
   getFromServerCookie,
   sendFiles,
@@ -26,7 +27,7 @@ export class VideoManaging {
   private async getProfessorName(): Promise<string> {
     const res = await fetch(
       `${urlBackend}curs/professorName`,
-      getFromServerCookie()
+      getFromServerCookie(cookies().get("id")?.value)
     );
     return await res.text();
   }

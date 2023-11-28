@@ -1,6 +1,10 @@
 import { cookies, headers } from "next/headers";
 import { UserRecever } from "./UserRecever";
-import { urlFrontend } from "../UserServer/ServerRequest";
+import {
+  getFromServerCookie,
+  urlBackend,
+  urlFrontend,
+} from "../UserServer/ServerRequest";
 
 export class HandleProfessorWorkout {
   static getId = async () => {
@@ -13,9 +17,15 @@ export class HandleProfessorWorkout {
     const headersList = headers();
     let fullUrl = headersList.get("referer") || "";
     fullUrl = fullUrl.replace(`${urlFrontend}professorworkspace/`, "");
-    const dynamicValue = fullUrl.split('/')[0];
+    const dynamicValue = fullUrl.split("/")[0];
     const text = decodeURIComponent(dynamicValue);
     return text;
   };
-  
+  static async getProfessorName(): Promise<string> {
+    const res = await fetch(
+      `${urlBackend}curs/professorName`,
+      getFromServerCookie(cookies().get("id")?.value)
+    );
+    return await res.text();
+  }
 }

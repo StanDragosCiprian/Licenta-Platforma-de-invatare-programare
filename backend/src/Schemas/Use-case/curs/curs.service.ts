@@ -57,6 +57,10 @@ export class CursService {
     const name = await this.cursModel.findById(cursId);
     return name.name;
   }
+  async takeFullCurs(cursId: string): Promise<ICurs> {
+    const name = await this.cursModel.findOne({ name: cursId });
+    return name;
+  }
   async addVideoToCurs(cursId: string, video: IVideo): Promise<ICurs> {
     const mycurs = await this.cursModel.findById(cursId);
     mycurs.curs.push(video);

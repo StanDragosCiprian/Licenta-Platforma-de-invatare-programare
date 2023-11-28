@@ -45,10 +45,13 @@ export const getUserFromServer = (id: string) => {
     },
   };
 };
-export const getFromServerCookie = () => {
+export const getFromServerCookie = (id:string|undefined) => {
   return {
     method: "GET",
     credentials: "include" as RequestCredentials,
+     headers: {
+      Cookie: `id=${id}`,
+    },
   };
 };
 export const getFromServer = () => {
