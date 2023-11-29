@@ -28,8 +28,23 @@ export class CursService {
     const curs: ICurs = await this.cursModel.findById(cursId);
     curs.curs.push(video);
     curs.save();
-    return curs.curs.lastIndexOf;
+    return curs.curs.length - 1;
   }
+  async getProfessorCurs(id: string): Promise<ICurs[]> {
+    const professorCoursId: any[] = (
+      await this.professorService.getProfessorById(id)
+    ).coursesId;
+    console.log('professorCoursId: ', professorCoursId);
+    const courses: ICurs[] = [];
+    for (const c of professorCoursId) {
+      const cours: ICurs = await this.cursModel.findById(c);
+      if (cours?.vizibility === true) {
+        courses.push(cours);
+      }
+    }
+    return courses;
+  }
+
   async getCoursComponent(): Promise<ICurs[]> {
     const professorCoursId: Set<Types.ObjectId> =
       await this.professorService.getAllProfessorsCursId();
@@ -57,9 +72,27 @@ export class CursService {
     const name = await this.cursModel.findById(cursId);
     return name.name;
   }
+  async takeCoursByName(
+    cursName: string,
+  ): Promise<{ title: string; description: string }> {
+    const name = await this.cursModel.findOne({ name: cursName });
+    return { title: name.name, description: name.description };
+  }
   async takeFullCurs(cursId: string): Promise<ICurs> {
     const name = await this.cursModel.findOne({ name: cursId });
     return name;
+  }
+  async changeIndex(
+    cursName: string,
+    drag: string,
+    drop: string,
+  ): Promise<void> {
+    const curs = await this.cursModel.findOne({ name: cursName });
+    const temp = curs.curs[Number(drag)];
+    curs.curs[Number(drag)] = curs.curs[Number(drop)];
+    curs.curs[Number(drop)] = temp;
+    console.log(curs.curs);
+    curs.save();
   }
   async addVideoToCurs(cursId: string, video: IVideo): Promise<ICurs> {
     const mycurs = await this.cursModel.findById(cursId);

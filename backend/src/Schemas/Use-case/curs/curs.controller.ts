@@ -60,7 +60,25 @@ export class CursController {
 
     return coursesObject;
   }
+  @Get('/cursProfessor')
+  async cursProfessor(@Cookies('id') id: string) {
+    const curses: ICurs[] = await this.cursService.getProfessorCurs(id);
 
+    const courses = curses.map((curs: ICurs) => {
+      return {
+        title: curs.name,
+        description: curs.description,
+        image: curs.imagePath,
+      };
+    });
+
+    const coursesObject = courses.reduce((obj, item, index) => {
+      obj[index] = item;
+      return obj;
+    }, {});
+
+    return coursesObject;
+  }
   @Get('/professorName')
   @UseGuards(ProfessorGuard)
   async professorName(@Cookies('id') id: string): Promise<string> {
@@ -73,6 +91,18 @@ export class CursController {
     const name = await this.cursService.takeName(coursId);
     return name;
   }
+  @Get('/:coursName/fullCours')
+  async getFullCours(@Param('coursName') coursId: string) {
+    return await this.cursService.takeCoursByName(coursId);
+  }
+  @Get('/:cursName/:drag/:drop/dragAndDrop')
+  async dragDrop(
+    @Param('drag') drag: string,
+    @Param('drop') drop: string,
+    @Param('cursName') cursName: string,
+  ) {
+    this.cursService.changeIndex(cursName, drag, drop);
+  }
   @Get('/:coursName/:id/videoCurs')
   async getCours(
     @Param('coursName') coursName: string,
@@ -81,6 +111,16 @@ export class CursController {
     const name = await this.cursService.takeFullCurs(coursName);
     console.log('name: ', name);
     return name.curs[id];
+  }
+  @Get('/:coursName/videoCurs')
+  async getCoursFullCurs(@Param('coursName') coursName: string) {
+    const name = await this.cursService.takeFullCurs(coursName);
+    console.log('name: ', name);
+    const m = name.curs.map((cours: any) => {
+      return { title: cours.title };
+    });
+    console.log(m);
+    return m;
   }
   @Get('/:professorName/:cursName/:videoName/:extension/video')
   async getVideo(
@@ -142,9 +182,11 @@ export class CursController {
   async createTextForVideoCurs(
     @Param('coursName') coursId: string,
     @Body() createCursDto: IVideo,
-  ) {
+  ): Promise<string> {
     const cursId: Types.ObjectId = await this.cursService.takeCours(coursId);
     const curs = await this.cursService.addVideoToVide(cursId, createCursDto);
+    console.log('curs: ', curs);
+    return await curs.toString();
   }
 
   @Post('/new/pdf')

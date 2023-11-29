@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { getCookie } from "cookies-next";
 import {
   getFromServerCookie,
   sendFiles,
@@ -15,7 +15,7 @@ export class VideoManaging {
     title: string,
     description: string,
     video: string
-  ): Promise<void> {
+  ): Promise<string> {
     const res = await fetch(
       `${urlBackend}curs/${this.videoName}/add/video/textInput`,
       sendToServerCookies(
@@ -23,11 +23,12 @@ export class VideoManaging {
         undefined
       )
     );
+    return await res.text();
   }
   private async getProfessorName(): Promise<string> {
     const res = await fetch(
       `${urlBackend}curs/professorName`,
-      getFromServerCookie(cookies().get("id")?.value)
+      getFromServerCookie(getCookie("id"))
     );
     return await res.text();
   }
@@ -44,6 +45,7 @@ export class VideoManaging {
   public async sendText(title: string, description: string, file: string) {
     const professorName = await this.getProfessorName();
     const video = await this.setVideo(file, professorName);
-    const res = await this.setVideoText(title, description, video);
+    const res: string = await this.setVideoText(title, description, video);
+    return await res;
   }
 }

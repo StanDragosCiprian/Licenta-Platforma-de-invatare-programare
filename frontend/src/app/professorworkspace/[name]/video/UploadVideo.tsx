@@ -7,6 +7,7 @@ import { UploadVideoInput } from "./Components/UploadVideoInput";
 import { VideoCard } from "./VideoCard";
 import { VideoManaging } from "../../../Entity/VideoManaging";
 import { IName } from "./VideoInterfaces";
+import { useRouter } from "next/navigation";
 
 export const UploadVideo: FC<IName> = ({ name }) => {
   const [videoDescription, setVideoDescription] = useState({
@@ -14,13 +15,15 @@ export const UploadVideo: FC<IName> = ({ name }) => {
     filePath: "",
     description: "",
   });
+  const rout: any = useRouter();
   const handeVideo = async () => {
     const videoText: VideoManaging = new VideoManaging(name);
-    await videoText.sendText(
+  const videoId=  await videoText.sendText(
       videoDescription.title,
       videoDescription.description,
       videoDescription.filePath
     );
+    rout.push(`/professorworkspace/${name}/${videoId}/video`)
   };
   return (
     <>
