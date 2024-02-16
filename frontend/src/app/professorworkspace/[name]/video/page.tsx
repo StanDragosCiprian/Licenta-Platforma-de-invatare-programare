@@ -11,7 +11,7 @@ export default async function VideoPage() {
   return (
     <>
   
-        <UploadVideo name={HandleProfessorWorkout.getDynamicValue()}/>
+        <UploadVideo/>
 
     </>
   );

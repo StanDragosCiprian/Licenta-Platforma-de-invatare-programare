@@ -30,7 +30,12 @@ export class AppController {
       'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Images\\Courses\\uploadPdfImage.jpg',
     );
   }
-
+  @Get('pdfTest')
+  addCodePdfTest(@Res() response) {
+    response.sendFile(
+      'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\dari\\Desen\\GrileRezolvate_BradImagini_1708097003234.pdf',
+    );
+  }
   @Get('editcourses/codeImg')
   addCodeToCoursesImage(@Res() response) {
     response.sendFile(

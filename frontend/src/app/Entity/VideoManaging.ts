@@ -16,36 +16,36 @@ export class VideoManaging {
     description: string,
     video: string
   ): Promise<string> {
-    const res = await fetch(
+    const response = await fetch(
       `${urlBackend}curs/${this.videoName}/add/video/textInput`,
       sendToServerCookies(
         { title: title, description: description, videoPath: video },
         undefined
       )
     );
-    return await res.text();
+    return await response.text();
   }
   private async getProfessorName(): Promise<string> {
-    const res = await fetch(
+    const professor = await fetch(
       `${urlBackend}curs/professorName`,
       getFromServerCookie(getCookie("id"))
     );
-    return await res.text();
+    return await professor.text();
   }
   private async setVideo(
     filePath: string,
     professorName: string
   ): Promise<string> {
-    const res = await fetch(
+    const response = await fetch(
       `${urlBackend}curs/${professorName}/${this.videoName}/add/video/videoInput`,
       sendFiles(filePath)
     );
-    return await res.text();
+    return await response.text();
   }
   public async sendText(title: string, description: string, file: string) {
     const professorName = await this.getProfessorName();
     const video = await this.setVideo(file, professorName);
-    const res: string = await this.setVideoText(title, description, video);
-    return await res;
+    const response: string = await this.setVideoText(title, description, video);
+    return await response;
   }
 }

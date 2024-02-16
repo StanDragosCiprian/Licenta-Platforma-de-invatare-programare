@@ -1,5 +1,6 @@
 import { Document } from 'mongoose';
-export interface IPdf extends Document {
-  pdfPath: string;
-  pdfName: string;
+export interface IDocumentFormat extends Document {
+  format: string;
+  documentFormatPath: string;
+  documentFormatName: string;
 }

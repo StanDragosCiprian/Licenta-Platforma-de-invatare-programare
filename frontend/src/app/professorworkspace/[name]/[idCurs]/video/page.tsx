@@ -6,27 +6,16 @@ const takeCoursVide = async (cursName: string, idCurs: string) => {
   const curs = await fetch(`${urlBackend}curs/${cursName}/${idCurs}/videoCurs`);
   return curs.json();
 };
-const takeVideoPath = async (
-  cursName: string,
-  video: string
-): Promise<string> => {
-  const professir = await HandleProfessorWorkout.getProfessorName();
-  console.log("professir: ", professir);
+const takeVideoPath = async (video: string): Promise<string> => {
   const allVideo = video.split(".");
-  console.log(
-    `${urlBackend}curs/John/${cursName}/${allVideo[0]}/${allVideo[1]}/video`
-  );
-  return `${urlBackend}curs/John/${cursName}/${allVideo[0]}/${allVideo[1]}/video`;
+  return `${urlBackend}curs/${allVideo[0]}/${allVideo[1]}/video`;
 };
 export default async function PreviewVideoProfessor({ params }: any) {
   if (!(await HandleProfessorWorkout.getId())) {
     notFound();
   }
   const curs = await takeCoursVide(params.name, params.idCurs);
-
-  console.log("curs: ", curs.videoPath);
-  const video = await takeVideoPath(params.name, curs.videoPath);
-  console.log("video: ", video);
+  const video = await takeVideoPath(curs.videoPath);
   return (
     <>
       <PreviewVideo

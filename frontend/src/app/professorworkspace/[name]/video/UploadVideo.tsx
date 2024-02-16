@@ -8,22 +8,26 @@ import { VideoCard } from "./VideoCard";
 import { VideoManaging } from "../../../Entity/VideoManaging";
 import { IName } from "./VideoInterfaces";
 import { useRouter } from "next/navigation";
-
-export const UploadVideo: FC<IName> = ({ name }) => {
+import { usePathname } from 'next/navigation'
+export const UploadVideo = () => {
   const [videoDescription, setVideoDescription] = useState({
     title: "",
     filePath: "",
     description: "",
   });
   const rout: any = useRouter();
+  const pathname = usePathname()
+  
   const handeVideo = async () => {
-    const videoText: VideoManaging = new VideoManaging(name);
-  const videoId=  await videoText.sendText(
+    const pathArray = pathname.split("/");
+    const yourValue = pathArray[2];
+    const videoText: VideoManaging = new VideoManaging(yourValue);
+    const videoId = await videoText.sendText(
       videoDescription.title,
       videoDescription.description,
       videoDescription.filePath
     );
-    rout.push(`/professorworkspace/${name}/${videoId}/video`)
+    rout.push(`/professorworkspace/${yourValue}/${videoId}/video`);
   };
   return (
     <>

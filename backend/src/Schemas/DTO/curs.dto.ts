@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { IVideo } from '../Entity/IVideo';
-import { IPdf } from '../Entity/IPdf';
+import { IDocumentFormat } from '../Entity/IPdf';
 import { ICompilators } from '../Entity/ICompilators';
 export class CursDto {
   _id: Types.ObjectId;
@@ -10,5 +10,5 @@ export class CursDto {
   imagePath: string;
   studentId: Types.ObjectId[];
   colaborationId: Types.ObjectId[];
-  curs: [IVideo | IPdf | ICompilators];
+  curs: [IVideo | IDocumentFormat | ICompilators];
 }

@@ -4,4 +4,5 @@ export interface ICompilators {
   problemInputs: string;
   problemOutputs: string;
   funtionProblemModel: string;
+  format: string;
 }

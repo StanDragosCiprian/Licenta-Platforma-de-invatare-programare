@@ -1,10 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { UserRecever } from "./UserRecever";
-import {
-  getFromServerCookie,
-  urlBackend,
-  urlFrontend,
-} from "../UserServer/ServerRequest";
+import { urlFrontend } from "../UserServer/ServerRequest";
 
 export class HandleProfessorWorkout {
   static getId = async () => {
@@ -21,11 +17,8 @@ export class HandleProfessorWorkout {
     const text = decodeURIComponent(dynamicValue);
     return text;
   };
-  static async getProfessorName(): Promise<string> {
-    const res = await fetch(
-      `${urlBackend}curs/professorName`,
-      getFromServerCookie(cookies().get("id")?.value)
-    );
-    return await res.text();
-  }
+  static getProfessor = async () => {
+    const userManager = new UserRecever();
+    return await userManager.getUser("");
+  };
 }

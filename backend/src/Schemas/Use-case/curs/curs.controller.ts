@@ -10,21 +10,16 @@ import {
 } from '@nestjs/common';
 import { CursDto } from 'src/Schemas/DTO/curs.dto';
 import { CursService } from './curs.service';
-// import { IVideo } from 'src/Schemas/Entity/IVideo';
-import { ErrorInterceptor } from '../ErrorInterceptor';
-import { IPdf } from 'src/Schemas/Entity/IPdf';
-import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 import { Cookies } from 'src/Cookie/cookie';
 import { ProfessorGuard } from 'src/auth/professor.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Request } from 'express';
 import { diskStorage } from 'multer';
-import { existsSync, mkdirSync } from 'fs';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { Types } from 'mongoose';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
-
+import { FileHandle, IFileHandle } from './FileHandle';
+const fileHandle: IFileHandle = new FileHandle();
 @Controller('curs')
 export class CursController {
   constructor(private cursService: CursService) {}
@@ -82,7 +77,6 @@ export class CursController {
   @Get('/professorName')
   @UseGuards(ProfessorGuard)
   async professorName(@Cookies('id') id: string): Promise<string> {
-    console.log('id: ', id);
     return await this.cursService.getProfessorNameForCours(id);
   }
 
@@ -109,7 +103,6 @@ export class CursController {
     @Param('id') id: string,
   ) {
     const name = await this.cursService.takeFullCurs(coursName);
-    console.log('name: ', name);
     return name.curs[id];
   }
   @Get('/:coursName/videoCurs')
@@ -119,7 +112,6 @@ export class CursController {
     const m = name.curs.map((cours: any) => {
       return { title: cours.title };
     });
-    console.log(m);
     return m;
   }
   @Get('/:professorName/:cursName/:videoName/:extension/video')
@@ -130,6 +122,9 @@ export class CursController {
     @Param('videoName') videoName: string,
     @Param('extension') extension: string,
   ) {
+    console.log(
+      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
+    );
     response.sendFile(
       `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
     );
@@ -138,44 +133,18 @@ export class CursController {
   @UseGuards(ProfessorGuard)
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: (req: Request, file, cb) => {
-          const coursName = req.params.coursName;
-          const professorName = req.params.professorName;
-          const dest = `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${coursName}`;
-          if (!existsSync(dest)) {
-            mkdirSync(dest, { recursive: true });
-          }
-          cb(null, dest);
-        },
-        filename: (req, file, cb) => {
-          const name = file.originalname.split('.')[0];
-          const fileExtension = file.originalname.split('.')[1];
-          const newFileName =
-            name.split(' ').join('_') + '_' + Date.now() + '.' + fileExtension;
-          req.body.filename = newFileName;
-          cb(null, newFileName);
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        const allowedMimeTypes = [
-          'video/mp4',
-          'video/x-msvideo',
-          'video/quicktime',
-        ];
-        if (allowedMimeTypes.includes(file.mimetype)) {
-          cb(null, true);
-        } else {
-          cb(null, false);
-        }
-      },
+      storage: diskStorage(fileHandle.destinationVideo()),
+      fileFilter: fileHandle.filterVideo(),
     }),
   )
   async addVideoForVideoCurs(
     @Cookies('id') id: string,
     @Body('filename') filename: string,
+    @Param('professorName') professorName: string,
+    @Param('coursName') coursName: string,
   ) {
-    return `${filename}`;
+    console.log(`${professorName}/${coursName}/${filename}`);
+    return `${professorName}/${coursName}/${filename}`;
   }
   @Post('/:coursName/add/video/textInput')
   @UseGuards(ProfessorGuard)
@@ -184,36 +153,37 @@ export class CursController {
     @Body() createCursDto: IVideo,
   ): Promise<string> {
     const cursId: Types.ObjectId = await this.cursService.takeCours(coursId);
-    const curs = await this.cursService.addVideoToVide(cursId, createCursDto);
-    console.log('curs: ', curs);
+    const videoDto = createCursDto;
+    videoDto.format = 'Video';
+    const curs = await this.cursService.addVideoToVide(cursId, videoDto);
     return await curs.toString();
   }
 
-  @Post('/new/pdf')
-  @UseInterceptors(ErrorInterceptor)
-  async createPdfCurs(@Res() response, @Body() PdfDto: IPdf) {
-    if (this.resp.hasSameKeys(PdfDto, this.resp.pdfKeys)) {
-      const newCurs = await this.cursService.addPdfToCurs(
-        '6528206c40e8e31219a642a2',
-        PdfDto,
-      );
-      return this.resp.goodResponse(response, newCurs);
-    }
-    return this.resp.badResponse(response);
+  @Post('/:professorName/:coursName/add/document/Docs')
+  @UseGuards(ProfessorGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage(fileHandle.destinationVideo()),
+      fileFilter: fileHandle.filterDocuments(),
+    }),
+  )
+  async createPdfCurs(@Body('filename') filename: string) {
+    console.log(`${filename}`);
+    return `${filename}`;
   }
-  @Post('/new/compilator')
-  @UseInterceptors(ErrorInterceptor)
-  async createCompilatorCurs(
-    @Res() response,
-    @Body() compilatorDto: ICompilators,
-  ) {
-    if (this.resp.hasSameKeys(compilatorDto, this.resp.compilatorKeys)) {
-      const newCompilator = await this.cursService.addCompilatorToCurs(
-        '6528206c40e8e31219a642a2',
-        compilatorDto,
-      );
-      return this.resp.goodResponse(response, newCompilator);
-    }
-    return this.resp.badResponse(response);
-  }
+  // @Post('/new/compilator')
+  // @UseInterceptors(ErrorInterceptor)
+  // async createCompilatorCurs(
+  //   @Res() response,
+  //   @Body() compilatorDto: ICompilators,
+  // ) {
+  //   if (this.resp.hasSameKeys(compilatorDto, this.resp.compilatorKeys)) {
+  //     const newCompilator = await this.cursService.addCompilatorToCurs(
+  //       '6528206c40e8e31219a642a2',
+  //       compilatorDto,
+  //     );
+  //     return this.resp.goodResponse(response, newCompilator);
+  //   }
+  //   return this.resp.badResponse(response);
+  // }
 }

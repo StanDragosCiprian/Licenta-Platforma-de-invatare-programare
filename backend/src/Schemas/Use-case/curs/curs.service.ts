@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 import { CursDto } from 'src/Schemas/DTO/curs.dto';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
-import { IPdf } from 'src/Schemas/Entity/IPdf';
+import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { ProfessorService } from '../professor/professor.service';
 
@@ -24,7 +24,10 @@ export class CursService {
       console.log(change);
     });
   }
-  async addVideoToVide(cursId: Types.ObjectId, video: IVideo) {
+  async addVideoToVide(
+    cursId: Types.ObjectId,
+    video: IVideo | IDocumentFormat,
+  ) {
     const curs: ICurs = await this.cursModel.findById(cursId);
     curs.curs.push(video);
     curs.save();
@@ -99,7 +102,7 @@ export class CursService {
     mycurs.curs.push(video);
     return mycurs.save();
   }
-  async addPdfToCurs(cursId: string, pdf: IPdf): Promise<ICurs> {
+  async addPdfToCurs(cursId: string, pdf: IDocumentFormat): Promise<ICurs> {
     const mycurs = await this.cursModel.findById(cursId);
     mycurs.curs.push(pdf);
     return mycurs.save();

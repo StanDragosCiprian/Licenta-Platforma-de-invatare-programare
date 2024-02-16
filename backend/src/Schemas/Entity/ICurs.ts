@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { IPdf } from './IPdf';
+import { IDocumentFormat } from './IPdf';
 import { IVideo } from './IVideo';
 import { ICompilators } from './ICompilators';
 
@@ -11,5 +11,5 @@ export interface ICurs extends Document {
   imagePath: string;
   studentId: Types.ObjectId[];
   colaborationId: Types.ObjectId[];
-  curs: [IVideo | IPdf | ICompilators];
+  curs: [IVideo | IDocumentFormat | ICompilators];
 }

@@ -27,7 +27,7 @@ export default async function NewCourse({ params }: any) {
         />
       </Link>
       <Link
-        href="/professorworkspace"
+         href={`/professorworkspace/${params.name}/docs`}
         className="hover:cursor-pointer hover:scale-103 transition-transform duration-200"
       >
         <EditCard
