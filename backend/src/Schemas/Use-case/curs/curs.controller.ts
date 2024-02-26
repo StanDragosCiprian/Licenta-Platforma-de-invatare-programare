@@ -79,7 +79,15 @@ export class CursController {
   async professorName(@Cookies('id') id: string): Promise<string> {
     return await this.cursService.getProfessorNameForCours(id);
   }
-
+  @Get('/professorVerifyCours/:nameCours')
+  @UseGuards(ProfessorGuard)
+  async professorVerifyCours(
+    @Cookies('id') id: string,
+    @Param('nameCours') nameCours: string,
+  ): Promise<boolean> {
+    const cours = await this.cursService.getProfessorCurs(id);
+    return cours.some((c: ICurs) => c.name == nameCours);
+  }
   @Get('/:coursName')
   async getCoursName(@Param('coursName') coursId: string) {
     const name = await this.cursService.takeName(coursId);

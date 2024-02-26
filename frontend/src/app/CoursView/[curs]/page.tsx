@@ -9,6 +9,9 @@ const takeCoursesName = async (cursName: string) => {
 const getCours = async (cursName: string) => {
   return await courses.getCourse(cursName);
 };
+const verifyIfIsProfessorToAdd=async()=>{
+  
+}
 export default async function CursViewList({ params }: any) {
   const courseTitles = await takeCoursesName(params.curs);
   const course = await getCours(params.curs);

@@ -81,6 +81,7 @@ export class CursService {
     const name = await this.cursModel.findOne({ name: cursName });
     return { title: name.name, description: name.description };
   }
+
   async takeFullCurs(cursId: string): Promise<ICurs> {
     const name = await this.cursModel.findOne({ name: cursId });
     return name;

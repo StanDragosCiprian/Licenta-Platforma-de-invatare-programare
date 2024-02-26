@@ -16,7 +16,7 @@ async function getData() {
   const cours: any[] = await courses.json();
   return Object.values(cours);
 }
-export default async function ProfessorPreviewCours() {
+export default async function PreviewCours() {
   if (!(await HandleProfessorWorkout.getId())) {
     notFound();
   }
