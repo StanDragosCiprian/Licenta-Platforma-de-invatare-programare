@@ -14,22 +14,22 @@ export class DocumentHandle {
       `${urlBackend}curs/professorName`,
       getFromServerCookie(getCookie("id"))
     );
-    console.log(professor);
     return await professor.text();
   }
   private async setDocs(
     filePath: string,
-    professorName: string
+    professorName: string,
+    title: string
   ): Promise<string> {
     const res = await fetch(
-      `${urlBackend}curs/${professorName}/${this.cursName}/add/document/Docs`,
+      `${urlBackend}curs/${professorName}/${this.cursName}/${title}/add/document/Docs`,
       sendFiles(filePath)
     );
     return await res.text();
   }
-  public async sendText( file: string) {
+  public async sendText(file: string, title: string) {
     const professorName = await this.getProfessorName();
-    const video = await this.setDocs(file, professorName);
+    const video = await this.setDocs(file, professorName,title);
 
     return await video;
   }

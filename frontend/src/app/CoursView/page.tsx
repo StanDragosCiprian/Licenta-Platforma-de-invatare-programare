@@ -16,22 +16,24 @@ async function getData() {
   const cours: any[] = await courses.json();
   return Object.values(cours);
 }
+
 export default async function PreviewCours() {
   if (!(await HandleProfessorWorkout.getId())) {
     notFound();
   }
   const professorCours: any = await getData();
+
   return (
     <>
       <div className="flex flex-wrap">
         {professorCours.map((curs: ICursCard, index: number) => (
           <div key={index}>
             <Link href={`/CoursView/${curs.title}`}>
-            <CoursCard
-              title={curs.title}
-              description={curs.description}
-              image={curs.image}
-            />
+              <CoursCard
+                title={curs.title}
+                description={curs.description}
+                image={curs.image}
+              />
             </Link>
           </div>
         ))}

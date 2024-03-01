@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CursDto } from 'src/Schemas/DTO/curs.dto';
-import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { ProfessorService } from '../professor/professor.service';
+import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 
 @Injectable()
 export class CursService {
@@ -24,25 +24,27 @@ export class CursService {
       console.log(change);
     });
   }
-  async addVideoToVide(
+  async addMediaFormat(
     cursId: Types.ObjectId,
-    video: IVideo | IDocumentFormat,
+    media: IVideo | IDocumentFormat,
   ) {
     const curs: ICurs = await this.cursModel.findById(cursId);
-    curs.curs.push(video);
+    curs.curs.push(media);
     curs.save();
     return curs.curs.length - 1;
   }
+
   async getProfessorCurs(id: string): Promise<ICurs[]> {
-    const professorCoursId: any[] = (
-      await this.professorService.getProfessorById(id)
-    ).coursesId;
-    console.log('professorCoursId: ', professorCoursId);
+    const professorCoursId: IProfessor =
+      await this.professorService.getProfessorById(id);
+
     const courses: ICurs[] = [];
-    for (const c of professorCoursId) {
-      const cours: ICurs = await this.cursModel.findById(c);
-      if (cours?.vizibility === true) {
-        courses.push(cours);
+    if (professorCoursId !== null) {
+      for (const c of professorCoursId.coursesId) {
+        const cours: ICurs = await this.cursModel.findById(c);
+        if (cours?.vizibility === true) {
+          courses.push(cours);
+        }
       }
     }
     return courses;
@@ -97,23 +99,5 @@ export class CursService {
     curs.curs[Number(drop)] = temp;
     console.log(curs.curs);
     curs.save();
-  }
-  async addVideoToCurs(cursId: string, video: IVideo): Promise<ICurs> {
-    const mycurs = await this.cursModel.findById(cursId);
-    mycurs.curs.push(video);
-    return mycurs.save();
-  }
-  async addPdfToCurs(cursId: string, pdf: IDocumentFormat): Promise<ICurs> {
-    const mycurs = await this.cursModel.findById(cursId);
-    mycurs.curs.push(pdf);
-    return mycurs.save();
-  }
-  async addCompilatorToCurs(
-    cursId: string,
-    compilators: ICompilators,
-  ): Promise<ICurs> {
-    const mycurs = await this.cursModel.findById(cursId);
-    mycurs.curs.push(compilators);
-    return mycurs.save();
   }
 }

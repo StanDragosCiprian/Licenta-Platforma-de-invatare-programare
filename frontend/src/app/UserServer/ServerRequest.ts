@@ -9,6 +9,7 @@ export const sendToServer = (bodyContent: any) => {
     body: JSON.stringify(bodyContent),
   };
 };
+
 export const sendToServerCookies = (
   bodyContent: any,
   id: string | undefined
@@ -18,6 +19,7 @@ export const sendToServerCookies = (
     credentials: "include" as RequestCredentials,
     headers: {
       "Content-Type": "application/json",
+      "Cookies":`id=${id}`,
     },
     body: JSON.stringify(bodyContent),
   };
@@ -45,11 +47,11 @@ export const getUserFromServer = (id: string) => {
     },
   };
 };
-export const getFromServerCookie = (id:string|undefined) => {
+export const getFromServerCookie = (id: string | undefined) => {
   return {
     method: "GET",
     credentials: "include" as RequestCredentials,
-     headers: {
+    headers: {
       Cookie: `id=${id}`,
     },
   };

@@ -11,7 +11,7 @@ async function getData() {
 
 export default async function Page() {
   const courses: ICursCard[] = await getData();
-
+  debugger
   return (
     <>
       <div className="flex flex-wrap">

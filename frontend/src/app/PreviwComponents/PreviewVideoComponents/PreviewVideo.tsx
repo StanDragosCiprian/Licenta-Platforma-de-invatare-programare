@@ -4,6 +4,7 @@ import { VideoCard } from "../../professorworkspace/[name]/video/VideoCard";
 import Video from "next-video";
 import { FC } from "react";
 export const PreviewVideo:FC<IVidePreview> = ({title,description,videoPath}) => {
+  console.log(videoPath);
   return (
     <>
       <div className="flex justify-center items-center h-screen mx-[18vw]">

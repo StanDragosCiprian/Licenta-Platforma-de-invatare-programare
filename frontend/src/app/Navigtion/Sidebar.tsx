@@ -27,6 +27,7 @@ export const Sidebar = async () => {
           </ul>
           <Account />
         </div>
+        
       </aside>
     </div>
   );

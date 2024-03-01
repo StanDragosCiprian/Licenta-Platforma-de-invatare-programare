@@ -19,6 +19,7 @@ import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { Types } from 'mongoose';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
 import { FileHandle, IFileHandle } from './FileHandle';
+import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 const fileHandle: IFileHandle = new FileHandle();
 @Controller('curs')
 export class CursController {
@@ -27,13 +28,10 @@ export class CursController {
   @Post('/new')
   @UseGuards(ProfessorGuard)
   async createCurs(
-    @Cookies() id,
+    @Cookies('id') id,
     @Body() createCursDto: CursDto,
-  ): Promise<any> {
-    const newCurs = await this.cursService.createNewCourse(
-      createCursDto,
-      id.id,
-    );
+  ): Promise<string> {
+    const newCurs = await this.cursService.createNewCourse(createCursDto, id);
     return newCurs;
   }
   @Get('/cursPresentation')
@@ -80,13 +78,17 @@ export class CursController {
     return await this.cursService.getProfessorNameForCours(id);
   }
   @Get('/professorVerifyCours/:nameCours')
-  @UseGuards(ProfessorGuard)
   async professorVerifyCours(
     @Cookies('id') id: string,
     @Param('nameCours') nameCours: string,
   ): Promise<boolean> {
-    const cours = await this.cursService.getProfessorCurs(id);
-    return cours.some((c: ICurs) => c.name == nameCours);
+    if (id !== 'undefined') {
+      const cours = await this.cursService.getProfessorCurs(id);
+      return cours !== null
+        ? cours.some((c: ICurs) => c.name == nameCours)
+        : false;
+    }
+    return false;
   }
   @Get('/:coursName')
   async getCoursName(@Param('coursName') coursId: string) {
@@ -163,11 +165,11 @@ export class CursController {
     const cursId: Types.ObjectId = await this.cursService.takeCours(coursId);
     const videoDto = createCursDto;
     videoDto.format = 'Video';
-    const curs = await this.cursService.addVideoToVide(cursId, videoDto);
+    const curs = await this.cursService.addMediaFormat(cursId, videoDto);
     return await curs.toString();
   }
 
-  @Post('/:professorName/:coursName/add/document/Docs')
+  @Post('/:professorName/:coursName/:title/add/document/Docs')
   @UseGuards(ProfessorGuard)
   @UseInterceptors(
     FileInterceptor('file', {
@@ -175,9 +177,35 @@ export class CursController {
       fileFilter: fileHandle.filterDocuments(),
     }),
   )
-  async createPdfCurs(@Body('filename') filename: string) {
-    console.log(`${filename}`);
-    return `${filename}`;
+  async createPdfCurs(
+    @Body('filename') filename: string,
+    @Param('coursName') coursName: string,
+    @Param('professorName') professorName: string,
+    @Param('title') title: string,
+  ) {
+    const cursId: Types.ObjectId = await this.cursService.takeCours(coursName);
+    const videoDto: IDocumentFormat = {
+      format: 'Pdf',
+      title: `${title}`,
+      documentFormatName: `${professorName}/${coursName}/${filename}`,
+    };
+    await this.cursService.addMediaFormat(cursId, videoDto);
+    console.log(`${professorName}/${coursName}/${filename}`);
+    return `${professorName}/${coursName}/${filename}`;
+  }
+  @Get('/:professorName/:cursName/:pdfName/pdf')
+  async getPdf(
+    @Res() response,
+    @Param('professorName') professorName: string,
+    @Param('cursName') cursName: string,
+    @Param('pdfName') videoName: string,
+  ) {
+    console.log(
+      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
+    );
+    response.sendFile(
+      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
+    );
   }
   // @Post('/new/compilator')
   // @UseInterceptors(ErrorInterceptor)

@@ -16,14 +16,21 @@ export class VideoManaging {
     description: string,
     video: string
   ): Promise<string> {
-    const response = await fetch(
-      `${urlBackend}curs/${this.videoName}/add/video/textInput`,
+    const test = await fetch(
+      "/api/handleNewVideoApi",
       sendToServerCookies(
-        { title: title, description: description, videoPath: video },
+        {
+          title: title,
+          description: description,
+          videoPath: video,
+          videoName: this.videoName,
+        },
         undefined
       )
     );
-    return await response.text();
+    const { text } = await test.json();
+
+    return text;
   }
   private async getProfessorName(): Promise<string> {
     const professor = await fetch(

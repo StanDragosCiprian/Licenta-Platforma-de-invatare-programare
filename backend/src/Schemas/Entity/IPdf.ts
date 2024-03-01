@@ -1,6 +1,5 @@
-import { Document } from 'mongoose';
-export interface IDocumentFormat extends Document {
+export interface IDocumentFormat {
+  title: string;
   format: string;
-  documentFormatPath: string;
   documentFormatName: string;
 }

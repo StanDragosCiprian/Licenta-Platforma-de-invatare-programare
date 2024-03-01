@@ -23,8 +23,6 @@ export const DragDropComponenst = ({
     const draggedItemIndex = e.dataTransfer.getData("draggedItemIndex");
 
     if (draggedItemIndex) {
-      console.log("Dropped at index: ", index); // Add this line
-      console.log("Dragged item index: ", draggedItemIndex); // Add this line
       const cours = new CoursManager();
       cours.changeIndexCours(coursName, draggedItemIndex, index.toString());
       const newCourses = [...courses];
@@ -35,7 +33,6 @@ export const DragDropComponenst = ({
       setCourses(newCourses);
     }
   };
-
   const dragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
@@ -51,7 +48,6 @@ export const DragDropComponenst = ({
           className="cursor-move select-none"
         >
           <SelectCourses title={title} index={index} nameCours={coursName} />
-    
         </div>
       ))}
     </>
