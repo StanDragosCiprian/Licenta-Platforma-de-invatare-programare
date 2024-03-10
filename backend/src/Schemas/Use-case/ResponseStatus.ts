@@ -7,7 +7,7 @@ export class ResponseStatus {
   public videoKeys: (keyof IVideo)[] = ['videoPath', 'title', 'descrition'];
 
   public compilatorKeys: (keyof ICompilators)[] = [
-    'problemName',
+    'title',
     'problemRequire',
     'problemInputs',
     'problemOutputs',

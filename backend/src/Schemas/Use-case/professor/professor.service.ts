@@ -40,6 +40,18 @@ export class ProfessorService implements OnModuleInit {
     });
     return user;
   }
+  async getProfessorByCours(idCours: Types.ObjectId) {
+    const professor = await this.professorModel.findOne({
+      coursesId: idCours,
+    });
+    return professor.email;
+  }
+  async getProfessorByEmail(email: string) {
+    const professor = await this.professorModel.findOne({
+      email: email,
+    });
+    return professor.coursesId;
+  }
   async getProfessorName(jwtId: string): Promise<string> {
     const decriptJwt = await this.decriptJwt(jwtId);
     const professor = await this.getProfessor(decriptJwt);

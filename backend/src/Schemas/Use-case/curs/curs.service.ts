@@ -7,14 +7,25 @@ import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { ProfessorService } from '../professor/professor.service';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
-
+import {
+  HandleProgrammingLanguage,
+  IHandleProgrammingLanguage,
+} from 'src/Schemas/Compiler/HandleProgrammingLanguage';
+import { ICompilatorUser } from 'src/Schemas/Entity/ICompilatorUser';
+import { ICompilators } from 'src/Schemas/Entity/ICompilators';
+import { createCipheriv, scrypt } from 'crypto';
+import { promisify } from 'util';
+import { createDecipheriv } from 'crypto';
 @Injectable()
 export class CursService {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
   constructor(@InjectModel('Curs') private cursModel: Model<ICurs>) {}
-  async takeCours(cursName: string): Promise<Types.ObjectId> {
+  async takeCoursId(cursName: string): Promise<Types.ObjectId> {
     return (await this.cursModel.findOne({ name: cursName }))._id;
+  }
+  async takeCours(cursId: Types.ObjectId): Promise<ICurs> {
+    return await this.cursModel.findOne({ _id: cursId });
   }
   async getProfessorNameForCours(id: string): Promise<string> {
     return this.professorService.getProfessorName(id);
@@ -24,9 +35,72 @@ export class CursService {
       console.log(change);
     });
   }
+  async encryptText(text: string) {
+    const iv = Buffer.from('abcdefghijklmnop');
+    const key = (await promisify(scrypt)(
+      'Proffessor email by id',
+      'salt',
+      32,
+    )) as Buffer;
+    const cipher = createCipheriv('aes-256-ctr', key, iv);
+
+    const textToEncrypt = text;
+    console.log('textToEncrypt: ', textToEncrypt);
+    const encryptedText = Buffer.concat([
+      cipher.update(textToEncrypt, 'utf8'),
+      cipher.final(),
+    ]);
+
+    return encryptedText.toString('hex'); // or 'base64'
+  }
+  async decryptText(encryptedText: string) {
+    const iv = Buffer.from('abcdefghijklmnop');
+    const key = (await promisify(scrypt)(
+      'Proffessor email by id',
+      'salt',
+      32,
+    )) as Buffer;
+    const decipher = createDecipheriv('aes-256-ctr', key, iv);
+
+    const textToDecrypt = Buffer.from(encryptedText, 'hex'); // or 'base64'
+    const decryptedText = Buffer.concat([
+      decipher.update(textToDecrypt),
+      decipher.final(),
+    ]);
+
+    return decryptedText.toString('utf8');
+  }
+  async findCoursFromProfessor(email: string, coursName: string) {
+    const decryptedEmail = await this.decryptText(email);
+    const professor =
+      await this.professorService.getProfessorByEmail(decryptedEmail);
+    for (const c of professor) {
+      if (c.toString() === (await this.takeCoursId(coursName)).toString()) {
+        return true;
+      }
+    }
+    return false;
+  }
+  async getCoursFromProfessor(email: string, coursName: string, id: string) {
+    const decryptedEmail = await this.decryptText(email);
+    const professor =
+      await this.professorService.getProfessorByEmail(decryptedEmail);
+    for (const c of professor) {
+      const cours = await this.takeCoursId(coursName);
+      console.log('cours: ', cours);
+      console.log(id);
+      if (c.toString() === cours.toString()) {
+        return (await this.takeCours(cours)).curs[id];
+      }
+    }
+    return false;
+  }
+  async findCourseWithProfessor(courseId: Types.ObjectId): Promise<any> {
+    return await this.professorService.getProfessorByCours(courseId);
+  }
   async addMediaFormat(
     cursId: Types.ObjectId,
-    media: IVideo | IDocumentFormat,
+    media: IVideo | IDocumentFormat | ICompilators,
   ) {
     const curs: ICurs = await this.cursModel.findById(cursId);
     curs.curs.push(media);
@@ -99,5 +173,36 @@ export class CursService {
     curs.curs[Number(drop)] = temp;
     console.log(curs.curs);
     curs.save();
+  }
+  async chooseCompiler(userData: ICompilatorUser) {
+    //     const pythonScript = `
+
+    // import numpy as np
+    // a = np.array([1, 2, 3])
+    // print(a)
+    // `.trim();
+    //     const process = spawn('python', ['-c', pythonScript]);
+
+    //     process.stdout.on('data', (data) => {
+    //       console.log(`stdout: ${data}`);
+    //     });
+
+    //     process.stderr.on('data', (data) => {
+    //       console.error(`stderr: ${data}`);
+    //     });
+
+    //     process.on('close', (code) => {
+    //       console.log(`child process exited with code ${code}`);
+    //     });
+
+    const handleProgrammingLanguage: IHandleProgrammingLanguage =
+      new HandleProgrammingLanguage(userData);
+    return handleProgrammingLanguage.chooseLanguage();
+  }
+  async executeScripts(userData: ICompilatorUser, input: string) {
+    const handleProgrammingLanguage: IHandleProgrammingLanguage =
+      new HandleProgrammingLanguage(userData);
+    handleProgrammingLanguage.setInputOutputs(input);
+    return handleProgrammingLanguage.executeScripts();
   }
 }

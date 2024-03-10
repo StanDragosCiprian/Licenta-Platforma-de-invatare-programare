@@ -11,18 +11,18 @@ async function getData() {
 
 export default async function Page() {
   const courses: ICursCard[] = await getData();
-  debugger
+  console.log('courses: ', courses);
+ 
   return (
     <>
       <div className="flex flex-wrap">
         {courses.map((curs: ICursCard, index: number) => (
           <div key={index}>
-            <Link href={`/CoursView/${curs.title}`}>
+            <Link href={`/CoursView/${curs.professor}/${curs.title}`}>
             <CoursCard
-              title={curs.title}
-              description={curs.description}
-              image={curs.image}
-            />
+                title={curs.title}
+                description={curs.description}
+                image={curs.image} professor={curs.professor}            />
             </Link>
           </div>
         ))}

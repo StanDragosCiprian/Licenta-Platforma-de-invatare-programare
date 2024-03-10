@@ -24,7 +24,18 @@ export const sendToServerCookies = (
     body: JSON.stringify(bodyContent),
   };
 };
-
+export const sendToServerFile = (blob:any,
+  file: any,
+) => {
+  return {
+    method: "POST",
+    credentials: "include" as RequestCredentials,
+    headers: {
+      "Content-Type": `${file.type}`,
+    },
+    body: JSON.stringify(blob),
+  };
+};
 export const sendFiles = (file: any) => {
   const body = new FormData();
   body.append("file", file);

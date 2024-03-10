@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { CursDto } from 'src/Schemas/DTO/curs.dto';
 import { CursService } from './curs.service';
-import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 import { Cookies } from 'src/Cookie/cookie';
 import { ProfessorGuard } from 'src/auth/professor.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -20,11 +19,15 @@ import { Types } from 'mongoose';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
 import { FileHandle, IFileHandle } from './FileHandle';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
+import { FILELOCATION } from 'EnviormentVariable';
+import { ICompilatorUser } from 'src/Schemas/Entity/ICompilatorUser';
+import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 const fileHandle: IFileHandle = new FileHandle();
 @Controller('curs')
 export class CursController {
   constructor(private cursService: CursService) {}
-  private resp = new ResponseStatus();
+
+  //Cours funcion
   @Post('/new')
   @UseGuards(ProfessorGuard)
   async createCurs(
@@ -37,21 +40,43 @@ export class CursController {
   @Get('/cursPresentation')
   async cursPresentation() {
     const curses: ICurs[] = await this.cursService.getCoursComponent();
+    console.log('curses: ', curses);
 
-    const courses = curses.map((curs: ICurs) => {
-      return {
-        title: curs.name,
-        description: curs.description,
-        image: curs.imagePath,
-      };
-    });
-
+    const courses = await Promise.all(
+      curses.map(async (curs: ICurs) => {
+        const professorData = await this.cursService.findCourseWithProfessor(
+          curs._id,
+        );
+        const encryptedText = await this.cursService.encryptText(
+          professorData.toString(),
+        );
+        return {
+          title: curs.name,
+          description: curs.description,
+          image: curs.imagePath,
+          professor: encryptedText,
+        };
+      }),
+    );
     const coursesObject = courses.reduce((obj, item, index) => {
       obj[index] = item;
       return obj;
     }, {});
+    console.log('coursesObject: ', coursesObject);
 
     return coursesObject;
+  }
+  @Get('/:id/:coursName/vefiy/cours')
+  async verifyCours(
+    @Param('id') id: string,
+    @Param('coursName') coursName: string,
+  ) {
+    return {
+      isPageVerify: await this.cursService.findCoursFromProfessor(
+        id,
+        coursName,
+      ),
+    };
   }
   @Get('/cursProfessor')
   async cursProfessor(@Cookies('id') id: string) {
@@ -107,7 +132,8 @@ export class CursController {
   ) {
     this.cursService.changeIndex(cursName, drag, drop);
   }
-  @Get('/:coursName/:id/videoCurs')
+  //Video function
+  @Get('/:coursName/:id/get/cours')
   async getCours(
     @Param('coursName') coursName: string,
     @Param('id') id: string,
@@ -133,10 +159,10 @@ export class CursController {
     @Param('extension') extension: string,
   ) {
     console.log(
-      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
+      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
     );
     response.sendFile(
-      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
+      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
     );
   }
   @Post('/:professorName/:coursName/add/video/videoInput')
@@ -162,13 +188,13 @@ export class CursController {
     @Param('coursName') coursId: string,
     @Body() createCursDto: IVideo,
   ): Promise<string> {
-    const cursId: Types.ObjectId = await this.cursService.takeCours(coursId);
+    const cursId: Types.ObjectId = await this.cursService.takeCoursId(coursId);
     const videoDto = createCursDto;
     videoDto.format = 'Video';
     const curs = await this.cursService.addMediaFormat(cursId, videoDto);
     return await curs.toString();
   }
-
+  //Pdf funcioon
   @Post('/:professorName/:coursName/:title/add/document/Docs')
   @UseGuards(ProfessorGuard)
   @UseInterceptors(
@@ -183,7 +209,8 @@ export class CursController {
     @Param('professorName') professorName: string,
     @Param('title') title: string,
   ) {
-    const cursId: Types.ObjectId = await this.cursService.takeCours(coursName);
+    const cursId: Types.ObjectId =
+      await this.cursService.takeCoursId(coursName);
     const videoDto: IDocumentFormat = {
       format: 'Pdf',
       title: `${title}`,
@@ -201,25 +228,129 @@ export class CursController {
     @Param('pdfName') videoName: string,
   ) {
     console.log(
-      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
+      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
     );
     response.sendFile(
-      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
+      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
     );
   }
-  // @Post('/new/compilator')
-  // @UseInterceptors(ErrorInterceptor)
-  // async createCompilatorCurs(
-  //   @Res() response,
-  //   @Body() compilatorDto: ICompilators,
-  // ) {
-  //   if (this.resp.hasSameKeys(compilatorDto, this.resp.compilatorKeys)) {
-  //     const newCompilator = await this.cursService.addCompilatorToCurs(
-  //       '6528206c40e8e31219a642a2',
-  //       compilatorDto,
-  //     );
-  //     return this.resp.goodResponse(response, newCompilator);
-  //   }
-  //   return this.resp.badResponse(response);
-  // }
+  //Compiler function
+
+  @Get('/:professor/:coursName/:language/:id/compile')
+  async chooseCompilerEndPoint(
+    @Param('language') language: string,
+    @Param('id') id: string,
+    @Param('professor') professor: string,
+    @Param('coursName') coursName: string,
+  ): Promise<string> {
+    console.log(professor, language, id, coursName);
+    const curs: ICompilators = await this.cursService.getCoursFromProfessor(
+      professor,
+      coursName,
+      id,
+    );
+
+    const choose = await this.cursService.chooseCompiler(
+      this.makeCompilerDto(curs, language, ''),
+    );
+    return choose;
+  }
+  private makeCompilerDto(
+    curs: ICompilators,
+    language: string,
+    scripts: string,
+  ) {
+    const test = curs.problemParameter.split(',');
+    const j = {};
+
+    test.forEach((t: string) => {
+      const c = t.split('.');
+      j[c[1]] = c[0];
+    });
+    console.log(j);
+    const compilerDto: ICompilatorUser = {
+      programmingLanguage: language,
+      functionName: curs.funtionProblemModel,
+      parameterWithType: JSON.parse(JSON.stringify(j)),
+      scripts: scripts,
+    };
+    return compilerDto;
+  }
+  @Post('/:professor/:coursName/:language/:id/execute/script')
+  async executeScripts(
+    @Body() scripts: { script: string },
+    @Param('language') language: string,
+    @Param('id') id: string,
+    @Param('professor') professor: string,
+    @Param('coursName') coursName: string,
+  ) {
+    const curs: ICompilators = await this.cursService.getCoursFromProfessor(
+      professor,
+      coursName,
+      id,
+    );
+    console.log('curs: ', this.takeParameterValue(curs.problemInputs, 'Input'));
+    const output = this.takeParameterValue(curs.problemOutputs, 'Output');
+
+    const inputs = this.takeParameterValue(curs.problemInputs, 'Input');
+    for (let index = 0; index < inputs.length; index++) {
+      const input = inputs[index];
+      const exec = await this.cursService.executeScripts(
+        this.makeCompilerDto(curs, language, scripts.script),
+        input,
+      );
+      const e = exec.toString().replace('\r\n', '');
+
+      if (e !== output[index]) {
+        console.log('e: ', e);
+        return {
+          isAlgorithmOk: false,
+          input: input,
+          yourOutput: e,
+          expected: output[index],
+        };
+      }
+    }
+
+    return {
+      isAlgorithmOk: true,
+      input: '',
+      yourOutput: '',
+      expected: '',
+    };
+  }
+  private takeParameterValue(input: string[], type: string): string[] {
+    return input.map((item) => {
+      return item.replace(`${type}(`, '').replace(')', '');
+    });
+  }
+  @Post('/:coursName/new/exercices')
+  @UseGuards(ProfessorGuard)
+  async newExercies(
+    @Body() exercices: ICompilators,
+    @Param('coursName') coursName: string,
+  ) {
+    const cursId: Types.ObjectId =
+      await this.cursService.takeCoursId(coursName);
+    console.log(exercices);
+    return await this.cursService.addMediaFormat(cursId, exercices);
+  }
+  @Get('/:professor/:coursName/:id/get/exercices/format')
+  async getCompilerFormat(
+    @Param('coursName') coursName: string,
+    @Param('professor') professor: string,
+    @Param('id') id: string,
+  ) {
+    const curs: ICompilators = await this.cursService.getCoursFromProfessor(
+      professor,
+      coursName,
+      id,
+    );
+    return {
+      title: curs.title,
+      problemRequire: curs.problemRequire,
+      problemExemples: curs.problemExemples,
+      format: curs.format,
+    };
+  }
 }

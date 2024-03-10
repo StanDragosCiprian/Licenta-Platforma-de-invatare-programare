@@ -1,8 +1,10 @@
 export interface ICompilators {
-  problemName: string;
+  title: string;
   problemRequire: string;
-  problemInputs: string;
-  problemOutputs: string;
+  problemExemples: [];
+  problemInputs: string[];
+  problemOutputs: string[];
   funtionProblemModel: string;
+  problemParameter: string;
   format: string;
 }

@@ -22,17 +22,19 @@ export default async function PreviewCours() {
     notFound();
   }
   const professorCours: any = await getData();
+  console.log("professorCours: ", professorCours);
 
   return (
     <>
       <div className="flex flex-wrap">
         {professorCours.map((curs: ICursCard, index: number) => (
           <div key={index}>
-            <Link href={`/CoursView/${curs.title}`}>
+            <Link href={`/CoursView/${curs.professor}/${curs.title}`}>
               <CoursCard
                 title={curs.title}
                 description={curs.description}
                 image={curs.image}
+                professor={curs.professor}
               />
             </Link>
           </div>

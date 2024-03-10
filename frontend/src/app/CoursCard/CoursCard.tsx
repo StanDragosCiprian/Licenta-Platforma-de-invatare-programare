@@ -2,7 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { ICursCard } from "../core/ICursCard";
 import { FC } from "react";
-export const CoursCard: FC<ICursCard> = ({ title, image, description }) => {
+
+export const CoursCard: FC<ICursCard> = ({
+  title,
+  image,
+  description,
+  professor,
+}) => {
   return (
     <>
       <div className="m-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow">

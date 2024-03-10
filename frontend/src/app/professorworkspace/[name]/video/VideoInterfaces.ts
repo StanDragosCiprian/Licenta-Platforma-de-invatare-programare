@@ -5,11 +5,17 @@ export interface IName {
 }
 
 export interface IVideoDescription {
-  setVideoDescription: Dispatch<
-    SetStateAction<{
-      title: string;
-      filePath: string;
-      description: string;
-    }>
-  >;
+  setVideoDescription:
+    | Dispatch<
+        SetStateAction<{
+          title: string;
+          filePath: string;
+          description: string;
+        }>
+      >
+    | Dispatch<
+        SetStateAction<{
+          filePath: string;
+        }>
+      >;
 }
