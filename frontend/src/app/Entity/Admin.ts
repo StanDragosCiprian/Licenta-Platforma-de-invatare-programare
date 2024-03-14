@@ -5,7 +5,7 @@ export class Admin implements IAdmin {
   username: string = "";
   email: string = "";
   password: string = "";
-  profileImage: string = "";
+  profileImage: string = "http://localhost:3000/default/img";
   role: string = "admin";
   constructor(user: IAdmin) {
     this.username = user.username;

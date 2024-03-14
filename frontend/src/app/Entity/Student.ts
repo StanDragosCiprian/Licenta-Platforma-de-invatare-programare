@@ -8,7 +8,7 @@ export class Student implements IStudent {
   username: string = "";
   email: string = "";
   password: string = "";
-  profileImage: string = "";
+  profileImage: string = "http://localhost:3000/default/img";
   role: string = "student";
 
   constructor(user: IUser) {

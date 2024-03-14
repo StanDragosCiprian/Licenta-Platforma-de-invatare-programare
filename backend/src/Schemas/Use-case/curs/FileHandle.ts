@@ -1,6 +1,20 @@
 import { Request } from 'express';
 import { existsSync, mkdirSync } from 'fs';
 export class FileHandle implements IFileHandle {
+  filterImage(): (req: any, file: any, cb: any) => void {
+    return (req, file, cb) => {
+      const allowedMimeTypes = [
+        'application/image',
+        'application/jpegf',
+        'application/msword',
+      ];
+      if (allowedMimeTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(null, false);
+      }
+    };
+  }
   public filterVideo(): (req: any, file: any, cb: any) => void {
     return this.filterVideoFormat();
   }
@@ -69,4 +83,5 @@ export interface IFileHandle {
   destinationVideo(): object;
   filterVideo(): (req: any, file: any, cb: any) => void;
   filterDocuments(): (req: any, file: any, cb: any) => void;
+  filterImage(): (req: any, file: any, cb: any) => void;
 }

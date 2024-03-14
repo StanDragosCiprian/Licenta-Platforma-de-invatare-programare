@@ -101,7 +101,7 @@ export class AdminsController {
           username: 'professor',
           email: 'professor@example.com',
           password: 'password',
-          profileImage: 'default/img',
+          profileImage: 'http://localhost:3000/default/img',
           role: 'professor',
           studentList: [],
           colaborationId: [],

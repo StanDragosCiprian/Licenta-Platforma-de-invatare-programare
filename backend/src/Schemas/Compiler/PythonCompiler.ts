@@ -33,7 +33,6 @@ export class PythonCompier implements IPythonCompier {
     keys.forEach((k: string) => {
       stringKey += ',' + k;
     });
-    console.log(stringKey);
     this.script = `def ${this.funtionName.split('.')[1]}(${stringKey.substring(
       1,
     )}):`;
@@ -42,11 +41,10 @@ export class PythonCompier implements IPythonCompier {
   public async execute() {
     const nameOfFunction = this.funtionName.split('.')[1].replace('def ', '');
     this.script += `\n\nprint(${nameOfFunction}(${this.inputs}))`;
-    console.log('this.script: ', this.script);
     const compilerHandler: ICompilerHandler = new CompilerHandler(
       this.programingLanguage,
       this.script,
     );
-    return compilerHandler.executeCode();
+    return compilerHandler.executePythonCode();
   }
 }

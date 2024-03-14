@@ -9,7 +9,7 @@ export class Professor implements IProfessor {
   username: string = "";
   email: string = "";
   password: string = "";
-  profileImage: string = "";
+  profileImage: string = "http://localhost:3000/default/img";
   role: string = "professor";
   constructor(user: IUser) {
     this.username = user.username;

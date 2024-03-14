@@ -1,12 +1,15 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
+import { StudentService } from '../student/student.service';
 
 @Injectable()
 export class ProfessorService implements OnModuleInit {
+  @Inject(StudentService)
+  private readonly studentService: StudentService;
   constructor(
     @InjectModel('Professor') private professorModel: Model<IProfessor>,
     private jwtService: JwtService,
@@ -14,6 +17,16 @@ export class ProfessorService implements OnModuleInit {
   async createProfessor(createProfessorDto: ProfessorDto): Promise<IProfessor> {
     const newProfessor = await new this.professorModel(createProfessorDto);
     return newProfessor.save();
+  }
+  async addStudentToCours(
+    coursId: string,
+    professor: string,
+    coursName: string,
+  ) {
+    const cours = await this.getProfessorByEmail(professor);
+    console.log(cours);
+    console.log(coursName);
+    console.log(this.decriptJwt(coursId));
   }
   async getAllProfessorsCursId(): Promise<Set<Types.ObjectId>> {
     const professors: IProfessor[] = await this.professorModel.find();
@@ -83,5 +96,44 @@ export class ProfessorService implements OnModuleInit {
   async decriptJwt(id: string) {
     const decodedToken = this.jwtService.verify(id);
     return decodedToken.sub;
+  }
+  async updateUsername(email: string, newName: string) {
+    const username = await this.professorModel.findOneAndUpdate(
+      { email: email }, // filter
+      { username: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  async updateEmail(email: string, newName: string) {
+    const username = await this.professorModel.findOneAndUpdate(
+      { email: email }, // filter
+      { email: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  async updatePassword(email: string, newName: string) {
+    const username = await this.professorModel.findOneAndUpdate(
+      { email: email }, // filter
+      { password: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

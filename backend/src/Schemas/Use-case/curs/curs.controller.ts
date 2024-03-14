@@ -40,7 +40,6 @@ export class CursController {
   @Get('/cursPresentation')
   async cursPresentation() {
     const curses: ICurs[] = await this.cursService.getCoursComponent();
-    console.log('curses: ', curses);
 
     const courses = await Promise.all(
       curses.map(async (curs: ICurs) => {
@@ -62,7 +61,6 @@ export class CursController {
       obj[index] = item;
       return obj;
     }, {});
-    console.log('coursesObject: ', coursesObject);
 
     return coursesObject;
   }
@@ -124,6 +122,24 @@ export class CursController {
   async getFullCours(@Param('coursName') coursId: string) {
     return await this.cursService.takeCoursByName(coursId);
   }
+  @Get('/:professorId/:coursName/isJoin/cours')
+  async isJoin(
+    @Param('professorId') professorId: string,
+    @Param('coursName') coursName: string,
+    @Cookies('id') id: string,
+  ) {
+    return await this.cursService.isStudentInCours(professorId, coursName, id);
+  }
+  @Post('/:professorId/:coursName/join/cours')
+  // @UseGuards(StudentGuard)
+  async addStudentToCours(
+    @Param('professorId') professorId: string,
+    @Param('coursName') coursName: string,
+    @Body() id: { id: { name: string; value: string } },
+  ) {
+    this.cursService.addStudent(id.id.value, professorId, coursName);
+    return { isUpdate: true };
+  }
   @Get('/:cursName/:drag/:drop/dragAndDrop')
   async dragDrop(
     @Param('drag') drag: string,
@@ -144,7 +160,6 @@ export class CursController {
   @Get('/:coursName/videoCurs')
   async getCoursFullCurs(@Param('coursName') coursName: string) {
     const name = await this.cursService.takeFullCurs(coursName);
-    console.log('name: ', name);
     const m = name.curs.map((cours: any) => {
       return { title: cours.title };
     });
@@ -158,9 +173,6 @@ export class CursController {
     @Param('videoName') videoName: string,
     @Param('extension') extension: string,
   ) {
-    console.log(
-      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
-    );
     response.sendFile(
       `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
     );
@@ -179,7 +191,6 @@ export class CursController {
     @Param('professorName') professorName: string,
     @Param('coursName') coursName: string,
   ) {
-    console.log(`${professorName}/${coursName}/${filename}`);
     return `${professorName}/${coursName}/${filename}`;
   }
   @Post('/:coursName/add/video/textInput')
@@ -217,7 +228,6 @@ export class CursController {
       documentFormatName: `${professorName}/${coursName}/${filename}`,
     };
     await this.cursService.addMediaFormat(cursId, videoDto);
-    console.log(`${professorName}/${coursName}/${filename}`);
     return `${professorName}/${coursName}/${filename}`;
   }
   @Get('/:professorName/:cursName/:pdfName/pdf')
@@ -227,9 +237,6 @@ export class CursController {
     @Param('cursName') cursName: string,
     @Param('pdfName') videoName: string,
   ) {
-    console.log(
-      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
-    );
     response.sendFile(
       `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
     );
@@ -243,7 +250,6 @@ export class CursController {
     @Param('professor') professor: string,
     @Param('coursName') coursName: string,
   ): Promise<string> {
-    console.log(professor, language, id, coursName);
     const curs: ICompilators = await this.cursService.getCoursFromProfessor(
       professor,
       coursName,
@@ -267,7 +273,6 @@ export class CursController {
       const c = t.split('.');
       j[c[1]] = c[0];
     });
-    console.log(j);
     const compilerDto: ICompilatorUser = {
       programmingLanguage: language,
       functionName: curs.funtionProblemModel,
@@ -289,7 +294,6 @@ export class CursController {
       coursName,
       id,
     );
-    console.log('curs: ', this.takeParameterValue(curs.problemInputs, 'Input'));
     const output = this.takeParameterValue(curs.problemOutputs, 'Output');
 
     const inputs = this.takeParameterValue(curs.problemInputs, 'Input');
@@ -300,9 +304,9 @@ export class CursController {
         input,
       );
       const e = exec.toString().replace('\r\n', '');
-
+      console.log('e: ', e);
+      console.log(output[index]);
       if (e !== output[index]) {
-        console.log('e: ', e);
         return {
           isAlgorithmOk: false,
           input: input,
@@ -332,7 +336,6 @@ export class CursController {
   ) {
     const cursId: Types.ObjectId =
       await this.cursService.takeCoursId(coursName);
-    console.log(exercices);
     return await this.cursService.addMediaFormat(cursId, exercices);
   }
   @Get('/:professor/:coursName/:id/get/exercices/format')

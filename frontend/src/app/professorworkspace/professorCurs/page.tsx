@@ -28,10 +28,9 @@ export default async function ProfessorPreviewCours() {
           <div key={index}>
             <Link href={`/CoursView/${curs.title}`}>
             <CoursCard
-              title={curs.title}
-              description={curs.description}
-              image={curs.image}
-            />
+                title={curs.title}
+                description={curs.description}
+                image={curs.image} professor={""}            />
             </Link>
           </div>
         ))}

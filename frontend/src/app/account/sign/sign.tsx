@@ -19,7 +19,7 @@ export const SignComponents = () => {
     username: "",
     email: "",
     password: "",
-    profileImage: "z",
+    profileImage: "http://localhost:3000/default/img",
   });
 
   return (

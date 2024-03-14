@@ -48,4 +48,43 @@ export class StudentService implements OnModuleInit {
     const decodedToken = this.jwtService.verify(id);
     return decodedToken.sub;
   }
+  async updateUsername(email: string, newName: string) {
+    const username = await this.studentModel.findOneAndUpdate(
+      { email: email }, // filter
+      { username: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  async updateEmail(email: string, newName: string) {
+    const username = await this.studentModel.findOneAndUpdate(
+      { email: email }, // filter
+      { email: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  async updatePassword(email: string, newName: string) {
+    const username = await this.studentModel.findOneAndUpdate(
+      { email: email }, // filter
+      { password: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }

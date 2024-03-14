@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
     `${urlBackend}curs/${professor}/${coursName}/${language}/${id}/execute/script`,
     sendToServerCookies(body, undefined)
   );
-  console.log(await f.json());
-  return new NextResponse(JSON.stringify({ text: 5 }));
+  console.log();
+  return new NextResponse(JSON.stringify(await f.json()));
 }
 function getUrl(body: any): {
   professor: string;

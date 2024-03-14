@@ -45,7 +45,6 @@ export class CursService {
     const cipher = createCipheriv('aes-256-ctr', key, iv);
 
     const textToEncrypt = text;
-    console.log('textToEncrypt: ', textToEncrypt);
     const encryptedText = Buffer.concat([
       cipher.update(textToEncrypt, 'utf8'),
       cipher.final(),
@@ -70,6 +69,16 @@ export class CursService {
 
     return decryptedText.toString('utf8');
   }
+  async addStudent(id: string, professor: string, coursName: string) {
+    console.log(this.professorService.decriptJwt(id));
+    await this.addCoursFromProfessor(
+      professor,
+      coursName,
+      await this.professorService.decriptJwt(id),
+    );
+
+    //this.professorService.addStudentToCours(id, professor, coursName);
+  }
   async findCoursFromProfessor(email: string, coursName: string) {
     const decryptedEmail = await this.decryptText(email);
     const professor =
@@ -81,14 +90,48 @@ export class CursService {
     }
     return false;
   }
+  async decomprimStudent(id: string) {
+    return await this.professorService.decriptJwt(id);
+  }
+  async isStudentInCours(email: string, coursName: string, id: string) {
+    const decryptedEmail = await this.decryptText(email);
+    const professor =
+      await this.professorService.getProfessorByEmail(decryptedEmail);
+    for (const c of professor) {
+      const cours = await this.takeCoursId(coursName);
+      if (c.toString() === cours.toString()) {
+        const cs = await this.takeCours(cours);
+        const i = await this.decomprimStudent(id);
+        return cs.studentId.map((id) => id.toString()).includes(i);
+      }
+    }
+  }
+  async addCoursFromProfessor(
+    email: string,
+    coursName: string,
+    student: string,
+  ) {
+    const decryptedEmail = await this.decryptText(email);
+    const professor =
+      await this.professorService.getProfessorByEmail(decryptedEmail);
+    for (const c of professor) {
+      const cours = await this.takeCoursId(coursName);
+      console.log('cours: ', cours.toString());
+      if (c.toString() === cours.toString()) {
+        const cs = await this.takeCours(cours);
+        cs.studentId.push(new Types.ObjectId(student));
+        console.log('cs: ', cs);
+        const newCurs = await new this.cursModel(cs);
+        newCurs.save();
+      }
+    }
+  }
   async getCoursFromProfessor(email: string, coursName: string, id: string) {
     const decryptedEmail = await this.decryptText(email);
     const professor =
       await this.professorService.getProfessorByEmail(decryptedEmail);
     for (const c of professor) {
       const cours = await this.takeCoursId(coursName);
-      console.log('cours: ', cours);
-      console.log(id);
       if (c.toString() === cours.toString()) {
         return (await this.takeCours(cours)).curs[id];
       }
