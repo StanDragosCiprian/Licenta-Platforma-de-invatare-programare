@@ -8,7 +8,7 @@ export default async function documents() {
   }
   return (
     <>
-      <DocumentComponents />
+      <DocumentComponents isUpdated={false} documentName={""} coursName={""} setDialog={undefined} />
     </>
   );
 }

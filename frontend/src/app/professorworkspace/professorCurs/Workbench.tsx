@@ -28,6 +28,12 @@ const Workbench: FC<{ professorCours: ICoursesAllCard[] }> = ({ professorCours }
             Videos Update
             </th>
             <th scope="col" className="px-6 py-3">
+            Pdf Update
+            </th>
+            <th scope="col" className="px-6 py-3">
+            Code Update
+            </th>
+            <th scope="col" className="px-6 py-3">
               Update
             </th>
             <th scope="col" className="px-6 py-3">

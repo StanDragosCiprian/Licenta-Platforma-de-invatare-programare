@@ -75,6 +75,46 @@ export class CursController {
     );
     return `${professorName}/${coursName}/${filename}`;
   }
+  @Post(
+    '/:professorName/:videName/:coursName/:newTitle/add/pdf/Update/pdfInput',
+  )
+  @UseGuards(ProfessorGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage(fileHandle.destinationVideo()),
+      fileFilter: fileHandle.filterDocuments(),
+    }),
+  )
+  async updatePdfForVideoCurs(
+    @Cookies('id') id: string,
+    @Body('filename') filename: string,
+    @Param('professorName') professorName: string,
+    @Param('videName') videName: string,
+    @Param('coursName') coursName: string,
+    @Param('newTitle') newTitle: string,
+  ) {
+    const videoPath = await this.cursService.getPdfPathFromCourse(
+      id,
+      coursName,
+      videName,
+    );
+    if (filename !== undefined) {
+      const videoPathArray = videoPath.split('/');
+      const videoPathString = videoPathArray.join('\\');
+      fs.unlinkSync(
+        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${videoPathString}`,
+      );
+    }
+    const pdf: IDocumentFormat = {
+      format: 'Pdf',
+      title: newTitle,
+      documentFormatName:
+        filename !== undefined
+          ? `${professorName}/${coursName}/${filename}`
+          : '',
+    };
+    await this.cursService.updatePdfFromCourse(pdf, videName, id, coursName);
+  }
   //make a post funtion which call this funtion from cursService updateVideoFromCourse
   @Post('/:coursName/:videoName/update/video')
   @UseGuards(ProfessorGuard)
@@ -181,7 +221,25 @@ export class CursController {
     @Cookies('id') id: string,
     @Param('courseName') courseName: string,
   ) {
-    const video: IVideo[] = await this.cursService.getProfessorVideos(
+    const video: IVideo[] | IDocumentFormat[] =
+      await this.cursService.getProfessorMedia(id, courseName, 'Video');
+    return video;
+  }
+  @Get('/coursesProfessor/:courseName/pdf')
+  async coursesProfessorPdf(
+    @Cookies('id') id: string,
+    @Param('courseName') courseName: string,
+  ) {
+    const video: IVideo[] | IDocumentFormat[] =
+      await this.cursService.getProfessorMedia(id, courseName, 'Pdf');
+    return video;
+  }
+  @Get('/coursesProfessor/:courseName/compile')
+  async coursesProfessorCompile(
+    @Cookies('id') id: string,
+    @Param('courseName') courseName: string,
+  ) {
+    const video: string[] = await this.cursService.getProfessorCompilator(
       id,
       courseName,
     );

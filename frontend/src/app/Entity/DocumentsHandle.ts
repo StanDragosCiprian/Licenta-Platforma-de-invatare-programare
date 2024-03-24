@@ -33,4 +33,23 @@ export class DocumentHandle {
 
     return await video;
   }
+  private async setDocsUpdate(
+    filePath: string,
+    professorName: string,
+    pdfTitle: string,
+    newPdfTitle: string
+
+  ): Promise<string> {
+    newPdfTitle=newPdfTitle === ""?"_":newPdfTitle;
+  
+    const res = await fetch(
+      `${urlBackend}courses/${professorName}/${pdfTitle}/${this.cursName}/${newPdfTitle}/add/pdf/Update/pdfInput`,
+      sendFiles(filePath)
+    );
+    return await res.text();
+  }
+  public async sendTextUpdate(file: string, pdfTitle: string, newPdfTitle: string) {
+    const professorName = await this.getProfessorName();
+ await this.setDocsUpdate(file, professorName,pdfTitle,newPdfTitle);
+  }
 }

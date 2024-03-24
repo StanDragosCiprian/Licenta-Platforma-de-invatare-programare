@@ -6,9 +6,14 @@ import {
 } from "@/app/UserServer/ServerRequest";
 import { getCookie } from "cookies-next";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import * as XLSX from "xlsx";
-export function ExercicesComponens() {
+export const ExercicesComponens: FC<{
+  setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
+  courseName: string;
+  isUpdated: boolean;
+  exercicesName: string;
+}> = ({ setDialog, courseName, isUpdated, exercicesName }) => {
   const [exemples, setExemples] = useState(["Input:\nOutput:"]);
   const [inputs, setInputs] = useState(["Input"]);
   const [combineParams, setCombineParams] = useState<string[]>([]);
@@ -38,7 +43,6 @@ export function ExercicesComponens() {
     const newArray = [...inputValue];
     newArray[index] = event;
     setInputValue(newArray);
-    console.log("newArray: ", newArray);
   };
 
   const handleSelectChange = (event: string, index: number) => {
@@ -50,15 +54,15 @@ export function ExercicesComponens() {
     setInputs([...inputs, "Input"]);
   };
   const [items, setItems] = useState([]);
-  const hndleExel=new ExelHandle();
-  const send = async () => {
+  const hndleExel = new ExelHandle();
+  const finalUpdate=()=>{
     let s = "";
     combineParams.forEach((e: string) => {
       s += "," + e;
     });
     console.log("items: ", items);
-    let output:string[] = [];
-    let input:string[] = [];
+    let output: string[] = [];
+    let input: string[] = [];
     items.forEach((o: any) => {
       let out = [];
       let inp = [];
@@ -74,20 +78,33 @@ export function ExercicesComponens() {
       output.push(`Output(${out})`);
       input.push(`Input(${inp})`);
     });
-     const problemToSed = { ...exercices };
-     problemToSed.problemParameter = s.substring(1);
-     const id = getCookie("id")?.toString();
-     const pathArray = pathname.split("/");
-     const urlName = pathArray[2];
-     problemToSed.urlName = urlName;
-     problemToSed.problemOutputs=output;
-     problemToSed.problemInputs=input;
-     console.log('problemToSed: ', problemToSed);
-     const api = await fetch(
-       "/api/handleNewExercicesApi",
-       sendToServerCookies(problemToSed, id)
-     );
-     console.log("api: ", await api.json());
+    const problemToSed = { ...exercices };
+    problemToSed.problemParameter = s.substring(1);
+    
+    const pathArray = pathname.split("/");
+    const urlName = pathArray[2];
+    problemToSed.urlName = urlName;
+    problemToSed.problemOutputs = output;
+    problemToSed.problemInputs = input;
+    return problemToSed;
+  }
+  const send = async () => {
+    const id = getCookie("id")?.toString();
+    console.log("problemToSed: ", finalUpdate());
+    const api = await fetch(
+      "/api/handleNewExercicesApi",
+      sendToServerCookies(finalUpdate(), id)
+    );
+    console.log("api: ", await api.json());
+  };
+  const sendUpdate = async () => {
+    const id = getCookie("id")?.toString();
+    console.log("problemToSed: ", finalUpdate());
+    const api = await fetch(
+      "/api/handleUpdateCourseApi/handleUpdateExercicesApi",
+      sendToServerCookies(finalUpdate(), id)
+    );
+    console.log("api: ", await api.json());
   };
   const handleInputChange = (event: { target: { name: any; value: any } }) => {
     setExercices({
@@ -195,16 +212,16 @@ export function ExercicesComponens() {
         name="file"
         onChange={(e: any) => {
           const file = e.target.files[0];
-          hndleExel.readExcel(file,setItems);
+          hndleExel.readExcel(file, setItems);
         }}
         required
       />
       <button
-        onClick={send}
+        onClick={!isUpdated ? send : sendUpdate}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
       >
         Send
       </button>
     </div>
   );
-}
+};

@@ -7,6 +7,10 @@ import { CoursesName } from "../CoursesName";
 import { Modal } from "flowbite-react";
 import VideoUpdatePage from "./VideoUpdate";
 import IconUpdateVideo from "@/app/IconsComponents/IconUpdateVideo";
+import IconPdf from "@/app/IconsComponents/IconPdf";
+import PdfUpdate from "./PdfUpdate";
+import IconCode from "@/app/IconsComponents/IconCode";
+import CodeUpdate from "./CodeUpdate";
 export const ProfessorWorkbenchComponents: FC<{
   setCourseName: Dispatch<SetStateAction<string>>;
   courseName: string;
@@ -14,7 +18,6 @@ export const ProfessorWorkbenchComponents: FC<{
   vizibility: boolean;
   // handleModel: () => void;
 }> = ({ courseName, setCourseName, setDialog, vizibility }) => {
-
   return (
     <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
       <th
@@ -23,7 +26,9 @@ export const ProfessorWorkbenchComponents: FC<{
       >
         {courseName}
       </th>
-      <td className="px-6 py-4"><p>{vizibility?"Visible":"Invisible"}</p></td>
+      <td className="px-6 py-4">
+        <p>{vizibility ? "Visible" : "Invisible"}</p>
+      </td>
       <td className="px-6 py-4">
         <button
           type="button"
@@ -68,11 +73,39 @@ export const ProfessorWorkbenchComponents: FC<{
           className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
           onClick={() => {
             setDialog(() => (
-              <VideoUpdatePage setDialog={setDialog} courseName={courseName}/>
+              <VideoUpdatePage setDialog={setDialog} courseName={courseName} />
             ));
           }}
         >
-        <IconUpdateVideo />
+          <IconUpdateVideo />
+        </button>
+      </td>
+      <td className="px-6 py-4">
+        <button
+          type="button"
+          aria-label="Add students"
+          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+          onClick={() => {
+            setDialog(() => (
+              <PdfUpdate setDialog={setDialog} courseName={courseName} />
+            ));
+          }}
+        >
+          <IconPdf />
+        </button>
+      </td>
+      <td className="px-6 py-4">
+        <button
+          type="button"
+          aria-label="Add students"
+          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+          onClick={() => {
+            setDialog(() => (
+             <CodeUpdate setDialog={setDialog} courseName={courseName} />
+            ));
+          }}
+        >
+          <IconCode />
         </button>
       </td>
       <td className="px-6 py-4">
@@ -85,7 +118,11 @@ export const ProfessorWorkbenchComponents: FC<{
               <Modal show={true} onClose={() => setDialog(undefined)}>
                 <Modal.Header>Update {courseName}</Modal.Header>
                 <div className="flex justify-center items-center inset-0 bg-white">
-                  <CoursesName isUpdated={true} courseName={courseName} setDialog={setDialog}/>
+                  <CoursesName
+                    isUpdated={true}
+                    courseName={courseName}
+                    setDialog={setDialog}
+                  />
                 </div>
               </Modal>
             ));

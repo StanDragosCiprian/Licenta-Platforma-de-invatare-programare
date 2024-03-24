@@ -46,6 +46,50 @@ export class CursService {
       }
     }
   }
+  async getMediaPath(
+    professorId: string,
+    courseName: string,
+    mediaTitle: string,
+    format: 'Video' | 'Pdf',
+  ) {
+    const professorCourses: ICurs[] =
+      await this.fetchProfessorCourses(professorId);
+    let mediaPath: string = '';
+    for (const course of professorCourses) {
+      if (course.name === courseName) {
+        for (const component of course.curs) {
+          if (component.format === format) {
+            let videoComponent: IVideo | IDocumentFormat;
+            if (format === 'Video') {
+              videoComponent = component as IVideo;
+              if (videoComponent.title === mediaTitle) {
+                mediaPath = videoComponent.videoPath;
+              }
+            } else if (format === 'Pdf') {
+              videoComponent = component as IDocumentFormat;
+              if (videoComponent.title === mediaTitle) {
+                mediaPath = videoComponent.documentFormatName;
+              }
+            }
+          }
+        }
+      }
+    }
+    return mediaPath;
+  }
+  async getPdfPathFromCourse(
+    professorId: string,
+    courseName: string,
+    videoTitle: string,
+  ) {
+    const pdfPath = await this.getMediaPath(
+      professorId,
+      courseName,
+      videoTitle,
+      'Pdf',
+    );
+    return pdfPath;
+  }
   async getVideoPathFromCourse(
     professorId: string,
     courseName: string,
@@ -68,6 +112,39 @@ export class CursService {
     }
     return videoPath;
   }
+  async updatePdfFromCourse(
+    newPdf: IDocumentFormat,
+    pdfTitle: string,
+    professorId: string,
+    courseName: string,
+  ) {
+    const professorCourses: ICurs[] =
+      await this.fetchProfessorCourses(professorId);
+    for (const course of professorCourses) {
+      if (course.name === courseName) {
+        for (const component of course.curs) {
+          if (component.format === 'Pdf') {
+            const pdfComponent = component as IDocumentFormat;
+            if (pdfComponent.title === pdfTitle) {
+              pdfComponent.title =
+                pdfComponent.title !== '' &&
+                pdfComponent.title !== newPdf.title &&
+                newPdf.title !== '_'
+                  ? newPdf.title
+                  : pdfComponent.title;
+              pdfComponent.documentFormatName =
+                newPdf.documentFormatName !== '' &&
+                pdfComponent.documentFormatName !== newPdf.documentFormatName
+                  ? newPdf.documentFormatName
+                  : pdfComponent.documentFormatName;
+              const c = await new this.cursModel(course);
+              await c.save();
+            }
+          }
+        }
+      }
+    }
+  }
   async updateVideoFromCourse(
     video: IVideo,
     videoTitle: string,
@@ -83,20 +160,19 @@ export class CursService {
             const videoComponent = component as IVideo;
             if (videoComponent.title === videoTitle) {
               videoComponent.title =
-                videoComponent.title !== video.title &&
-                videoComponent.title !== ''
+                video.title !== '' && video.title !== videoComponent.title
                   ? video.title
                   : videoComponent.title;
               videoComponent.descrition =
-                videoComponent.descrition !== videoTitle &&
-                videoComponent.descrition !== ''
-                  ? videoComponent.descrition
-                  : video.descrition;
+                video.descrition !== '' &&
+                video.descrition !== videoComponent.descrition
+                  ? video.descrition
+                  : videoComponent.descrition;
               videoComponent.videoPath =
-                videoComponent.videoPath !== videoTitle &&
-                videoComponent.videoPath !== ''
-                  ? videoComponent.videoPath
-                  : video.videoPath;
+                video.videoPath !== '' &&
+                video.videoPath !== videoComponent.videoPath
+                  ? video.videoPath
+                  : videoComponent.videoPath;
               const c = await new this.cursModel(course);
               await c.save();
             }
@@ -303,22 +379,46 @@ export class CursService {
     }
     return courses;
   }
-  async getProfessorVideos(id: string, courseName: string): Promise<IVideo[]> {
+  async getProfessorCompilator(id: string, courseName: string) {
     const professorCourses: ICurs[] = await this.fetchProfessorCourses(id);
-    const videos: IVideo[] = [];
+    const compilator: string[] = [];
     for (const course of professorCourses) {
       if (course.name === courseName) {
         for (const component of course.curs) {
-          if (component.format === 'Video') {
-            const videoComponent = component as IVideo;
-            videos.push(videoComponent);
+          if (component.format === 'Compilator') {
+            const c = component as ICompilators;
+            compilator.push(c.title);
           }
         }
       }
     }
-    return videos;
+    return compilator;
   }
-
+  async getProfessorMedia(
+    id: string,
+    courseName: string,
+    format: 'Pdf' | 'Video',
+  ): Promise<IVideo[] | IDocumentFormat[]> {
+    const professorCourses: ICurs[] = await this.fetchProfessorCourses(id);
+    const videos: IVideo[] = [];
+    const documents: IDocumentFormat[] = [];
+    for (const course of professorCourses) {
+      if (course.name === courseName) {
+        for (const component of course.curs) {
+          if (component.format === format) {
+            if (format === 'Video') {
+              const videoComponent = component as IVideo;
+              videos.push(videoComponent);
+            } else if (format === 'Pdf') {
+              const pdfComponent = component as IDocumentFormat;
+              documents.push(pdfComponent);
+            }
+          }
+        }
+      }
+    }
+    return format === 'Video' ? videos : documents;
+  }
   async fetchProfessorCourses(id: string): Promise<ICurs[]> {
     const professorCoursId: IProfessor =
       await this.professorService.getProfessorById(id);

@@ -38,26 +38,30 @@ const VideoUpdatePage: FC<{
       <Modal.Header>Add </Modal.Header>
       <Modal.Body>
         {videoUpdate === undefined
-          ? Array.isArray(video) &&
-            video.map((video: IVidePreview, index: number) => (
-              <button
-                key={index}
-                onClick={() =>
-                  setVideoUpdate(
-                    <div className="w-full h-full overflow-auto">
-                      <UploadVideo
-                        isUpdated={true}
-                        videoName={video.title}
-                        coursName={courseName}
-                        setDialog={setDialog}
-                      />
-                    </div>
-                  )
-                }
-              >
-                {video.title}
-              </button>
-            ))
+          ? Array.isArray(video) && (
+              <ul>
+                {video.map((video: IVidePreview, index: number) => (
+                  <li key={index}>
+                    <button
+                      onClick={() =>
+                        setVideoUpdate(
+                          <div className="w-full h-full overflow-auto">
+                            <UploadVideo
+                              isUpdated={true}
+                              videoName={video.title}
+                              coursName={courseName}
+                              setDialog={setDialog}
+                            />
+                          </div>
+                        )
+                      }
+                    >
+                      {video.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )
           : videoUpdate}
       </Modal.Body>
     </Modal>
