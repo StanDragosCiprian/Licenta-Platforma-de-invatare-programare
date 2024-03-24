@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const { professor, coursName } = await req.json();
   const cookie: any = await req.cookies.get("id");
   const f = await fetch(
-    `${urlBackend}curs/${professor}/${coursName}/isJoin/cours'`,
+    `${urlBackend}courses/${professor}/${coursName}/isJoin/cours'`,
     getFromServerCookie(cookie)
   );
   console.log(f);

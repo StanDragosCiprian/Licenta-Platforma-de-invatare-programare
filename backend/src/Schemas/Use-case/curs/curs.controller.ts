@@ -22,12 +22,12 @@ import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { FILELOCATION } from 'EnviormentVariable';
 import { ICompilatorUser } from 'src/Schemas/Entity/ICompilatorUser';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
+import * as fs from 'fs';
 const fileHandle: IFileHandle = new FileHandle();
-@Controller('curs')
+@Controller('courses')
 export class CursController {
   constructor(private cursService: CursService) {}
 
-  //Cours funcion
   @Post('/new')
   @UseGuards(ProfessorGuard)
   async createCurs(
@@ -36,6 +36,86 @@ export class CursController {
   ): Promise<string> {
     const newCurs = await this.cursService.createNewCourse(createCursDto, id);
     return newCurs;
+  }
+  @Post('/update')
+  @UseGuards(ProfessorGuard)
+  async updateCurs(
+    @Cookies('id') id,
+    @Body() createCursDto: any,
+  ): Promise<number> {
+    console.log(id);
+    await this.cursService.updateCourse(createCursDto, id);
+    return 0;
+  }
+  @Post('/:professorName/:videName/:coursName/add/video/Update/videoInput')
+  @UseGuards(ProfessorGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage(fileHandle.destinationVideo()),
+      fileFilter: fileHandle.filterVideo(),
+    }),
+  )
+  async updateVideoForVideoCurs(
+    @Cookies('id') id: string,
+    @Body('filename') filename: string,
+    @Param('professorName') professorName: string,
+    @Param('videName') videName: string,
+    @Param('coursName') coursName: string,
+  ) {
+    const videoPath = await this.cursService.getVideoPathFromCourse(
+      id,
+      coursName,
+      videName,
+    );
+    //from this videoPath=john2/test/Tp_1711204609822.mp4 make to look like this :videoPath=john2\\test\\Tp_1711204609822.mp4
+    const videoPathArray = videoPath.split('/');
+    const videoPathString = videoPathArray.join('\\');
+    fs.unlinkSync(
+      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${videoPathString}`,
+    );
+    return `${professorName}/${coursName}/${filename}`;
+  }
+  //make a post funtion which call this funtion from cursService updateVideoFromCourse
+  @Post('/:coursName/:videoName/update/video')
+  @UseGuards(ProfessorGuard)
+  async updateVideo(
+    @Cookies('id') id: string,
+    @Body() file: IVideo,
+    @Param('coursName') coursName: string,
+    @Param('videoName') videoName: string,
+  ) {
+    await this.cursService.updateVideoFromCourse(
+      file,
+      videoName,
+      id,
+      coursName,
+    );
+  }
+  @Post('/add/professors/to/couses')
+  async addProfessorToCourse(
+    @Body() body: { studentsEmail: string[]; courseName: string },
+    @Cookies('id') id: string,
+  ) {
+    await this.cursService.addProfessorToCourses(
+      id,
+      body.studentsEmail,
+      body.courseName,
+    );
+
+    return 0;
+  }
+  @Post('/add/students/to/couses')
+  async addStudentToCourse(
+    @Body() body: { studentsEmail: string[]; courseName: string },
+    @Cookies('id') id: string,
+  ) {
+    await this.cursService.addStudentsToCourses(
+      id,
+      body.studentsEmail,
+      body.courseName,
+    );
+
+    return 0;
   }
   @Get('/cursPresentation')
   async cursPresentation() {
@@ -70,7 +150,7 @@ export class CursController {
     @Param('coursName') coursName: string,
   ) {
     return {
-      isPageVerify: await this.cursService.findCoursFromProfessor(
+      isPageVerify: await this.cursService.findCoursFromProfessorEmail(
         id,
         coursName,
       ),
@@ -78,12 +158,44 @@ export class CursController {
   }
   @Get('/cursProfessor')
   async cursProfessor(@Cookies('id') id: string) {
-    const curses: ICurs[] = await this.cursService.getProfessorCurs(id);
+    const curses: ICurs[] =
+      await this.cursService.fetchProfessorVisibleCourses(id);
 
     const courses = curses.map((curs: ICurs) => {
       return {
         title: curs.name,
         description: curs.description,
+        image: curs.imagePath,
+      };
+    });
+
+    const coursesObject = courses.reduce((obj, item, index) => {
+      obj[index] = item;
+      return obj;
+    }, {});
+
+    return coursesObject;
+  }
+  @Get('/coursesProfessor/:courseName/video')
+  async coursesProfessorVideo(
+    @Cookies('id') id: string,
+    @Param('courseName') courseName: string,
+  ) {
+    const video: IVideo[] = await this.cursService.getProfessorVideos(
+      id,
+      courseName,
+    );
+    return video;
+  }
+  @Get('/coursesProfessor/all')
+  async coursesProfessor567all(@Cookies('id') id: string) {
+    const curses: ICurs[] = await this.cursService.fetchProfessorCourses(id);
+
+    const courses = curses.map((curs: ICurs) => {
+      return {
+        title: curs.name,
+        description: curs.description,
+        vizibility: curs.vizibility,
         image: curs.imagePath,
       };
     });
@@ -106,7 +218,7 @@ export class CursController {
     @Param('nameCours') nameCours: string,
   ): Promise<boolean> {
     if (id !== 'undefined') {
-      const cours = await this.cursService.getProfessorCurs(id);
+      const cours = await this.cursService.fetchProfessorVisibleCourses(id);
       return cours !== null
         ? cours.some((c: ICurs) => c.name == nameCours)
         : false;
@@ -304,8 +416,6 @@ export class CursController {
         input,
       );
       const e = exec.toString().replace('\r\n', '');
-      console.log('e: ', e);
-      console.log(output[index]);
       if (e !== output[index]) {
         return {
           isAlgorithmOk: false,

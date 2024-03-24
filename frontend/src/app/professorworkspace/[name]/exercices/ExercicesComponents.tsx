@@ -1,4 +1,5 @@
 "use client";
+import { ExelHandle } from "@/app/Entity/ExelHandle";
 import {
   sendToServerCookies,
   sendToServerFile,
@@ -49,30 +50,7 @@ export function ExercicesComponens() {
     setInputs([...inputs, "Input"]);
   };
   const [items, setItems] = useState([]);
-  const readExcel = (file: any) => {
-    const promise = new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsArrayBuffer(file);
-      fileReader.onload = (e: any) => {
-        const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, {
-          type: "buffer",
-        });
-        const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
-        let data: any = XLSX.utils.sheet_to_json(ws, { header: 1 });
-        data = data[0].map((_: any, i: any) => data.map((row: any) => row[i]));
-        resolve(data);
-      };
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-    promise.then((d: any) => {
-      setItems(d);
-    });
-  };
-
+  const hndleExel=new ExelHandle();
   const send = async () => {
     let s = "";
     combineParams.forEach((e: string) => {
@@ -217,7 +195,7 @@ export function ExercicesComponens() {
         name="file"
         onChange={(e: any) => {
           const file = e.target.files[0];
-          readExcel(file);
+          hndleExel.readExcel(file,setItems);
         }}
         required
       />

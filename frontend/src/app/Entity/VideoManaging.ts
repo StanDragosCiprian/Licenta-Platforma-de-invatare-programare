@@ -32,9 +32,32 @@ export class VideoManaging {
 
     return text;
   }
+  private async setVideoTextUpdate(
+    title: string,
+    description: string,
+    video: string,
+    coursName: string
+  ): Promise<string> {
+    const test = await fetch(
+      "/api/handleUpdateCourseApi/handleSendUpdateVideoApi",
+      sendToServerCookies(
+        {
+          title: title,
+          description: description,
+          videoPath: video,
+          videoName: this.videoName,
+          coursName: coursName,
+        },
+        undefined
+      )
+    );
+    const { text } = await test.json();
+
+    return text;
+  }
   private async getProfessorName(): Promise<string> {
     const professor = await fetch(
-      `${urlBackend}curs/professorName`,
+      `${urlBackend}courses/professorName`,
       getFromServerCookie(getCookie("id"))
     );
     return await professor.text();
@@ -44,10 +67,43 @@ export class VideoManaging {
     professorName: string
   ): Promise<string> {
     const response = await fetch(
-      `${urlBackend}curs/${professorName}/${this.videoName}/add/video/videoInput`,
+      `${urlBackend}courses/${professorName}/${this.videoName}/add/video/videoInput`,
       sendFiles(filePath)
     );
     return await response.text();
+  }
+  private async setUpdateVideo(
+    filePath: string,
+    professorName: string,
+    videoName: string
+  ): Promise<string> {
+    console.log(
+      `${urlBackend}courses/${professorName}/${this.videoName}/${videoName}/add/video/Update/videoInput`
+    );
+    const response = await fetch(
+      `${urlBackend}courses/${professorName}/${this.videoName}/${videoName}/add/video/Update/videoInput`,
+      sendFiles(filePath)
+    );
+    return await response.text();
+  }
+  public async sendTextUpdate(
+    title: string,
+    description: string,
+    file: string,
+    coursName: string
+  ) {
+    const professorName = await this.getProfessorName();
+    let video = "";
+    if (file !== "")
+      video = await this.setUpdateVideo(file, professorName, coursName);
+    console.log(video);
+    const response: string = await this.setVideoTextUpdate(
+      title,
+      description,
+      video,
+      coursName
+    );
+    return await response;
   }
   public async sendText(title: string, description: string, file: string) {
     const professorName = await this.getProfessorName();

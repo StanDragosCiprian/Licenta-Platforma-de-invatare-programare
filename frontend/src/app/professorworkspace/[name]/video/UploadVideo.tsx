@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { TextareaInput } from "./Components/TextareaInput";
 import { TitileInput } from "./Components/TitleInput";
 import { UploadVideoInput } from "./Components/UploadVideoInput";
@@ -8,17 +8,22 @@ import { VideoCard } from "./VideoCard";
 import { VideoManaging } from "../../../Entity/VideoManaging";
 import { IName } from "./VideoInterfaces";
 import { useRouter } from "next/navigation";
-import { usePathname } from 'next/navigation'
-export const UploadVideo = () => {
+import { usePathname } from "next/navigation";
+export const UploadVideo: FC<{
+  isUpdated: boolean;
+  videoName: string;
+  coursName: string;
+  setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
+}> = ({ isUpdated, videoName, coursName, setDialog }) => {
   const [videoDescription, setVideoDescription] = useState({
     title: "",
     filePath: "",
     description: "",
   });
   const rout: any = useRouter();
-  const pathname = usePathname()
-  
-  const handeVideo = async () => {
+  const pathname = usePathname();
+
+  const handeNewVideo = async () => {
     const pathArray = pathname.split("/");
     const yourValue = pathArray[2];
     const videoText: VideoManaging = new VideoManaging(yourValue);
@@ -27,7 +32,19 @@ export const UploadVideo = () => {
       videoDescription.description,
       videoDescription.filePath
     );
-    rout.push(`/professorworkspace/${yourValue}/${videoId}/video`);
+    // rout.push(`/professorworkspace/${yourValue}/${videoId}/video`);
+  };
+  const handleVideoUpdate = async () => {
+    const videoText: VideoManaging = new VideoManaging(videoName);
+    await videoText.sendTextUpdate(
+      videoDescription.title,
+      videoDescription.description,
+      videoDescription.filePath,
+      coursName
+    );
+    if (setDialog) {
+      setDialog(undefined);
+    }
   };
   return (
     <>
@@ -38,7 +55,7 @@ export const UploadVideo = () => {
         <button
           type="submit"
           className=" my-4 relative h-12 w-full min-w-[200px] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          onClick={handeVideo}
+          onClick={!isUpdated ? handeNewVideo : handleVideoUpdate}
         >
           Submit
         </button>

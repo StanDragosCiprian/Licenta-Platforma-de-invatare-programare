@@ -3,7 +3,7 @@ import { FC } from "react";
 export const VideoCard: FC<any> = ({ children }) => {
   return (
     <>
-      <div className="flex justify-center items-center h-screen w-screen">
+      
         <div className="w-full max-w-2xl p-8 bg-white border rounded-lg shadow sm:p-12 md:p-16">
           <h5 className="text-2xl font-medium text-gray-900">Upload video</h5>
           <div className="w-full grid grid-rows-3 grid-flow-col">
@@ -15,7 +15,7 @@ export const VideoCard: FC<any> = ({ children }) => {
             </div>
           </div>
         </div>
-      </div>
+
     </>
   );
 };

@@ -70,6 +70,11 @@ export class ProfessorService implements OnModuleInit {
     const professor = await this.getProfessor(decriptJwt);
     return professor.username;
   }
+  async getStudentsId(students: string[]): Promise<Promise<Types.ObjectId>[]> {
+    return await students.map(async (studentEmail: string) => {
+      return await this.studentService.getStudentByEmail(studentEmail);
+    });
+  }
   async getProfessorById(id: string): Promise<IProfessor> {
     const decriptJwt = await this.decriptJwt(id);
     const professor = await this.professorModel.findById(decriptJwt);

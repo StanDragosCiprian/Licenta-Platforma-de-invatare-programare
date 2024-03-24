@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { AccountCard } from "../account/CardInputComponents/AccountCard";
 import { Submit } from "../account/CardInputComponents/Submit";
 import { TextBox } from "../account/CardInputComponents/TextBox";
@@ -9,7 +9,11 @@ import { SelectVizibility } from "./SelectRole";
 import { TextareaWithLimit } from "./TextareaWithLimit";
 import { urlBackend } from "../UserServer/ServerRequest";
 
-export const CoursesName = () => {
+export const CoursesName: FC<{
+  isUpdated: boolean;
+  courseName: string;
+  setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
+}> = ({ isUpdated, courseName, setDialog }) => {
   const [course, setCours] = useState({
     name: "",
     vizibility: false,
@@ -31,6 +35,17 @@ export const CoursesName = () => {
     const t = await test.newCourse();
     isId(t);
   };
+
+  const handleUserUpdate = async (user: any) => {
+    course.name = nameCours.Name;
+    const test = new Courses(user);
+    console.log(courseName);
+    const t = await test.updateCourse(courseName);
+    if (setDialog) {
+      setDialog(undefined);
+      rout.refresh();
+    }
+  };
   return (
     <>
       <AccountCard name="Create courses">
@@ -40,7 +55,6 @@ export const CoursesName = () => {
           setUser={setNameCours}
           user={nameCours}
         >
-          
           <SelectVizibility
             registerType={["Name"]}
             reg={null}
@@ -58,7 +72,9 @@ export const CoursesName = () => {
             reg={null}
             setUser={setCours}
             user={course}
-            handleUser={() => handleUser(course)}
+            handleUser={() =>
+              isUpdated ? handleUserUpdate(course) : handleUser(course)
+            }
           />
         </TextBox>
       </AccountCard>

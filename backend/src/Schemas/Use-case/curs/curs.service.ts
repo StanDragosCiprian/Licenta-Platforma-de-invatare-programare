@@ -24,11 +24,96 @@ export class CursService {
   async takeCoursId(cursName: string): Promise<Types.ObjectId> {
     return (await this.cursModel.findOne({ name: cursName }))._id;
   }
+  async updateCourse(createCursDto: any, id: any) {
+    const { cursBody } = createCursDto;
+    const professorCourses: ICurs[] = await this.fetchProfessorCourses(id);
+    for (const c of professorCourses) {
+      if (c.name === cursBody.oldCoursName) {
+        const course = await this.cursModel.findById(c._id);
+        course.name =
+          cursBody.name !== '' && cursBody.name !== c.name
+            ? cursBody.name
+            : c.name;
+        course.vizibility =
+          cursBody.vizibility !== c.vizibility
+            ? cursBody.vizibility
+            : c.vizibility;
+        course.description =
+          cursBody.description !== '' && cursBody.description !== c.description
+            ? cursBody.description
+            : c.description;
+        await course.save();
+      }
+    }
+  }
+  async getVideoPathFromCourse(
+    professorId: string,
+    courseName: string,
+    videoTitle: string,
+  ) {
+    const professorCourses: ICurs[] =
+      await this.fetchProfessorCourses(professorId);
+    let videoPath: string = '';
+    for (const course of professorCourses) {
+      if (course.name === courseName) {
+        for (const component of course.curs) {
+          if (component.format === 'Video') {
+            const videoComponent = component as IVideo;
+            if (videoComponent.title === videoTitle) {
+              videoPath = videoComponent.videoPath;
+            }
+          }
+        }
+      }
+    }
+    return videoPath;
+  }
+  async updateVideoFromCourse(
+    video: IVideo,
+    videoTitle: string,
+    professorId: string,
+    courseName: string,
+  ) {
+    const professorCourses: ICurs[] =
+      await this.fetchProfessorCourses(professorId);
+    for (const course of professorCourses) {
+      if (course.name === courseName) {
+        for (const component of course.curs) {
+          if (component.format === 'Video') {
+            const videoComponent = component as IVideo;
+            if (videoComponent.title === videoTitle) {
+              videoComponent.title =
+                videoComponent.title !== video.title &&
+                videoComponent.title !== ''
+                  ? video.title
+                  : videoComponent.title;
+              videoComponent.descrition =
+                videoComponent.descrition !== videoTitle &&
+                videoComponent.descrition !== ''
+                  ? videoComponent.descrition
+                  : video.descrition;
+              videoComponent.videoPath =
+                videoComponent.videoPath !== videoTitle &&
+                videoComponent.videoPath !== ''
+                  ? videoComponent.videoPath
+                  : video.videoPath;
+              const c = await new this.cursModel(course);
+              await c.save();
+            }
+          }
+        }
+      }
+    }
+  }
+
   async takeCours(cursId: Types.ObjectId): Promise<ICurs> {
     return await this.cursModel.findOne({ _id: cursId });
   }
   async getProfessorNameForCours(id: string): Promise<string> {
     return this.professorService.getProfessorName(id);
+  }
+  async getProfessorById(id: string): Promise<Types.ObjectId> {
+    return (await this.professorService.getProfessorById(id))._id;
   }
   onModuleInit() {
     this.cursModel.watch().on('change', (change) => {
@@ -70,7 +155,6 @@ export class CursService {
     return decryptedText.toString('utf8');
   }
   async addStudent(id: string, professor: string, coursName: string) {
-    console.log(this.professorService.decriptJwt(id));
     await this.addCoursFromProfessor(
       professor,
       coursName,
@@ -79,7 +163,7 @@ export class CursService {
 
     //this.professorService.addStudentToCours(id, professor, coursName);
   }
-  async findCoursFromProfessor(email: string, coursName: string) {
+  async findCoursFromProfessorEmail(email: string, coursName: string) {
     const decryptedEmail = await this.decryptText(email);
     const professor =
       await this.professorService.getProfessorByEmail(decryptedEmail);
@@ -90,9 +174,64 @@ export class CursService {
     }
     return false;
   }
+  async findCoursFromProfessorId(id: string, coursName: string) {
+    const professor = await this.professorService.getProfessorById(id);
+    for (const c of professor.coursesId) {
+      if (c.toString() === (await this.takeCoursId(coursName)).toString()) {
+        return await this.takeCours(c);
+      }
+    }
+  }
   async decomprimStudent(id: string) {
     return await this.professorService.decriptJwt(id);
   }
+  async addProfessorToCourses(
+    professorId: string,
+    professor: string[],
+    courseName,
+  ) {
+    const professorCourses: ICurs[] =
+      await this.fetchProfessorVisibleCourses(professorId);
+    for (const s of professor) {
+      for (const courses of professorCourses) {
+        if (courseName === courses.name) {
+          const c: ICurs = await this.findCoursFromProfessorId(
+            professorId,
+            courses.name,
+          );
+          c.colaborationId.push(
+            (await this.professorService.getProfessorById(s))._id,
+          );
+          const newCurs = await new this.cursModel(c);
+          newCurs.save();
+        }
+      }
+    }
+  }
+
+  async addStudentsToCourses(
+    professorId: string,
+    student: string[],
+    courseName,
+  ) {
+    const professorCourses: ICurs[] =
+      await this.fetchProfessorVisibleCourses(professorId);
+    const s = Promise.all(await this.professorService.getStudentsId(student));
+    for (const stud of await s) {
+      for (const courses of professorCourses) {
+        if (courseName === courses.name) {
+          const c: ICurs = await this.findCoursFromProfessorId(
+            professorId,
+            courses.name,
+          );
+          c.studentId.push(stud);
+          const newCurs = await new this.cursModel(c);
+          newCurs.save();
+        }
+      }
+    }
+  }
+
   async isStudentInCours(email: string, coursName: string, id: string) {
     const decryptedEmail = await this.decryptText(email);
     const professor =
@@ -116,11 +255,9 @@ export class CursService {
       await this.professorService.getProfessorByEmail(decryptedEmail);
     for (const c of professor) {
       const cours = await this.takeCoursId(coursName);
-      console.log('cours: ', cours.toString());
       if (c.toString() === cours.toString()) {
         const cs = await this.takeCours(cours);
         cs.studentId.push(new Types.ObjectId(student));
-        console.log('cs: ', cs);
         const newCurs = await new this.cursModel(cs);
         newCurs.save();
       }
@@ -151,7 +288,7 @@ export class CursService {
     return curs.curs.length - 1;
   }
 
-  async getProfessorCurs(id: string): Promise<ICurs[]> {
+  async fetchProfessorVisibleCourses(id: string): Promise<ICurs[]> {
     const professorCoursId: IProfessor =
       await this.professorService.getProfessorById(id);
 
@@ -162,6 +299,35 @@ export class CursService {
         if (cours?.vizibility === true) {
           courses.push(cours);
         }
+      }
+    }
+    return courses;
+  }
+  async getProfessorVideos(id: string, courseName: string): Promise<IVideo[]> {
+    const professorCourses: ICurs[] = await this.fetchProfessorCourses(id);
+    const videos: IVideo[] = [];
+    for (const course of professorCourses) {
+      if (course.name === courseName) {
+        for (const component of course.curs) {
+          if (component.format === 'Video') {
+            const videoComponent = component as IVideo;
+            videos.push(videoComponent);
+          }
+        }
+      }
+    }
+    return videos;
+  }
+
+  async fetchProfessorCourses(id: string): Promise<ICurs[]> {
+    const professorCoursId: IProfessor =
+      await this.professorService.getProfessorById(id);
+
+    const courses: ICurs[] = [];
+    if (professorCoursId !== null) {
+      for (const c of professorCoursId.coursesId) {
+        const cours: ICurs = await this.cursModel.findById(c);
+        courses.push(cours);
       }
     }
     return courses;
@@ -214,30 +380,9 @@ export class CursService {
     const temp = curs.curs[Number(drag)];
     curs.curs[Number(drag)] = curs.curs[Number(drop)];
     curs.curs[Number(drop)] = temp;
-    console.log(curs.curs);
     curs.save();
   }
   async chooseCompiler(userData: ICompilatorUser) {
-    //     const pythonScript = `
-
-    // import numpy as np
-    // a = np.array([1, 2, 3])
-    // print(a)
-    // `.trim();
-    //     const process = spawn('python', ['-c', pythonScript]);
-
-    //     process.stdout.on('data', (data) => {
-    //       console.log(`stdout: ${data}`);
-    //     });
-
-    //     process.stderr.on('data', (data) => {
-    //       console.error(`stderr: ${data}`);
-    //     });
-
-    //     process.on('close', (code) => {
-    //       console.log(`child process exited with code ${code}`);
-    //     });
-
     const handleProgrammingLanguage: IHandleProgrammingLanguage =
       new HandleProgrammingLanguage(userData);
     return handleProgrammingLanguage.chooseLanguage();

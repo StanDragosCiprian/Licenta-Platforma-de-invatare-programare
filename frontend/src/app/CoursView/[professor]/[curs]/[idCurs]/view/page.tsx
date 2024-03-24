@@ -6,12 +6,12 @@ import PdfViewer from "../docsView/DocsView";
 import { redirect } from "next/navigation";
 import { CompilerViewComponents } from "../compilerView/CompilorViewComponents";
 const takeCoursVide = async (cursName: string, idCurs: string) => {
-  const curs = await fetch(`${urlBackend}curs/${cursName}/${idCurs}/get/cours`);
+  const curs = await fetch(`${urlBackend}courses/${cursName}/${idCurs}/get/cours`);
   return curs.json();
 };
 const takeVideoPath = async (video: string): Promise<string> => {
   const allVideo = video.split(".");
-  return `${urlBackend}curs/${allVideo[0]}/${allVideo[1]}/video`;
+  return `${urlBackend}courses/${allVideo[0]}/${allVideo[1]}/video`;
 };
 const takeCompilator = async (
   professor: string,
@@ -19,7 +19,7 @@ const takeCompilator = async (
   idCurs: string
 ) => {
   const curs = await fetch(
-    `${urlBackend}curs/${professor}/${cursName}/${idCurs}/get/exercices/format`
+    `${urlBackend}courses/${professor}/${cursName}/${idCurs}/get/exercices/format`
   );
   return curs.json();
 };
@@ -32,7 +32,7 @@ export default async function View({ params }: any) {
   if (curs.format === "Video") {
     media = await takeVideoPath(curs.videoPath);
   } else if (curs.format === "Pdf") {
-    media = `${urlBackend}Curs/`;
+    media = `${urlBackend}courses/`;
     media += curs.documentFormatName;
     media = media.replace(".", "/");
     console.log("media: ", media);

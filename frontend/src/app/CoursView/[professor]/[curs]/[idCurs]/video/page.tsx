@@ -4,12 +4,12 @@ import { urlBackend } from "@/app/UserServer/ServerRequest";
 import { notFound } from "next/navigation";
 import PdfViewer from "../docsView/DocsView";
 const takeCoursVide = async (cursName: string, idCurs: string) => {
-  const curs = await fetch(`${urlBackend}curs/${cursName}/${idCurs}/videoCurs`);
+  const curs = await fetch(`${urlBackend}courses/${cursName}/${idCurs}/videoCurs`);
   return curs.json();
 };
 const takeVideoPath = async (video: string): Promise<string> => {
   const allVideo = video.split(".");
-  return `${urlBackend}curs/${allVideo[0]}/${allVideo[1]}/video`;
+  return `${urlBackend}courses/${allVideo[0]}/${allVideo[1]}/video`;
 };
 export default async function PreviewVideoProfessor({ params }: any) {
   // if (!(await HandleProfessorWorkout.getId())) {

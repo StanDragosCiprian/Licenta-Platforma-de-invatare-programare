@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ICursCard } from "../core/ICursCard";
+import { ICourseCard } from "../core/ICursCard";
 import { FC } from "react";
 
-export const CoursCard: FC<ICursCard> = ({
+export const CoursCard: FC<ICourseCard> = ({
   title,
   image,
   description,

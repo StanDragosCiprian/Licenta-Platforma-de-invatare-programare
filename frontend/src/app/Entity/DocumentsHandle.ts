@@ -11,7 +11,7 @@ export class DocumentHandle {
   }
   private async getProfessorName(): Promise<string> {
     const professor = await fetch(
-      `${urlBackend}curs/professorName`,
+      `${urlBackend}courses/professorName`,
       getFromServerCookie(getCookie("id"))
     );
     return await professor.text();
@@ -22,7 +22,7 @@ export class DocumentHandle {
     title: string
   ): Promise<string> {
     const res = await fetch(
-      `${urlBackend}curs/${professorName}/${this.cursName}/${title}/add/document/Docs`,
+      `${urlBackend}courses/${professorName}/${this.cursName}/${title}/add/document/Docs`,
       sendFiles(filePath)
     );
     return await res.text();

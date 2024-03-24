@@ -18,7 +18,7 @@ const getCours = async (cursName: string) => {
 };
 async function verifyProfessorCours(coursName: string): Promise<boolean> {
   const response = await fetch(
-    `${urlBackend}curs/professorVerifyCours/${coursName}`,
+    `${urlBackend}courses/professorVerifyCours/${coursName}`,
     getFromServerCookie(cookies().get("id")?.value)
   );
   const data = await response.json();
@@ -26,7 +26,7 @@ async function verifyProfessorCours(coursName: string): Promise<boolean> {
 }
 const verifyPage = async (id: string, cursName: string) => {
   const response = await fetch(
-    `${urlBackend}curs/${id}/${cursName}/vefiy/cours`
+    `${urlBackend}courses/${id}/${cursName}/vefiy/cours`
   );
   return response;
 };
@@ -35,9 +35,9 @@ const verifyIfStudentHaveCours = async (
   coursName: string
 ) => {
   console.log(cookies().get("id")?.value);
-  console.log(`${urlBackend}curs/${professor}/${coursName}/isJoin/cours`);
+  console.log(`${urlBackend}courses/${professor}/${coursName}/isJoin/cours`);
   const f = await fetch(
-    `${urlBackend}curs/${professor}/${coursName}/isJoin/cours`,
+    `${urlBackend}courses/${professor}/${coursName}/isJoin/cours`,
     getFromServerCookie(cookies().get("id")?.value)
   );
   return await f.json();

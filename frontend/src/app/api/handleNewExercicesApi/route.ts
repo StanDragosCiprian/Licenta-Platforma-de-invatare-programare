@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify(bodyCours),
       };
-      const res = await fetch(`${urlBackend}curs/${urlName}/new/exercices`, option);
+      const res = await fetch(`${urlBackend}courses/${urlName}/new/exercices`, option);
       const r=await res.json();
       console.log('r: ', r);
       return new NextResponse(JSON.stringify({text:r}));

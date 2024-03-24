@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IStudent } from 'src/Schemas/Entity/IStudent';
 import { StudentDto } from 'src/Schemas/DTO/student.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -31,6 +31,12 @@ export class StudentService implements OnModuleInit {
       _id: id,
     });
     return student;
+  }
+  async getStudentByEmail(email: string): Promise<Types.ObjectId> {
+    const student = await this.studentModel.findOne({
+      email: email,
+    });
+    return student._id;
   }
   async makeJwt(student: any) {
     if (student !== null) {

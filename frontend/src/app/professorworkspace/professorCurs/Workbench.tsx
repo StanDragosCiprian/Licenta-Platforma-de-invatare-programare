@@ -1,19 +1,12 @@
 "use client";
-import { ICursCard } from "@/app/core/ICursCard";
-import { FC, SetStateAction, useState } from "react";
+import { ICoursesAllCard } from "@/app/core/ICursCard";
+import { FC, useState } from "react";
 import ProfessorWorkbenchComponents from "./ProfessorWorkbenchComponents";
-import AddStudentToCourse from "./AddStudentToCourse";
 
-const Workbench: FC<{ professorCours: ICursCard[] }> = ({ professorCours }) => {
-    const[courseCrud,setCourseCrud]=useState<number>(0);
-    const handleModel = () => {
-        switch(courseCrud){
-            case 0:
-            return undefined
-            case 1:
-                return <AddStudentToCourse />
-        }
-    }
+const Workbench: FC<{ professorCours: ICoursesAllCard[] }> = ({ professorCours }) => {
+  const [courseName, setCourseName] = useState<string>("");
+  const [dialog, setDialog] = useState<JSX.Element | undefined>(undefined);
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -22,11 +15,17 @@ const Workbench: FC<{ professorCours: ICursCard[] }> = ({ professorCours }) => {
             <th scope="col" className="px-6 py-3">
               Course Name
             </th>
+              <th scope="col" className="px-6 py-3">
+              Vizibility
+            </th>
             <th scope="col" className="px-6 py-3">
               Add professor
             </th>
             <th scope="col" className="px-6 py-3">
               Add students
+            </th>
+          <th scope="col" className="px-6 py-3">
+            Videos Update
             </th>
             <th scope="col" className="px-6 py-3">
               Update
@@ -37,13 +36,18 @@ const Workbench: FC<{ professorCours: ICursCard[] }> = ({ professorCours }) => {
           </tr>
         </thead>
         <tbody>
-          {professorCours.map((curs: ICursCard, index: number) => (
-            <ProfessorWorkbenchComponents CourseName={curs.title} key={index} setCourseCrud={setCourseCrud} />
+          {professorCours.map((courses: ICoursesAllCard, index: number) => (
+            <ProfessorWorkbenchComponents
+              courseName={courses.title}
+              key={index}
+              setCourseName={setCourseName}
+              setDialog={setDialog}
+              vizibility={courses.vizibility}
+            />
           ))}
         </tbody>
       </table>
-      {handleModel()
-      }
+      {dialog}
     </div>
   );
 };
