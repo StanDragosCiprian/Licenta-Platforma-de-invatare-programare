@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Req,
   Res,
   UseGuards,
   UseInterceptors,
@@ -36,6 +37,18 @@ export class CursController {
   ): Promise<string> {
     const newCurs = await this.cursService.createNewCourse(createCursDto, id);
     return newCurs;
+  }
+  @Post('/rename/file')
+  @UseGuards(ProfessorGuard)
+  async renameFile(@Body() body: { email: string; newValue: string }) {
+    const getProfessorNameByEmail = await this.cursService.getProfessorByEmail(
+      body.email,
+    );
+    await this.cursService.renameFile(
+      getProfessorNameByEmail.username.replace(' ', '_'),
+      body.newValue.replace(' ', '_'),
+      getProfessorNameByEmail.coursesId,
+    );
   }
   @Post('/update')
   @UseGuards(ProfessorGuard)
@@ -158,8 +171,8 @@ export class CursController {
     return 0;
   }
   @Get('/cursPresentation')
-  async cursPresentation() {
-    const curses: ICurs[] = await this.cursService.getCoursComponent();
+  async cursPresentation(@Cookies('id') id: string) {
+    const curses: ICurs[] = await this.cursService.getCoursComponent(id);
 
     const courses = await Promise.all(
       curses.map(async (curs: ICurs) => {
@@ -245,6 +258,14 @@ export class CursController {
     );
     return video;
   }
+  @Post('/coursesProfessor/:courseName/Update/compile')
+  async coursesProfessorUpdateCompile(
+    @Cookies('id') id: string,
+    @Param('courseName') courseName: string,
+    @Body() body: ICompilators & { oldTitle: string },
+  ) {
+    await this.cursService.updateCompilatorFromCourse(body, id, courseName);
+  }
   @Get('/coursesProfessor/all')
   async coursesProfessor567all(@Cookies('id') id: string) {
     const curses: ICurs[] = await this.cursService.fetchProfessorCourses(id);
@@ -276,7 +297,7 @@ export class CursController {
     @Param('nameCours') nameCours: string,
   ): Promise<boolean> {
     if (id !== 'undefined') {
-      const cours = await this.cursService.fetchProfessorVisibleCourses(id);
+      const cours = await this.cursService.fetchProfessorCourses(id);
       return cours !== null
         ? cours.some((c: ICurs) => c.name == nameCours)
         : false;
@@ -298,7 +319,19 @@ export class CursController {
     @Param('coursName') coursName: string,
     @Cookies('id') id: string,
   ) {
-    return await this.cursService.isStudentInCours(professorId, coursName, id);
+    console.log(professorId);
+    console.log(coursName);
+    console.log(id);
+
+    let user = await this.cursService.isStudentInCours(
+      professorId,
+      coursName,
+      id,
+    );
+    if (user === false) {
+      user = await this.cursService.verifyProfessor(professorId, coursName, id);
+    }
+    return user;
   }
   @Post('/:professorId/:coursName/join/cours')
   // @UseGuards(StudentGuard)
@@ -356,12 +389,25 @@ export class CursController {
     }),
   )
   async addVideoForVideoCurs(
+    @Req() req: Request,
     @Cookies('id') id: string,
     @Body('filename') filename: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Param('professorName') professorName: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Param('coursName') coursName: string,
   ) {
-    return `${professorName}/${coursName}/${filename}`;
+    const { dest }: any = req.body;
+    const finalDest =
+      dest
+        .replace(
+          'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\',
+          '',
+        )
+        .replace(/\\/g, '/') +
+      '/' +
+      filename;
+    return finalDest;
   }
   @Post('/:coursName/add/video/textInput')
   @UseGuards(ProfessorGuard)

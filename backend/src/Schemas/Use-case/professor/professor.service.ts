@@ -23,10 +23,24 @@ export class ProfessorService implements OnModuleInit {
     professor: string,
     coursName: string,
   ) {
-    const cours = await this.getProfessorByEmail(professor);
+    const cours = await this.getCoursesFromProfessorByEmail(professor);
     console.log(cours);
     console.log(coursName);
     console.log(this.decriptJwt(coursId));
+  }
+  async deleteProfessor(email: string) {
+    await this.professorModel.findOneAndDelete({
+      email: email,
+    });
+  }
+  async deleteStudent(email: string) {
+    await this.studentService.deleteStudent(email);
+  }
+  async getAllStudent() {
+    return await this.studentService.getAllStudents();
+  }
+  async getAllProfessors(): Promise<IProfessor[]> {
+    return await this.professorModel.find();
   }
   async getAllProfessorsCursId(): Promise<Set<Types.ObjectId>> {
     const professors: IProfessor[] = await this.professorModel.find();
@@ -59,11 +73,16 @@ export class ProfessorService implements OnModuleInit {
     });
     return professor.email;
   }
-  async getProfessorByEmail(email: string) {
+  async getCoursesFromProfessorByEmail(email: string) {
     const professor = await this.professorModel.findOne({
       email: email,
     });
     return professor.coursesId;
+  }
+  async getProfessorByEmail(email: string): Promise<IProfessor> {
+    return await this.professorModel.findOne({
+      email: email,
+    });
   }
   async getProfessorName(jwtId: string): Promise<string> {
     const decriptJwt = await this.decriptJwt(jwtId);
@@ -103,6 +122,7 @@ export class ProfessorService implements OnModuleInit {
     return decodedToken.sub;
   }
   async updateUsername(email: string, newName: string) {
+    console.log('email: ', email);
     const username = await this.professorModel.findOneAndUpdate(
       { email: email }, // filter
       { username: newName }, // update

@@ -67,6 +67,12 @@ export class StudentService implements OnModuleInit {
       return true;
     }
   }
+  async deleteStudent(email: string) {
+    await this.studentModel.findOneAndDelete({ email: email });
+  }
+  async getAllStudents() {
+    return await this.studentModel.find();
+  }
   async updateEmail(email: string, newName: string) {
     const username = await this.studentModel.findOneAndUpdate(
       { email: email }, // filter

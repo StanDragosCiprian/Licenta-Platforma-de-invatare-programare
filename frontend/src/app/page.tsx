@@ -2,9 +2,14 @@ import { CoursCard } from "./CoursCard/CoursCard";
 import { ICourseCard } from "./core/ICursCard";
 import { urlBackend } from "./UserServer/ServerRequest";
 import Link from "next/link";
-
+import { cookies } from "next/headers";
 async function getData() {
-  const courses = await fetch(`${urlBackend}courses/cursPresentation`,{ next: { revalidate: 5 } });
+  const courses = await fetch(`${urlBackend}courses/cursPresentation`,{ next: { revalidate: 5 },
+  credentials: "include" as RequestCredentials,
+  headers: {
+    Cookie: `id=${cookies().get("id")?.value}`,
+  },
+});
   const cours: any[] = await courses.json();
   return Object.values(cours);
 }

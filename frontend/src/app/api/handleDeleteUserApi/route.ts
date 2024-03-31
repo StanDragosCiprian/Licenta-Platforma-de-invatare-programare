@@ -1,12 +1,11 @@
 import { urlBackend } from "@/app/UserServer/ServerRequest";
 import { NextRequest, NextResponse } from "next/server";
-
 export async function POST(req: NextRequest) {
-  const bodyCours = await req.json();
-  console.log("bodyCours: ", bodyCours);
+  const body = await req.json();
+  const { role } = body;
   const cookie = req.cookies.get("id");
-  const { courseName } = bodyCours;
-  delete bodyCours.courseName;
+  delete body.role;
+  console.log("body: ", body);
   const option = {
     method: "POST",
     credentials: "include" as RequestCredentials,
@@ -14,11 +13,13 @@ export async function POST(req: NextRequest) {
       "Content-Type": "application/json",
       Cookie: `id=${cookie?.value}`,
     },
-    body: JSON.stringify(bodyCours),
+    body: JSON.stringify(body),
   };
-  await fetch(
-    `${urlBackend}courses/coursesProfessor/${courseName}/Update/compile`,
-    option
-  );
-  return new NextResponse(JSON.stringify({ text: 5 }));
+  if (role === "student") {
+    await fetch(`${urlBackend}admin/delete/student`, option);
+  } else if (role === "professor") {
+    await fetch(`${urlBackend}admin/delete/professor`, option);
+  }
+
+  return new NextResponse(JSON.stringify({ videos: 5 }));
 }

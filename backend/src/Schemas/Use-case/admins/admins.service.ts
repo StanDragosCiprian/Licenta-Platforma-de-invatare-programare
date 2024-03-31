@@ -26,6 +26,27 @@ export class AdminsService {
     });
     return user;
   }
+  async switchProfessorCourses(email1: string, email2: string) {
+    const professor1 = await this.professorService.getProfessorByEmail(email1);
+    const professor2 = await this.professorService.getProfessorByEmail(email2);
+    for (const c of professor1.coursesId) {
+      professor2.coursesId.push(c);
+    }
+    await professor2.save();
+    await this.professorService.deleteProfessor(email1);
+  }
+  async deleteStudents(email: string) {
+    await this.professorService.deleteStudent(email);
+  }
+  async getAllStudents() {
+    return await this.professorService.getAllStudent();
+  }
+  async deleteProfessor(email: string) {
+    return await this.professorService.deleteProfessor(email);
+  }
+  async getAllProfessors() {
+    return await this.professorService.getAllProfessors();
+  }
   async getAdmin(id: string): Promise<IAdmin> {
     const admin = await this.adminModel.findOne({
       _id: id,

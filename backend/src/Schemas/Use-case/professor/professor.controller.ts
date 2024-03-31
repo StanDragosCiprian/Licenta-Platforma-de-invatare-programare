@@ -38,11 +38,11 @@ export class ProfessorController {
   @UseGuards(ProfessorGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
     console.log('id: ', id);
-    const student = await this.professorService.getProfessor(
+    const professor = await this.professorService.getProfessor(
       await this.professorService.decriptJwt(id),
     );
-    console.log('student: ', student.email);
-    if (student.email === body.email) {
+    console.log('student: ', professor.email);
+    if (professor.email === body.email) {
       return await this.professorService.updateUsername(
         body.email,
         body.newValue,

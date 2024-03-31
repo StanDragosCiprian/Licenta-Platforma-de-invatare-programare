@@ -2,6 +2,8 @@
 import { sendToServerCookies } from "@/app/UserServer/ServerRequest";
 import React, { FC } from "react";
 import { useRouter } from "next/navigation";
+import { getCookie } from "cookies-next";
+
 interface JoinCoursProps {
   professor: string;
   coursName: string;
@@ -10,7 +12,8 @@ interface JoinCoursProps {
 export const JoinCours: FC<JoinCoursProps> = ({ professor, coursName }) => {
     const router = useRouter();
   const handleCours = async () => {
-    console.log({ professor: professor, coursName: coursName });
+    console.log(getCookie('id'));
+if(getCookie('id')!==undefined){
     const option = {
       professor: `${professor}`,
       coursName: `${coursName}`,
@@ -19,7 +22,9 @@ export const JoinCours: FC<JoinCoursProps> = ({ professor, coursName }) => {
       "/api/handleJoinCoursApi",
       sendToServerCookies(option, undefined)
     );
-
+    }else{
+      router.push("/account/log");
+    }
     router.refresh();
   };
   return (

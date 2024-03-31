@@ -55,7 +55,7 @@ export const ExercicesComponens: FC<{
   };
   const [items, setItems] = useState([]);
   const hndleExel = new ExelHandle();
-  const finalUpdate=()=>{
+  const finalUpdate = () => {
     let s = "";
     combineParams.forEach((e: string) => {
       s += "," + e;
@@ -80,14 +80,14 @@ export const ExercicesComponens: FC<{
     });
     const problemToSed = { ...exercices };
     problemToSed.problemParameter = s.substring(1);
-    
+
     const pathArray = pathname.split("/");
     const urlName = pathArray[2];
     problemToSed.urlName = urlName;
     problemToSed.problemOutputs = output;
     problemToSed.problemInputs = input;
     return problemToSed;
-  }
+  };
   const send = async () => {
     const id = getCookie("id")?.toString();
     console.log("problemToSed: ", finalUpdate());
@@ -100,9 +100,13 @@ export const ExercicesComponens: FC<{
   const sendUpdate = async () => {
     const id = getCookie("id")?.toString();
     console.log("problemToSed: ", finalUpdate());
+    const exerciesUpdate: any = finalUpdate();
+    delete exerciesUpdate.urlName;
+    exerciesUpdate["courseName"] = courseName;
+    exerciesUpdate["oldTitle"] = exercicesName;
     const api = await fetch(
       "/api/handleUpdateCourseApi/handleUpdateExercicesApi",
-      sendToServerCookies(finalUpdate(), id)
+      sendToServerCookies(exerciesUpdate, id)
     );
     console.log("api: ", await api.json());
   };

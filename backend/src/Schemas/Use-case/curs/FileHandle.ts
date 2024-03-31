@@ -28,10 +28,14 @@ export class FileHandle implements IFileHandle {
     return (req: Request, file, cb) => {
       const coursName = req.params.coursName;
       const professorName = req.params.professorName;
-      const dest = `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName}\\${coursName}`;
+      const dest = `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName.replace(
+        ' ',
+        '_',
+      )}\\${coursName}`;
       if (!existsSync(dest)) {
         mkdirSync(dest, { recursive: true });
       }
+      req.body.dest = dest; // Add the destination path to the request object
       cb(null, dest);
     };
   }

@@ -26,7 +26,44 @@ export class AdminsController {
     private readonly adminService: AdminsService,
     private jwtService: JwtService,
   ) {}
+  @Get('/all/students')
+  @UseGuards(AdminGuard)
+  async getAllStudents() {
+    const students = await this.adminService.getAllStudents();
+    return students.map((student) => {
+      return { username: student.username, email: student.email };
+    });
+  }
+  @Post('/switch/professor/courses')
+  @UseGuards(AdminGuard)
+  async switchProfessorCourses(
+    @Body() professor: { email1: string; email2: string },
+  ) {
+    await this.adminService.switchProfessorCourses(
+      professor.email1,
+      professor.email2,
+    );
+  }
 
+  @Post('/delete/professor')
+  @UseGuards(AdminGuard)
+  async deleteProfessor(@Body() professor: { email: string }) {
+    return await this.adminService.deleteProfessor(professor.email);
+  }
+  @Post('/delete/student')
+  @UseGuards(AdminGuard)
+  async deleteStudent(@Body() student: { email: string }) {
+    return await this.adminService.deleteStudents(student.email);
+  }
+  @Get('/all/professors')
+  @UseGuards(AdminGuard)
+  async getAllProfessor() {
+    console.log('test');
+    const allProfessors = await this.adminService.getAllProfessors();
+    return allProfessors.map((professor) => {
+      return { username: professor.username, email: professor.email };
+    });
+  }
   @Post('/log')
   async logAdmin(@Body() log: LogDto): Promise<{ access_token: string }> {
     const logAdmin = await this.adminService.logUser(log.email, log.password);
