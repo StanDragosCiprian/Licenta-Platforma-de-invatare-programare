@@ -6,6 +6,9 @@ import { StudentModule } from './Schemas/Use-case/student/student.module';
 import { ProfessorModule } from './Schemas/Use-case/professor/professor.module';
 import { ContentModule } from './Schemas/Use-case/curs/curs.module';
 import { AdminsModule } from './Schemas/Use-case/admins/admins.module';
+import { VideoModule } from './Schemas/Use-case/Video/video.module';
+import { DocsModule } from './Schemas/Use-case/Pdf/docs.module';
+import { CompilatorModule } from './Schemas/Use-case/Compilator/compilator.module';
 
 @Module({
   imports: [
@@ -16,6 +19,9 @@ import { AdminsModule } from './Schemas/Use-case/admins/admins.module';
     ProfessorModule,
     ContentModule,
     AdminsModule,
+    VideoModule,
+    DocsModule,
+    CompilatorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

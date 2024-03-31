@@ -10,12 +10,12 @@ export async function POST(req: NextRequest) {
     method: "GET",
     credentials: "include" as RequestCredentials,
     headers: {
-      "Content-Type": "application/json",
       cookie: `id=${cookies?.value}`,
     },
   };
+  console.log(`${urlBackend}courses/docs/coursesProfessor/${courseName}/pdf`);
   const response = await fetch(
-    `${urlBackend}courses/coursesProfessor/${courseName}/pdf`,
+    `${urlBackend}courses/docs/coursesProfessor/${courseName}/get/pdf`,
     option
   );
   const video=await response.json();

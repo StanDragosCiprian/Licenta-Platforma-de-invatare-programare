@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     },
   };
   const response = await fetch(
-    `${urlBackend}courses/coursesProfessor/${courseName}/video`,
+    `${urlBackend}courses/video/coursesProfessor/${courseName}/video`,
     option
   );
   const video=await response.json();

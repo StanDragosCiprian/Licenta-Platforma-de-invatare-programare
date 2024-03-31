@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify(bodyCours),
   };
   await fetch(
-    `${urlBackend}courses/coursesProfessor/${courseName}/Update/compile`,
+    `${urlBackend}courses/compilator/coursesProfessor/${courseName}/Update/compile`,
     option
   );
   return new NextResponse(JSON.stringify({ text: 5 }));

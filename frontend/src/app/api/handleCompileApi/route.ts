@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   } = getUrl(body);
 
   const f = await fetch(
-    `${urlBackend}courses/${professor}/${coursName}/${language}/${id}/execute/script`,
+    `${urlBackend}courses/compilator/${professor}/${coursName}/${language}/${id}/execute/script`,
     sendToServerCookies(body, undefined)
   );
   console.log();

@@ -11,7 +11,7 @@ const takeCoursVide = async (cursName: string, idCurs: string) => {
 };
 const takeVideoPath = async (video: string): Promise<string> => {
   const allVideo = video.split(".");
-  return `${urlBackend}courses/${allVideo[0]}/${allVideo[1]}/video`;
+  return `${urlBackend}courses/video/${allVideo[0]}/${allVideo[1]}/get/video`;
 };
 const takeCompilator = async (
   professor: string,
@@ -19,7 +19,7 @@ const takeCompilator = async (
   idCurs: string
 ) => {
   const curs = await fetch(
-    `${urlBackend}courses/${professor}/${cursName}/${idCurs}/get/exercices/format`
+    `${urlBackend}courses/compilator/${professor}/${cursName}/${idCurs}/get/exercices/format`
   );
   return curs.json();
 };
@@ -32,7 +32,7 @@ export default async function View({ params }: any) {
   if (curs.format === "Video") {
     media = await takeVideoPath(curs.videoPath);
   } else if (curs.format === "Pdf") {
-    media = `${urlBackend}courses/`;
+    media = `${urlBackend}courses/docs/`;
     media += curs.documentFormatName;
     media = media.replace(".", "/");
     console.log("media: ", media);

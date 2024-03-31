@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify(bodyCours),
   };
-  const res = await fetch(`${urlBackend}courses/${videoName}/add/video/textInput`, option);
+  const res = await fetch(`${urlBackend}courses/video/${videoName}/add/video/textInput`, option);
   const r = await res.text();
   return new NextResponse(JSON.stringify({"text":r}));
 }

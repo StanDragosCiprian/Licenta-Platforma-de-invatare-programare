@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify(courseVideo),
   };
   const response = await fetch(
-    `${urlBackend}courses/${coursName}/${videoName}/update/video`,
+    `${urlBackend}courses/video/${coursName}/${videoName}/update/video`,
     option
   );
   return new NextResponse(JSON.stringify({ videos: 5 }));

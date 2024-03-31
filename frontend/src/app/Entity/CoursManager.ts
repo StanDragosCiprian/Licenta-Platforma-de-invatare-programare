@@ -2,7 +2,7 @@ import { urlBackend } from "@/app/UserServer/ServerRequest";
 
 export class CoursManager {
   private async fetchCourseTitles(path: string): Promise<any> {
-    const name = await fetch(`${urlBackend}courses/${path}/videoCurs`, {
+    const name = await fetch(`${urlBackend}courses/video/${path}/videoCourse`, {
       next: { revalidate: 5 },
     });
     const text: any = await name.json();

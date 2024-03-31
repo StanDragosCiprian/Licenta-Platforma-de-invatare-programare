@@ -22,7 +22,7 @@ export class DocumentHandle {
     title: string
   ): Promise<string> {
     const res = await fetch(
-      `${urlBackend}courses/${professorName}/${this.cursName}/${title}/add/document/Docs`,
+      `${urlBackend}courses/docs/${professorName}/${this.cursName}/${title}/add/document/Docs`,
       sendFiles(filePath)
     );
     return await res.text();
@@ -43,7 +43,7 @@ export class DocumentHandle {
     newPdfTitle=newPdfTitle === ""?"_":newPdfTitle;
   
     const res = await fetch(
-      `${urlBackend}courses/${professorName}/${pdfTitle}/${this.cursName}/${newPdfTitle}/add/pdf/Update/pdfInput`,
+      `${urlBackend}courses/docs/${professorName}/${pdfTitle}/${this.cursName}/${newPdfTitle}/add/pdf/Update/pdfInput`,
       sendFiles(filePath)
     );
     return await res.text();

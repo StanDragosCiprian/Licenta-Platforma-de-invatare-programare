@@ -67,10 +67,13 @@ export class VideoManaging {
     professorName: string
   ): Promise<string> {
     const response = await fetch(
-      `${urlBackend}courses/${professorName}/${this.videoName}/add/video/videoInput`,
+      `${urlBackend}courses/video/${professorName}/${this.videoName}/add/video/videoInput`,
       sendFiles(filePath)
     );
-    return await response.text();
+    //http://localhost:3000/courses/video/mmm/few/add/video/videoInput',
+    console.log(`${urlBackend}courses/video/${professorName}/${this.videoName}/add/video/videoInput`);
+    const r=await response.text();
+    return r;
   }
   private async setUpdateVideo(
     filePath: string,
@@ -81,7 +84,7 @@ export class VideoManaging {
       `${urlBackend}courses/${professorName}/${this.videoName}/${videoName}/add/video/Update/videoInput`
     );
     const response = await fetch(
-      `${urlBackend}courses/${professorName}/${this.videoName}/${videoName}/add/video/Update/videoInput`,
+      `${urlBackend}courses/video/${professorName}/${this.videoName}/${videoName}/add/video/Update/videoInput`,
       sendFiles(filePath)
     );
     return await response.text();
@@ -109,6 +112,8 @@ export class VideoManaging {
     const professorName = await this.getProfessorName();
     const video = await this.setVideo(file, professorName);
     const response: string = await this.setVideoText(title, description, video);
-    return await response;
+    const r=await response;
+    console.log('response: ',r);
+    return r;
   }
 }

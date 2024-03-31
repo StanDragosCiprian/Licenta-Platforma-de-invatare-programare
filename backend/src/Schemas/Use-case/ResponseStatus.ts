@@ -4,7 +4,7 @@ import { IVideo } from '../Entity/IVideo';
 import { ICompilators } from '../Entity/ICompilators';
 
 export class ResponseStatus {
-  public videoKeys: (keyof IVideo)[] = ['videoPath', 'title', 'descrition'];
+  public videoKeys: (keyof IVideo)[] = ['videoPath', 'title', 'description'];
 
   public compilatorKeys: (keyof ICompilators)[] = [
     'title',

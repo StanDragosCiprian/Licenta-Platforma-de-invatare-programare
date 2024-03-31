@@ -1,6 +1,6 @@
 export interface IVideo {
   videoPath: string;
   title: string;
-  descrition: string;
+  description: string;
   format: string;
 }
