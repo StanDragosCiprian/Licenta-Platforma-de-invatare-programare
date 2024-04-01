@@ -16,7 +16,7 @@ import { Types } from 'mongoose';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { FILELOCATION } from 'EnviormentVariable';
 import { DocsService } from './docs.service';
-import { FileHandle, IFileHandle } from '../curs/FileHandle';
+import { FileHandle, IFileHandle } from '../HandleControllersEntity/FileHandle';
 import * as fs from 'fs';
 const fileHandle: IFileHandle = new FileHandle();
 

@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { VideoServices } from './video.service';
-import { FileHandle, IFileHandle } from '../curs/FileHandle';
+import { FileHandle, IFileHandle } from '../HandleControllersEntity/FileHandle';
 import { FILELOCATION } from 'EnviormentVariable';
 import { ProfessorGuard } from 'src/auth/professor.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
