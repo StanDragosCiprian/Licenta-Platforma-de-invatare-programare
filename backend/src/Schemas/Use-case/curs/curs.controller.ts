@@ -29,9 +29,19 @@ export class CursController {
       getProfessorNameByEmail.coursesId,
     );
   }
+  @Post('/:courseName/delete')
+  @UseGuards(ProfessorGuard)
+  async deleteCourse(
+    @Cookies('id') id,
+    @Param('courseName') courseName: string,
+  ): Promise<number> {
+    console.log(id);
+    await this.cursService.deleteCourse(courseName, id);
+    return 0;
+  }
   @Post('/update')
   @UseGuards(ProfessorGuard)
-  async updateCurs(
+  async updateCourse(
     @Cookies('id') id,
     @Body() createCursDto: any,
   ): Promise<number> {
@@ -128,14 +138,21 @@ export class CursController {
   @Get('/coursesProfessor/all')
   async coursesProfessor567all(@Cookies('id') id: string) {
     const curses: ICurs[] = await this.cursService.fetchProfessorCourses(id);
-
     const courses = curses.map((curs: ICurs) => {
-      return {
-        title: curs.name,
-        description: curs.description,
-        vizibility: curs.vizibility,
-        image: curs.imagePath,
-      };
+      if (
+        curs &&
+        'name' in curs &&
+        'description' in curs &&
+        'vizibility' in curs &&
+        'imagePath' in curs
+      ) {
+        return {
+          title: curs.name,
+          description: curs.description,
+          vizibility: curs.vizibility,
+          image: curs.imagePath,
+        };
+      }
     });
 
     const coursesObject = courses.reduce((obj, item, index) => {

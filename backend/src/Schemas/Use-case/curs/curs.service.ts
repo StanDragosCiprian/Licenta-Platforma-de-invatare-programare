@@ -43,7 +43,12 @@ export class CursService {
     courseHandle.setCourseModel(this.cursModel);
     await courseHandle.updateCourse(cursBody, professorCourses);
   }
-
+  async deleteCourse(courseName: string, id: string) {
+    const professorCourses: ICurs[] = await this.fetchProfessorCourses(id);
+    const courseHandle = new CoursesHandle();
+    courseHandle.setCourseModel(this.cursModel);
+    await courseHandle.deleteCourse(courseName, professorCourses);
+  }
   async getProfessorByEmail(email: string): Promise<IProfessor> {
     return await this.professorService.getProfessorByEmail(email);
   }

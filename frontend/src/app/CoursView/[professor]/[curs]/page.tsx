@@ -36,7 +36,6 @@ const verifyIfStudentHaveCours = async (
 ) => {
   console.log(cookies().get("id")?.value);
   if(cookies().get("id")?.value!==undefined){
-    console.log(`${urlBackend}courses/${professor}/${coursName}/isJoin/cours`);
   const f = await fetch(
     `${urlBackend}courses/${professor}/${coursName}/isJoin/cours`,
     getFromServerCookie(cookies().get("id")?.value)

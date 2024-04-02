@@ -34,8 +34,9 @@ export class JavaScriptCompier implements IJavaScriptCompier {
       stringKey += ',' + `${k}`;
     });
     const funtionForms = this.funtionName.split('.');
-    this.script = `
-   function ${funtionForms[1]}(${stringKey.substring(1)}){\n\n}`;
+    this.script = `function ${funtionForms[1]}(${stringKey.substring(
+      1,
+    )}){\n\n}`;
   }
 
   public async execute() {

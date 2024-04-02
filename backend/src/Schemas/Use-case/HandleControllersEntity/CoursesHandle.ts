@@ -14,6 +14,13 @@ export class CoursesHandle {
   async takeCours(cursId: Types.ObjectId): Promise<ICurs> {
     return await this.courseModel.findOne({ _id: cursId });
   }
+  async deleteCourse(courseName: string, professorCourses: ICurs[]) {
+    for (const c of professorCourses) {
+      if (c.name === courseName) {
+        // await this.courseModel.deleteOne({ _id: c._id });
+      }
+    }
+  }
   async changeDirectoryfromCourse(
     courseId: Types.ObjectId[],
     oldName: string,

@@ -1,6 +1,5 @@
-import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
+import { ChildProcessWithoutNullStreams, exec, spawn } from 'child_process';
 import { writeFileSync } from 'fs';
-
 export interface ICompilerHandler {
   executePythonCode: () => Promise<unknown>;
   executeCppCode: () => Promise<unknown>;
@@ -17,40 +16,31 @@ export class CompilerHandler {
     this.script = script;
   }
   public executeCppCode = async () => {
-    writeFileSync(
-      'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\CppFile.cpp',
-      this.script,
-    );
-    return new Promise((resolve) => {
-      const compile = spawn('g++', [
-        '-o',
-        'output',
-        'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\CppFile.cpp',
-      ]);
-      let result = '';
-      compile.on('close', (compileExitStatus) => {
-        if (compileExitStatus != 0) {
-          return;
+    return new Promise((resolve, reject) => {
+      const command = `echo '${this.script}' | g++ -x c++ - -mconsole -o myprogram ; ./myprogram`;
+      const ps = spawn('powershell.exe', ['-Command', command]);
+
+      let stdout = '';
+      let stderr = '';
+
+      ps.stdout.on('data', (data) => {
+        stdout += data;
+      });
+
+      ps.stderr.on('data', (data) => {
+        stderr += data;
+      });
+
+      ps.on('close', (code) => {
+        if (code !== 0) {
+          reject(`error: ${stderr}`);
+        } else {
+          resolve(`${stdout}`);
         }
-
-        const run = spawn('./output');
-        run.stdout.on('data', (data) => {
-          result += `${data}`;
-          resolve(result);
-        });
-
-        run.stderr.on('data', (data) => {
-          result += `${data}`;
-          resolve(result);
-        });
-
-        run.on('close', (runExitStatus) => {
-          if (runExitStatus != 0) {
-          }
-        });
       });
     });
   };
+
   public executeCCode = async () => {
     writeFileSync(
       'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\CFile.c',
@@ -143,30 +133,24 @@ export class CompilerHandler {
   };
 
   public executeJavaScriptCode = async () => {
-    writeFileSync(
-      'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\JavaScripFile.js',
-      this.script,
-    );
-    return new Promise((resolve) => {
-      let result = '';
-      const child = spawn('node', [
-        'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\JavaScripFile.js',
-      ]);
+    return new Promise((resolve, reject) => {
+      const command = `node -e "${this.script.replace(/\n/g, ' ')}"`;
 
-      child.stdout.on('data', (data) => {
-        result += data;
-        console.log(`stdout: ${data}`);
-        resolve(result);
-      });
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          reject(`exec error: ${error}`);
+          return;
+        }
 
-      child.stderr.on('data', (data) => {
-        result += data;
-        console.error(`stderr: ${data}`);
-        resolve(result);
-      });
+        if (stderr) {
+          console.error(`stderr: ${stderr}`);
+          reject(`stderr: ${stderr}`);
+          return;
+        }
 
-      child.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
+        console.log(`${stdout}`);
+        resolve(stdout);
       });
     });
   };

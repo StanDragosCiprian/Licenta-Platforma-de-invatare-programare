@@ -95,7 +95,7 @@ export class CompilatorController {
         input,
       );
       const e = exec.toString().replace('\r\n', '');
-      if (e !== output[index]) {
+      if (e.replace('\n', '') !== output[index]) {
         return {
           isAlgorithmOk: false,
           input: input,
