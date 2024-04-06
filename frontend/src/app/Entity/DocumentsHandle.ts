@@ -27,9 +27,9 @@ export class DocumentHandle {
     );
     return await res.text();
   }
-  public async sendText(file: string, title: string) {
-    const professorName = await this.getProfessorName();
-    const video = await this.setDocs(file, professorName,title);
+  public async sendText(file: string, title: string, professorName: string) {
+   
+    const video = await this.setDocs(file, professorName, title);
 
     return await video;
   }
@@ -38,18 +38,21 @@ export class DocumentHandle {
     professorName: string,
     pdfTitle: string,
     newPdfTitle: string
-
   ): Promise<string> {
-    newPdfTitle=newPdfTitle === ""?"_":newPdfTitle;
-  
+    newPdfTitle = newPdfTitle === "" ? "_" : newPdfTitle;
+
     const res = await fetch(
       `${urlBackend}courses/docs/${professorName}/${pdfTitle}/${this.cursName}/${newPdfTitle}/add/pdf/Update/pdfInput`,
       sendFiles(filePath)
     );
     return await res.text();
   }
-  public async sendTextUpdate(file: string, pdfTitle: string, newPdfTitle: string) {
+  public async sendTextUpdate(
+    file: string,
+    pdfTitle: string,
+    newPdfTitle: string
+  ) {
     const professorName = await this.getProfessorName();
- await this.setDocsUpdate(file, professorName,pdfTitle,newPdfTitle);
+    await this.setDocsUpdate(file, professorName, pdfTitle, newPdfTitle);
   }
 }

@@ -51,6 +51,7 @@ const PdfUpdate: FC<{
                               setDialog={setDialog}
                               isUpdated={true}
                               documentName={video.title}
+                              professorName=""
                             />
                           </div>
                         )

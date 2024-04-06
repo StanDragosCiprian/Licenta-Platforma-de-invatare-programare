@@ -39,7 +39,6 @@ export const CoursesName: FC<{
   const handleUserUpdate = async (user: any) => {
     course.name = nameCours.Name;
     const test = new Courses(user);
-    console.log(courseName);
     const t = await test.updateCourse(courseName);
     if (setDialog) {
       setDialog(undefined);

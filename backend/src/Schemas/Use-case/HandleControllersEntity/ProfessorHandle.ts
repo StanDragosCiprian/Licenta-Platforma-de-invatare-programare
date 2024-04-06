@@ -195,22 +195,31 @@ export class ProfessorHandle implements IProfessorHandle {
     email: string,
     coursName: string,
     coursModal: Model<any>,
-    callback: (course: ICurs) => void,
-  ) {
-    const courseHandle = new CoursesHandle();
-    courseHandle.setCourseModel(coursModal);
-    const decryptedEmail = await this.decryptText(email);
-    const professor =
-      await this.professorService.getCoursesFromProfessorByEmail(
-        decryptedEmail,
-      );
-    for (const c of professor) {
-      const cours = await courseHandle.takeCoursId(coursName);
-      if (c.toString() === cours.toString()) {
-        const cs = await courseHandle.takeCours(cours);
-        callback(cs);
+    callback: (course: ICurs) => any, // Change void to any
+  ): Promise<any> {
+    // Add Promise<any> as return type
+    return new Promise(async (resolve, reject) => {
+      try {
+        const courseHandle = new CoursesHandle();
+        courseHandle.setCourseModel(coursModal);
+        const decryptedEmail = await this.decryptText(email);
+        const professor =
+          await this.professorService.getCoursesFromProfessorByEmail(
+            decryptedEmail,
+          );
+        for (const c of professor) {
+          const cours = await courseHandle.takeCoursId(coursName);
+          if (c.toString() === cours.toString()) {
+            const cs = await courseHandle.takeCours(cours);
+            const result = callback(cs);
+            resolve(result);
+          }
+        }
+        resolve(null);
+      } catch (error) {
+        reject(error);
       }
-    }
+    });
   }
   async addStudentsToCourses(
     professorId: string,

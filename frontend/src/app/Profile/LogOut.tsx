@@ -7,7 +7,6 @@ export const LogOut = () => {
   const router = useRouter();
 
   const handleLogOut = () => {
-    console.log("test");
     deleteCookie("id");
     router.refresh();
     router.push("/");

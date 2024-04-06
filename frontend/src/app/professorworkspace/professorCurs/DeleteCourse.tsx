@@ -22,6 +22,7 @@ const DeleteCourse: FC<{
       }),
     };
     const req = await fetch("/api/handleDeleteCourse/", option);
+    await req.json();
     setDialog(undefined);
     // Declare the 'route' variable
     route.refresh(); // Use the 'route' variable

@@ -72,11 +72,9 @@ export class StudentController {
     }),
   )
   async upload(@UploadedFile() file, @Cookies('id') id: string) {
-    console.log(id);
     const student: IStudent = await this.getStudent(id);
     const test = this.extractFilenameParts(file.path);
     student.profileImage = `http://localhost:3000/student/profile/${test[0]}/${test[1]}`;
-    console.log('test: ', test);
     student.save();
     return { path: true };
   }
@@ -90,7 +88,6 @@ export class StudentController {
   @UseGuards(StudentGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
     const student = await this.getStudent(id);
-    console.log('student: ', student.email);
     if (student.email === body.email) {
       return await this.studentService.updateUsername(
         body.email,
@@ -103,7 +100,6 @@ export class StudentController {
   @UseGuards(StudentGuard)
   async updateEmail(@Body() body: any, @Cookies('id') id: string) {
     const student = await this.getStudent(id);
-    console.log('student: ', student.email);
     if (student.email === body.email) {
       return await this.studentService.updateEmail(body.email, body.newValue);
     }
@@ -113,7 +109,6 @@ export class StudentController {
   @UseGuards(StudentGuard)
   async updatePassword(@Body() body: any, @Cookies('id') id: string) {
     const student = await this.getStudent(id);
-    console.log('student: ', student.email);
     if (student.email === body.email) {
       return await this.studentService.updatePassword(
         body.email,

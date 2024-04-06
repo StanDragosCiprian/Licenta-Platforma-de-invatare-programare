@@ -9,9 +9,11 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   console.log("formData: ", formData.values);
   const cookie: any = await req.cookies.get("id");
-  // rest of your code
+  const role: any = await req.cookies.get("role");
+  console.log('role: ', role.value);
+  //rest of your code
   const response = await fetch(
-    "http://localhost:3000/student/upload/profile/image",
+    `http://localhost:3000/${role.value}/upload/profile/image`,
     {
       method: "POST",
       body: formData,

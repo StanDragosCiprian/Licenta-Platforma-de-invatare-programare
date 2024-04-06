@@ -42,8 +42,6 @@ export class JavaScriptCompier implements IJavaScriptCompier {
   public async execute() {
     const nameOfFunction = this.funtionName.split('.')[1];
     this.script += `\nconsole.log(${nameOfFunction}(${this.inputs}))`;
-    console.log('this.script: ', this.script);
-    console.log(this.script);
     const compilerHandler: ICompilerHandler = new CompilerHandler(
       this.programingLanguage,
       this.script,

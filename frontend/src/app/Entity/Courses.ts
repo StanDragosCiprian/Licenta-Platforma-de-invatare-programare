@@ -22,7 +22,6 @@ export class Courses implements ICourses {
     this.curs = courses.curs;
   }
   public async updateCourse(courseName: string) {
-    console.log('courseName: ', courseName);
     const id = getCookie("id")?.toString();
     const option = {
       method: "Post",

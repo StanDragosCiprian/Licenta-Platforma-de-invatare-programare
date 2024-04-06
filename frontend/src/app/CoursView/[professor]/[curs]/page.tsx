@@ -34,21 +34,19 @@ const verifyIfStudentHaveCours = async (
   professor: string,
   coursName: string
 ) => {
-  console.log(cookies().get("id")?.value);
-  if(cookies().get("id")?.value!==undefined){
-  const f = await fetch(
-    `${urlBackend}courses/${professor}/${coursName}/isJoin/cours`,
-    getFromServerCookie(cookies().get("id")?.value)
-  );
-  return await f.json();
+  if (cookies().get("id")?.value !== undefined) {
+    const f = await fetch(
+      `${urlBackend}courses/${professor}/${coursName}/isJoin/cours`,
+      getFromServerCookie(cookies().get("id")?.value)
+    );
+    return await f.json();
   }
   return false;
 };
 export default async function CursViewList({ params }: any) {
   const courseTitles = await takeCoursesName(params.curs);
   const course = await getCours(params.curs);
-  const isProfessorCours:boolean = await verifyProfessorCours(params.curs);
-  console.log('isProfessorCours: ', isProfessorCours);
+  const isProfessorCours: boolean = await verifyProfessorCours(params.curs);
   const isPage = await verifyPage(params.professor, course.title);
   const i = await isPage.json();
   const isStudentInCours = await verifyIfStudentHaveCours(
@@ -67,7 +65,7 @@ export default async function CursViewList({ params }: any) {
             <p className="mb-4 text-lg font-normal text-gray-500 dark:text-gray-400">
               {course.description}
             </p>
-            {!isStudentInCours || !isProfessorCours? (
+            {!isStudentInCours && !isProfessorCours ? (
               <JoinCours professor={params.professor} coursName={params.curs} />
             ) : undefined}
           </div>

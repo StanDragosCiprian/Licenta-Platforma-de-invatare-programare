@@ -6,9 +6,6 @@ import { TitileInput } from "./Components/TitleInput";
 import { UploadVideoInput } from "./Components/UploadVideoInput";
 import { VideoCard } from "./VideoCard";
 import { VideoManaging } from "../../../Entity/VideoManaging";
-import { IName } from "./VideoInterfaces";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
 export const UploadVideo: FC<{
   isUpdated: boolean;
   videoName: string;
@@ -20,13 +17,9 @@ export const UploadVideo: FC<{
     filePath: "",
     description: "",
   });
-  const rout: any = useRouter();
-  const pathname = usePathname();
-
   const handeNewVideo = async () => {
-    const pathArray = pathname.split("/");
-    const yourValue = pathArray[2];
-    const videoText: VideoManaging = new VideoManaging(yourValue);
+
+    const videoText: VideoManaging = new VideoManaging(coursName);
     const videoId = await videoText.sendText(
       videoDescription.title,
       videoDescription.description,

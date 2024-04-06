@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
     `${urlBackend}courses/compilator/${professor}/${coursName}/${language}/${id}/execute/script`,
     sendToServerCookies(body, undefined)
   );
-  console.log();
   return new NextResponse(JSON.stringify(await f.json()));
 }
 function getUrl(body: any): {

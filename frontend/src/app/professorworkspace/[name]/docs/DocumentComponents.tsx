@@ -11,23 +11,29 @@ export const DocumentComponents: FC<{
   documentName: string;
   coursName: string;
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
-}> = ({ isUpdated, documentName, coursName, setDialog }) => {
+  professorName: string;
+}> = ({ isUpdated, documentName, coursName, setDialog, professorName }) => {
   const [videoDescription, setVideoDescription] = useState({
     title: "",
     filePath: "",
     description: "",
   });
-  const rout: any = useRouter();
-  const pathname = usePathname();
   const handePdf = async () => {
-    const pathArray = pathname.split("/");
-    const yourValue = pathArray[2];
-    const docs = new DocumentHandle(yourValue);
-    docs.sendText(videoDescription.filePath, videoDescription.title);
+    const docs = new DocumentHandle(coursName);
+    console.log('docs: ', docs);
+    docs.sendText(
+      videoDescription.filePath,
+      videoDescription.title,
+      professorName
+    );
   };
   const handlePdfUpdate = async () => {
     const pdf = new DocumentHandle(coursName);
-    await pdf.sendTextUpdate(videoDescription.filePath,documentName, videoDescription.title);
+    await pdf.sendTextUpdate(
+      videoDescription.filePath,
+      documentName,
+      videoDescription.title
+    );
     if (setDialog) {
       setDialog(undefined);
     }

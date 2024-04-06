@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CursDto } from 'src/Schemas/DTO/curs.dto';
+import { CoursesDto } from 'src/Schemas/DTO/courses.dto';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
 import { ProfessorService } from '../professor/professor.service';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
@@ -44,10 +44,24 @@ export class CursService {
     await courseHandle.updateCourse(cursBody, professorCourses);
   }
   async deleteCourse(courseName: string, id: string) {
-    const professorCourses: ICurs[] = await this.fetchProfessorCourses(id);
+    const professorCourses: IProfessor =
+      await this.professorService.getProfessor(
+        await this.professorService.decriptJwt(id),
+      );
     const courseHandle = new CoursesHandle();
     courseHandle.setCourseModel(this.cursModel);
-    await courseHandle.deleteCourse(courseName, professorCourses);
+    let course: ICurs;
+    let index: number = 0;
+    for (const c of professorCourses.coursesId) {
+      const cours = await this.takeCours(c);
+      if (cours.name === courseName) {
+        professorCourses.coursesId.splice(index, 1);
+        course = cours;
+        await professorCourses.save();
+      }
+      index++;
+    }
+    await courseHandle.deleteCourse(courseName, course);
   }
   async getProfessorByEmail(email: string): Promise<IProfessor> {
     return await this.professorService.getProfessorByEmail(email);
@@ -156,15 +170,14 @@ export class CursService {
   }
 
   async isStudentInCours(email: string, coursName: string, id: string) {
-    let isStudent: boolean;
     this.professorHandle.setProfessorService(this.professorService);
-    await this.professorHandle.iterateToCourses(
+    const isStudent = await this.professorHandle.iterateToCourses(
       email,
       coursName,
       this.cursModel,
       async (c: ICurs) => {
         const i = await this.decomprimStudent(id);
-        isStudent = c.studentId.map((id) => id.toString()).includes(i);
+        return c.studentId.some((id) => id.toString() === i);
       },
     );
     return isStudent;
@@ -253,7 +266,7 @@ export class CursService {
     return courses;
   }
 
-  async createNewCourse(curse: CursDto, professorId: string) {
+  async createNewCourse(curse: CoursesDto, professorId: string) {
     const newCurs = await new this.cursModel(curse);
     newCurs.save();
     const decryptId = await this.professorService.decriptJwt(professorId);
@@ -272,7 +285,12 @@ export class CursService {
     const name = await this.cursModel.findOne({ name: cursName });
     return { title: name.name, description: name.description };
   }
-
+  async takeColaboratoryByCourseName(
+    cursName: string,
+  ): Promise<Types.ObjectId[]> {
+    const name = await this.cursModel.findOne({ name: cursName });
+    return name.colaborationId;
+  }
   async takeFullCurs(cursId: string): Promise<ICurs> {
     const name = await this.cursModel.findOne({ name: cursId });
     return name;
@@ -287,5 +305,8 @@ export class CursService {
     curs.curs[Number(drag)] = curs.curs[Number(drop)];
     curs.curs[Number(drop)] = temp;
     curs.save();
+  }
+  async decryptProfessor(id: string) {
+    return await this.professorService.decriptJwt(id);
   }
 }

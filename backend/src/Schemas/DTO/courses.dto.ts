@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { IVideo } from '../Entity/IVideo';
 import { IDocumentFormat } from '../Entity/IPdf';
 import { ICompilators } from '../Entity/ICompilators';
-export class CursDto {
+export class CoursesDto {
   _id: Types.ObjectId;
   name: string;
   vizibility: boolean;

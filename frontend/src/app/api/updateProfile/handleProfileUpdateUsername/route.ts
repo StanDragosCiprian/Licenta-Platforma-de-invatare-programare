@@ -9,8 +9,6 @@ export async function POST(req: NextRequest) {
   //{ role: 'student', content: 'Dragos', newValue: 'za' }
   let request: any;
   const { role, content, newValue, email, urlApi } = await req.json();
-
-  console.log("email: ", urlApi);
   const cookie: any = await req.cookies.get("id");
   const option = {
     method: "POST",

@@ -51,7 +51,6 @@ export class ExelHandle {
     });
     promise.then((d: any) => {
       const c = d.filter((value: any) => value !== undefined);
-      console.log('c: ', c);
       setItems(c);
     });
   };

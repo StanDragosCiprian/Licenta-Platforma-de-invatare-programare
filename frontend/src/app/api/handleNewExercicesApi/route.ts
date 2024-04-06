@@ -17,6 +17,5 @@ export async function POST(req: NextRequest) {
       };
       const res = await fetch(`${urlBackend}courses/compilator/${urlName}/new/exercices`, option);
       const r=await res.json();
-      console.log('r: ', r);
       return new NextResponse(JSON.stringify({text:r}));
 }

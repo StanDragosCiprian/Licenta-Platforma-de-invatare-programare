@@ -15,7 +15,6 @@ const getUser = async () => {
   if (id !== undefined) {
     const userManager = new UserRecever();
     const user = await userManager.getUser("");
-    console.log('user: ', user);
     return {
       username: user.username,
       email: user.email,
@@ -30,7 +29,7 @@ export default async function Profile() {
   const { username, email, password, role, profileImage }: any =
     await getUser();
   return (
-    <>
+    <div className="flex justify-center items-center h-full w-screen">
       <ProfileComponent
         username={username}
         email={email}
@@ -38,6 +37,6 @@ export default async function Profile() {
         role={role}
         profileImage={profileImage}
       />
-    </>
+    </div>
   );
 }

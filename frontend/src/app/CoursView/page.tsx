@@ -22,8 +22,6 @@ export default async function PreviewCours() {
     notFound();
   }
   const professorCours: any = await getData();
-  console.log("professorCours: ", professorCours);
-
   return (
     <>
       <div className="flex flex-wrap">

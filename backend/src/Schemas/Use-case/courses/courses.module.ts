@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CursSchema } from 'src/Schemas/Entity.schema/curs.schema';
-import { CursController } from './curs.controller';
-import { CursService } from './curs.service';
+import { CursController } from './courses.controller';
+import { CursService } from './courses.service';
 import { ProfessorModule } from '../professor/professor.module';
 import { JwtModule } from '@nestjs/jwt';
 

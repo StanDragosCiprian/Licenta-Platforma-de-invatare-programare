@@ -26,7 +26,6 @@ const EntityAddModal: FC<
       }),
     };
     const req = await fetch("/api/handleUpdateStudentsToCourse/", option);
-    console.log(await req.json());
   };
   return (
     <>

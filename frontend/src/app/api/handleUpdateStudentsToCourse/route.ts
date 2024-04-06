@@ -3,9 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const bodyCours = await req.json();
-  console.log("bodyCours: ", bodyCours);
   const cookie = req.cookies.get("id");
-  console.log("cookie: ", cookie);
 
   const option = {
     method: "POST",

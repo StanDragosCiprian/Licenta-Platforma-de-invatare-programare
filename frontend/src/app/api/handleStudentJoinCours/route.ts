@@ -12,6 +12,5 @@ export async function GET(req: NextRequest) {
     `${urlBackend}courses/${professor}/${coursName}/isJoin/cours'`,
     getFromServerCookie(cookie)
   );
-  console.log(f);
   return new NextResponse(JSON.stringify({ t: 5 }));
 }

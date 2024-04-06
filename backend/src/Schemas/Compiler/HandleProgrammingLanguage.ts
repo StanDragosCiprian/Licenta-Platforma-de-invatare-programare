@@ -78,10 +78,6 @@ export class HandleProgrammingLanguage implements IHandleProgrammingLanguage {
       | IJavaScriptCompier
       | IJavaCompier
       | ICCompier;
-    console.log(
-      'this.userData.programmingLanguage: ',
-      this.userData.programmingLanguage,
-    );
     switch (this.userData.programmingLanguage) {
       case 'python':
         programs = new PythonCompier();

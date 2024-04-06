@@ -16,12 +16,10 @@ export default async function PreviewVideoProfessor({ params }: any) {
   //   notFound();
   // }
   const curs = await takeCoursVide(params.curs, params.idCurs);
-  console.log(curs)
   let media: string = "";
   if (curs.format === "Video") {
     media = await takeVideoPath(curs.videoPath);
   } else if (curs.format === "Pdf") {
-    console.log(curs)
 }
 
   return (

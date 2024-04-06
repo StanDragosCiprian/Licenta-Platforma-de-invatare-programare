@@ -12,7 +12,6 @@ interface JoinCoursProps {
 export const JoinCours: FC<JoinCoursProps> = ({ professor, coursName }) => {
     const router = useRouter();
   const handleCours = async () => {
-    console.log(getCookie('id'));
 if(getCookie('id')!==undefined){
     const option = {
       professor: `${professor}`,

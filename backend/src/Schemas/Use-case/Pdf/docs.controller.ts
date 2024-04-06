@@ -68,13 +68,10 @@ export class DocsController {
     @Cookies('id') id: string,
     @Param('courseName') courseName: string,
   ) {
-    console.log(id);
-    console.log(courseName);
     const pdf: IDocumentFormat[] = await this.docsService.getProfessorMedia(
       id,
       courseName,
     );
-    console.log(pdf);
     return pdf;
   }
   @Post('/:professorName/:coursName/:title/add/document/Docs')

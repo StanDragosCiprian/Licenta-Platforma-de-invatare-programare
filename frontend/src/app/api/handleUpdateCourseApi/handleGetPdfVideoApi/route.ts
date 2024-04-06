@@ -3,9 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { courseName } = await req.json();
-  console.log("courseName: ", courseName);
   const cookies = req.cookies.get("id");
-  console.log("cookiebgs: ", cookies?.value);
   const option = {
     method: "GET",
     credentials: "include" as RequestCredentials,
@@ -13,13 +11,11 @@ export async function POST(req: NextRequest) {
       cookie: `id=${cookies?.value}`,
     },
   };
-  console.log(`${urlBackend}courses/docs/coursesProfessor/${courseName}/pdf`);
   const response = await fetch(
     `${urlBackend}courses/docs/coursesProfessor/${courseName}/get/pdf`,
     option
   );
   const video=await response.json();
-  console.log('video: ', video);
   if (!response.ok) {
     console.error("Error occurred:", response.status);
   }

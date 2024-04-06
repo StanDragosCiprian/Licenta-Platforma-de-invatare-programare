@@ -6,7 +6,9 @@ import PdfViewer from "../docsView/DocsView";
 import { redirect } from "next/navigation";
 import { CompilerViewComponents } from "../compilerView/CompilorViewComponents";
 const takeCoursVide = async (cursName: string, idCurs: string) => {
-  const curs = await fetch(`${urlBackend}courses/${cursName}/${idCurs}/get/cours`);
+  const curs = await fetch(
+    `${urlBackend}courses/${cursName}/${idCurs}/get/cours`
+  );
   return curs.json();
 };
 const takeVideoPath = async (video: string): Promise<string> => {
@@ -35,7 +37,6 @@ export default async function View({ params }: any) {
     media = `${urlBackend}courses/docs/`;
     media += curs.documentFormatName;
     media = media.replace(".", "/");
-    console.log("media: ", media);
   } else if (curs.format === "Compilator") {
     curs = await takeCompilator(params.professor, params.curs, params.idCurs);
   }

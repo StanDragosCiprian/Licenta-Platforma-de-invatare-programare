@@ -71,7 +71,6 @@ export class VideoManaging {
       sendFiles(filePath)
     );
     //http://localhost:3000/courses/video/mmm/few/add/video/videoInput',
-    console.log(`${urlBackend}courses/video/${professorName}/${this.videoName}/add/video/videoInput`);
     const r=await response.text();
     return r;
   }
@@ -80,9 +79,6 @@ export class VideoManaging {
     professorName: string,
     videoName: string
   ): Promise<string> {
-    console.log(
-      `${urlBackend}courses/${professorName}/${this.videoName}/${videoName}/add/video/Update/videoInput`
-    );
     const response = await fetch(
       `${urlBackend}courses/video/${professorName}/${this.videoName}/${videoName}/add/video/Update/videoInput`,
       sendFiles(filePath)
@@ -99,7 +95,6 @@ export class VideoManaging {
     let video = "";
     if (file !== "")
       video = await this.setUpdateVideo(file, professorName, coursName);
-    console.log(video);
     const response: string = await this.setVideoTextUpdate(
       title,
       description,
@@ -113,7 +108,6 @@ export class VideoManaging {
     const video = await this.setVideo(file, professorName);
     const response: string = await this.setVideoText(title, description, video);
     const r=await response;
-    console.log('response: ',r);
     return r;
   }
 }

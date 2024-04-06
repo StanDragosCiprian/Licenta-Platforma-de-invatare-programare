@@ -58,7 +58,6 @@ export class AdminsController {
   @Get('/all/professors')
   @UseGuards(AdminGuard)
   async getAllProfessor() {
-    console.log('test');
     const allProfessors = await this.adminService.getAllProfessors();
     return allProfessors.map((professor) => {
       return { username: professor.username, email: professor.email };

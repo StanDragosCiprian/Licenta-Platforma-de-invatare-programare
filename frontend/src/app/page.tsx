@@ -16,7 +16,6 @@ async function getData() {
 
 export default async function Page() {
   const courses: ICourseCard[] = await getData();
-  console.log('courses: ', courses);
  
   return (
     <>

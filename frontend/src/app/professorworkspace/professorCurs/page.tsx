@@ -21,7 +21,6 @@ export default async function ProfessorPreviewCours() {
     notFound();
   }
   const professorCours: ICoursesAllCard[] = await getData();
-  console.log('professorCours: ', professorCours);
   return (
     <>
      <Workbench professorCours={professorCours} />

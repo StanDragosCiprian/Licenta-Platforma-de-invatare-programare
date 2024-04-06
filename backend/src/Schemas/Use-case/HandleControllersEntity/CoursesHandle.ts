@@ -2,7 +2,9 @@ import { Model, Types } from 'mongoose';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
-
+import * as fs from 'fs';
+import { FILELOCATION } from 'EnviormentVariable';
+import * as path from 'path';
 export class CoursesHandle {
   private courseModel: Model<any>;
   public setCourseModel(courseModel: Model<any>): void {
@@ -14,10 +16,30 @@ export class CoursesHandle {
   async takeCours(cursId: Types.ObjectId): Promise<ICurs> {
     return await this.courseModel.findOne({ _id: cursId });
   }
-  async deleteCourse(courseName: string, professorCourses: ICurs[]) {
-    for (const c of professorCourses) {
-      if (c.name === courseName) {
-        // await this.courseModel.deleteOne({ _id: c._id });
+  async deleteCourse(courseName: string, c: ICurs) {
+    if (c.name === courseName) {
+      for (const cs of c.curs) {
+        if (cs.format === 'Video') {
+          const video = cs as IVideo;
+          const vid = video.videoPath.replace(/\//g, '\\');
+          const filePath = path.resolve(
+            `${FILELOCATION}\\backend\\src\\VideoTutorial\\${vid}`,
+          );
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          } else {
+            console.log(`File does not exist: ${filePath}`);
+          }
+        } else if (cs.format === 'Pdf') {
+          const pdf = cs as IDocumentFormat;
+          fs.unlinkSync(
+            `${FILELOCATION}\\backend\\src\\VideoTutorial\\${pdf.documentFormatName.replace(
+              '/',
+              '\\',
+            )}`,
+          );
+        }
+        await this.courseModel.deleteOne({ _id: c._id });
       }
     }
   }

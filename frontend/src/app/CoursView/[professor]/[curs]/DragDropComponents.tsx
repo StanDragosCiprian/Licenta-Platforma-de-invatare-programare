@@ -38,7 +38,6 @@ export const DragDropComponenst = ({
   const dragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
-  console.log(courses);
   return (
     <>
       {courses.map((title: string, index: number) => (

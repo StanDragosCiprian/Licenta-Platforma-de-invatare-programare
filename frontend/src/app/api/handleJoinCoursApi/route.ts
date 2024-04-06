@@ -8,7 +8,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const { professor, coursName } = await req.json();
   const cookie: any = await req.cookies.get("id");
-  console.log("cookie: ", cookie);
   const f = await fetch(
     `${urlBackend}courses/${professor}/${coursName}/join/cours`,
     sendToServerCookies({ id: cookie }, undefined)

@@ -6,10 +6,8 @@ export async function POST(req: NextRequest) {
   const updatedCourse = await req.json();
   const parsedBody = JSON.parse(updatedCourse.body);
   const cookies = await req.cookies.get("id");
-  console.log("cookies: ", cookies?.value);
   const { cursBody, oldCoursName } = parsedBody;
   cursBody.oldCoursName = oldCoursName;
-  console.log('cursBody: ', cursBody);
   const option = {
     method: "Post",
     credentials: "include" as RequestCredentials,

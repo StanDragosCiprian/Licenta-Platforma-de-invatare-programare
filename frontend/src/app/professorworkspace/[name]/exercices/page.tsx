@@ -1,12 +1,14 @@
 import { ExercicesComponens } from "./ExercicesComponents";
 
-export default function Exercices() {
+export default function Exercices({ params }: any) {
   return (
-    <ExercicesComponens
-      setDialog={undefined}
-      courseName={""}
-      isUpdated={false}
-      exercicesName={""}
-    />
+    <div className="flex justify-center items-center h-full w-screen overflow-auto">
+      <ExercicesComponens
+        setDialog={undefined}
+        courseName={params.name}
+        isUpdated={false}
+        exercicesName={""}
+      />
+    </div>
   );
 }

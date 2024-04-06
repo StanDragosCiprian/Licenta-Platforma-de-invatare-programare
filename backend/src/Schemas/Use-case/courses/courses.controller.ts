@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { CursDto } from 'src/Schemas/DTO/curs.dto';
-import { CursService } from './curs.service';
+import { CoursesDto } from 'src/Schemas/DTO/courses.dto';
+import { CursService } from './courses.service';
 import { Cookies } from 'src/Cookie/cookie';
 import { ProfessorGuard } from 'src/auth/professor.guard';
 import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { Types } from 'mongoose';
 @Controller('courses')
 export class CursController {
   constructor(private cursService: CursService) {}
@@ -12,7 +13,7 @@ export class CursController {
   @UseGuards(ProfessorGuard)
   async createCurs(
     @Cookies('id') id,
-    @Body() createCursDto: CursDto,
+    @Body() createCursDto: CoursesDto,
   ): Promise<string> {
     const newCurs = await this.cursService.createNewCourse(createCursDto, id);
     return newCurs;
@@ -35,7 +36,6 @@ export class CursController {
     @Cookies('id') id,
     @Param('courseName') courseName: string,
   ): Promise<number> {
-    console.log(id);
     await this.cursService.deleteCourse(courseName, id);
     return 0;
   }
@@ -45,7 +45,6 @@ export class CursController {
     @Cookies('id') id,
     @Body() createCursDto: any,
   ): Promise<number> {
-    console.log(id);
     await this.cursService.updateCourse(createCursDto, id);
     return 0;
   }
@@ -174,9 +173,19 @@ export class CursController {
   ): Promise<boolean> {
     if (id !== 'undefined') {
       const cours = await this.cursService.fetchProfessorCourses(id);
-      return cours !== null
-        ? cours.some((c: ICurs) => c.name == nameCours)
-        : false;
+      const profesessor =
+        cours !== null ? cours.some((c: ICurs) => c.name == nameCours) : false;
+      if (!profesessor) {
+        const colab =
+          await this.cursService.takeColaboratoryByCourseName(nameCours);
+        const colaboratory = colab.some(
+          async (c: Types.ObjectId) =>
+            c ==
+            new Types.ObjectId(await this.cursService.decryptProfessor(id)),
+        );
+        return colaboratory;
+      }
+      return profesessor;
     }
     return false;
   }
@@ -195,19 +204,12 @@ export class CursController {
     @Param('coursName') coursName: string,
     @Cookies('id') id: string,
   ) {
-    console.log(professorId);
-    console.log(coursName);
-    console.log(id);
-
-    let user = await this.cursService.isStudentInCours(
+    const user = await this.cursService.isStudentInCours(
       professorId,
       coursName,
       id,
     );
-    if (user === false) {
-      user = await this.cursService.verifyProfessor(professorId, coursName, id);
-    }
-    return user;
+    return user !== undefined ? user : false;
   }
   @Post('/:professorId/:coursName/join/cours')
   // @UseGuards(StudentGuard)

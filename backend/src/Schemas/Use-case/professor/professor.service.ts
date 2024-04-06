@@ -18,16 +18,6 @@ export class ProfessorService implements OnModuleInit {
     const newProfessor = await new this.professorModel(createProfessorDto);
     return newProfessor.save();
   }
-  async addStudentToCours(
-    coursId: string,
-    professor: string,
-    coursName: string,
-  ) {
-    const cours = await this.getCoursesFromProfessorByEmail(professor);
-    console.log(cours);
-    console.log(coursName);
-    console.log(this.decriptJwt(coursId));
-  }
   async deleteProfessor(email: string) {
     await this.professorModel.findOneAndDelete({
       email: email,
@@ -122,7 +112,6 @@ export class ProfessorService implements OnModuleInit {
     return decodedToken.sub;
   }
   async updateUsername(email: string, newName: string) {
-    console.log('email: ', email);
     const username = await this.professorModel.findOneAndUpdate(
       { email: email }, // filter
       { username: newName }, // update

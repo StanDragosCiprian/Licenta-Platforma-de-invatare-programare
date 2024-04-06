@@ -5,7 +5,6 @@ import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { FC } from "react";
 const PdfViewer:FC<{url:string}> = ({ url }) => {
-  console.log('url: ', url);
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
   return (
     <div className="h-screen w-screen">

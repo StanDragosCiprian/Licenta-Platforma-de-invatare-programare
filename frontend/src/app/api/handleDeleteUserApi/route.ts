@@ -5,7 +5,6 @@ export async function POST(req: NextRequest) {
   const { role } = body;
   const cookie = req.cookies.get("id");
   delete body.role;
-  console.log("body: ", body);
   const option = {
     method: "POST",
     credentials: "include" as RequestCredentials,

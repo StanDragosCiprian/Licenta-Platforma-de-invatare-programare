@@ -48,13 +48,11 @@ export class JavaCompier implements IJavaCompier {
       'public static void main(String[] args) {',
       `public static void main(String[] args) {\nSystem.out.println(${nameOfFunction}(${this.inputs}));`,
     );
-    console.log(this.script);
     const compilerHandler: ICompilerHandler = new CompilerHandler(
       this.programingLanguage,
       this.script,
     );
     const test = await compilerHandler.executeJavaCode();
-    console.log('test: ', test);
     return test;
   }
 }
