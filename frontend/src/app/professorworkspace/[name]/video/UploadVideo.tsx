@@ -6,17 +6,20 @@ import { TitileInput } from "./Components/TitleInput";
 import { UploadVideoInput } from "./Components/UploadVideoInput";
 import { VideoCard } from "./VideoCard";
 import { VideoManaging } from "../../../Entity/VideoManaging";
+import { useRouter } from "next/navigation";
 export const UploadVideo: FC<{
   isUpdated: boolean;
   videoName: string;
   coursName: string;
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
-}> = ({ isUpdated, videoName, coursName, setDialog }) => {
+  professorEmail:string;
+}> = ({ isUpdated, videoName, coursName, setDialog,professorEmail }) => {
   const [videoDescription, setVideoDescription] = useState({
     title: "",
     filePath: "",
     description: "",
   });
+  const rout = useRouter();
   const handeNewVideo = async () => {
 
     const videoText: VideoManaging = new VideoManaging(coursName);
@@ -25,7 +28,7 @@ export const UploadVideo: FC<{
       videoDescription.description,
       videoDescription.filePath
     );
-    // rout.push(`/professorworkspace/${yourValue}/${videoId}/video`);
+     rout.push(`/CoursView/${professorEmail}/${coursName}/${videoId}/view`);
   };
   const handleVideoUpdate = async () => {
     const videoText: VideoManaging = new VideoManaging(videoName);

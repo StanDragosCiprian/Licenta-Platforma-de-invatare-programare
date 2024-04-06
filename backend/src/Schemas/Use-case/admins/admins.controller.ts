@@ -19,6 +19,7 @@ import * as Excel from 'exceljs';
 import { Types } from 'mongoose';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IAdmin } from 'src/Schemas/Entity/IAdmin';
+import { diskStorage } from 'multer';
 
 @Controller('admin')
 export class AdminsController {
@@ -63,6 +64,80 @@ export class AdminsController {
       return { username: professor.username, email: professor.email };
     });
   }
+  private extractFilenameParts(imagePath: string): string[] {
+    const parts = imagePath.split(/\/|\\/);
+    const filename = parts.pop() || '';
+    const filenameParts = filename.split('.');
+    return filenameParts;
+  }
+  @Post('/upload/profile/image')
+  @UseGuards(AdminGuard)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination:
+          'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Professor',
+        filename: (req, file, cb) => {
+          cb(null, `${Date.now()}_${file.originalname}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/jpeg') {
+          cb(null, true);
+        } else {
+          cb(new Error('Invalid file type. Only JPEG is allowed.'), false);
+        }
+      },
+    }),
+  )
+  async upload(@UploadedFile() file, @Cookies('id') id: string) {
+    const professor: IAdmin | string = await this.getAdmin(id);
+    const test = this.extractFilenameParts(file.path);
+    if (typeof professor !== 'string') {
+      professor.profileImage = `http://localhost:3000/professor/profile/${test[0]}/${test[1]}`;
+      professor.save();
+    }
+    return { path: true };
+  }
+  @Post('/update/username')
+  @UseGuards(AdminGuard)
+  async updateUsername(@Body() body: any, @Cookies('id') id: string) {
+    const student = await this.getAdmin(id);
+    if (typeof student !== 'string') {
+      if (student.email === body.email) {
+        return await this.adminService.updateUsername(
+          body.email,
+          body.newValue,
+        );
+      }
+    }
+    return false;
+  }
+  @Post('/update/email')
+  @UseGuards(AdminGuard)
+  async updateEmail(@Body() body: any, @Cookies('id') id: string) {
+    const student = await this.getAdmin(id);
+    if (typeof student !== 'string') {
+      if (student.email === body.email) {
+        return await this.adminService.updateEmail(body.email, body.newValue);
+      }
+    }
+    return false;
+  }
+  @Post('/update/password')
+  @UseGuards(AdminGuard)
+  async updatePassword(@Body() body: any, @Cookies('id') id: string) {
+    const student = await this.getAdmin(id);
+    if (typeof student !== 'string') {
+      if (student.email === body.email) {
+        return await this.adminService.updatePassword(
+          body.email,
+          body.newValue,
+        );
+      }
+    }
+    return false;
+  }
   @Post('/log')
   async logAdmin(@Body() log: LogDto): Promise<{ access_token: string }> {
     const logAdmin = await this.adminService.logUser(log.email, log.password);
@@ -78,7 +153,7 @@ export class AdminsController {
   }
   @Get('/get')
   @UseGuards(AdminGuard)
-  async getProfessor(@Cookies('id') id: string): Promise<IAdmin | string> {
+  async getAdmin(@Cookies('id') id: string): Promise<IAdmin | string> {
     const decodedToken = await this.adminService.decriptJwt(id);
     const admin = this.adminService.getAdmin(decodedToken);
     if (admin === null) {

@@ -44,11 +44,13 @@ export default async function View({ params }: any) {
   return (
     <>
       {curs.format === "Video" ? (
-        <PreviewVideo
-          title={curs.title}
-          description={curs.description}
-          videoPath={media}
-        />
+        <div className="flex justify-center items-center h-screen w-screen">
+          <PreviewVideo
+            title={curs.title}
+            description={curs.description}
+            videoPath={media}
+          />
+        </div>
       ) : curs.format === "Pdf" ? (
         <PdfViewer url={media} />
       ) : (

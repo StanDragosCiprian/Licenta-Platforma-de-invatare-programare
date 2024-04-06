@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { StudentService } from '../student/student.service';
+import { ProfessorHandle } from '../HandleControllersEntity/ProfessorHandle';
 
 @Injectable()
 export class ProfessorService implements OnModuleInit {
@@ -22,6 +23,11 @@ export class ProfessorService implements OnModuleInit {
     await this.professorModel.findOneAndDelete({
       email: email,
     });
+  }
+  async encryptProfessor(text: string) {
+    const professorHandle = new ProfessorHandle();
+    professorHandle.setProfessorService(this);
+    return await professorHandle.encryptText(text);
   }
   async deleteStudent(email: string) {
     await this.studentService.deleteStudent(email);

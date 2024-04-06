@@ -6,12 +6,14 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 import { Button, FileInput } from "flowbite-react";
 import DropDownSearch from "./DropDownSearch";
 import ProblemsInput from "./ProblemsInput";
+import { useRouter } from "next/navigation";
 export const ExercicesComponens: FC<{
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
   courseName: string;
   isUpdated: boolean;
   exercicesName: string;
-}> = ({ setDialog, courseName, isUpdated, exercicesName }) => {
+  professorEmail:string;
+}> = ({ setDialog, courseName, isUpdated, exercicesName,professorEmail }) => {
   const [exemples, setExemples] = useState(["Input:\nOutput:"]);
   const [inputs, setInputs] = useState<string[] | null>([]);
   const [funtionInputs, setFuntionInputs] = useState<string[]>([]);
@@ -73,6 +75,7 @@ export const ExercicesComponens: FC<{
       funtionInputs[0] !== undefined ? funtionInputs[0] : "";
     return problemToSed;
   };
+  const rout = useRouter();
   const send = async () => {
     const id = getCookie("id")?.toString();
     console.log(finalUpdate());
@@ -80,6 +83,8 @@ export const ExercicesComponens: FC<{
       "/api/handleNewExercicesApi",
       sendToServerCookies(finalUpdate(), id)
     );
+    const{text}=await api.json();
+    rout.push(`/CoursView/${professorEmail}/${courseName}/${text}/view`);
   };
   const sendUpdate = async () => {
     const id = getCookie("id")?.toString();

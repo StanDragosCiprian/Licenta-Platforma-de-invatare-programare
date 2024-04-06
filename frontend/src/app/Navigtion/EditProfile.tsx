@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { UserRecever } from "../Entity/UserRecever";
 
-export const ProfessorAdder = async () => {
+const EditProfile = async () => {
   const userManager = new UserRecever();
   const admin: any = await userManager.getUser("");
   return (
     <>
       {admin?.role === "admin" ? (
         <li className="flex flex-row">
-            <Link href="/adminWorkspace/newProfessor" className="flex items-center">
+          <Link
+            href="/adminWorkspace/editEmail"
+            className="flex items-center"
+          >
             <svg
               className="w-6 h-6 text-gray-500 mr-4"
               aria-hidden="true"
@@ -24,12 +27,12 @@ export const ProfessorAdder = async () => {
                 d="M10 5.757v8.486M5.757 10h8.486M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
               />
             </svg>
-            <span className="side-bar-text">
-              Create course
-            </span>
-            </Link>
+            <span className="side-bar-text">Edit Profile</span>
+          </Link>
         </li>
       ) : null}
     </>
   );
 };
+
+export default EditProfile;

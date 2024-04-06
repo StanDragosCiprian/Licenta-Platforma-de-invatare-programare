@@ -41,15 +41,16 @@ export const DragDropComponenst = ({
   return (
     <>
       {courses.map((title: string, index: number) => (
-        <div
-          draggable
-          onDragStart={(e) => dragStart(e, index)}
-          onDrop={(e) => drop(e, index)}
-          onDragOver={dragOver}
-          key={index}
-          className="cursor-move select-none"
-        >
-          <SelectCourses title={title} index={index} nameCours={coursName} coursProfessor={coursProfessor}/>
+        <div key={index}>
+          <SelectCourses
+            title={title}
+            index={index}
+            nameCours={coursName}
+            coursProfessor={coursProfessor}
+            dragStart={dragStart}
+            drop={drop}
+            dragOver={dragOver}
+          />
         </div>
       ))}
     </>

@@ -25,9 +25,11 @@ export async function POST(req: NextRequest) {
   if (role === "student") {
     request = await fetch(`${urlBackend}student${urlApi}`, option);
   } else if (role === "professor") {
-    if(urlApi === '/update/username') 
-    await fetch(`${urlBackend}courses/rename/file`, option);
+    if (urlApi === "/update/username")
+      await fetch(`${urlBackend}courses/rename/file`, option);
     request = await fetch(`${urlBackend}professor${urlApi}`, option);
+  } else if (role === "admin") {
+    request = await fetch(`${urlBackend}admin${urlApi}`, option);
   }
 
   return new NextResponse(JSON.stringify({ isUpdate: await request.json() }));

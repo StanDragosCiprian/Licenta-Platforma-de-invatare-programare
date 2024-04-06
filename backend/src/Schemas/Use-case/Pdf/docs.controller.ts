@@ -95,8 +95,9 @@ export class DocsController {
       title: `${title}`,
       documentFormatName: `${professorName}/${coursName}/${filename}`,
     };
-    await this.docsService.addMediaFormat(cursId, pdfDto);
-    return `${professorName}/${coursName}/${filename}`;
+    const t=await this.docsService.addMediaFormat(cursId, pdfDto);
+    console.log('t: ', t);
+    return t;
   }
   @Get('/:professorName/:cursName/:pdfName/pdf')
   async getPdf(

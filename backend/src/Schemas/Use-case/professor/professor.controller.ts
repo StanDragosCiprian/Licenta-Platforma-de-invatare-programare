@@ -122,6 +122,12 @@ export class ProfessorController {
     const filenameParts = filename.split('.');
     return filenameParts;
   }
+  @Get('/get/email/encripted')
+  @UseGuards(ProfessorGuard)
+  async getEmailEncrypted(@Cookies('id') id: string) {
+    const professor = await this.getProfessor(id);
+    return this.professorService.encryptProfessor(professor.email);
+  }
   @Get('/get')
   @UseInterceptors(ErrorInterceptor)
   async getProfessor(@Cookies('id') id: string): Promise<any> {

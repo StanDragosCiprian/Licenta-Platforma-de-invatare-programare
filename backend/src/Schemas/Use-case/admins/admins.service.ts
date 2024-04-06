@@ -19,6 +19,45 @@ export class AdminsService {
       console.log(change);
     });
   }
+  async updatePassword(email: string, newName: string) {
+    const username = await this.adminModel.findOneAndUpdate(
+      { email: email }, // filter
+      { password: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  async updateEmail(email: string, newName: string) {
+    const username = await this.adminModel.findOneAndUpdate(
+      { email: email }, // filter
+      { email: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  async updateUsername(email: string, newName: string) {
+    const username = await this.adminModel.findOneAndUpdate(
+      { email: email }, // filter
+      { username: newName }, // update
+      { new: true }, // options
+    );
+
+    if (username === null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   async logUser(email: string, password: string): Promise<IAdmin> {
     const user = await this.adminModel.findOne({
       email: email,
