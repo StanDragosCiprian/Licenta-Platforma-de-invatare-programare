@@ -10,7 +10,7 @@ export const TextareaInput: FC<IVideoDescription> = ({
         id="message"
         rows={7}
         className="mt-2 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-        placeholder="Write your thoughts here..."
+        placeholder="Write your description here..."
         onChange={(e) => {
           setVideoDescription((prevState: any) => ({
             ...prevState,

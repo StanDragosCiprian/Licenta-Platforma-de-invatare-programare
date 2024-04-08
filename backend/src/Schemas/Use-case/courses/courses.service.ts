@@ -238,19 +238,19 @@ export class CursService {
         }
       } else {
         try {
-          if (
-            c.studentId.filter(
-              async (student) =>
-                student.toString() ===
-                new Types.ObjectId(
-                  await this.professorService.decriptJwt(id),
-                ).toString(),
-            ) ||
-            c.colaborationId.includes(
-              new Types.ObjectId(await this.professorService.decriptJwt(id)),
-            ) ||
-            c?.vizibility === true
-          ) {
+          const isStudent = c.studentId.some(
+            async (student: any) =>
+              student.toString() ===
+              (await this.professorService.decriptJwt(id)),
+          );
+          const isColaborator = c.colaborationId.some(
+            async (student: any) =>
+              student.toString() ===
+              (await this.professorService.decriptJwt(id)),
+          );
+          if (isStudent || isColaborator) {
+            courses.push(c);
+          } else if (c?.vizibility === true) {
             courses.push(c);
           } else {
             const professor = await this.professorService.getProfessorById(id);

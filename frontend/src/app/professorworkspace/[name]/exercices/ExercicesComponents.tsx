@@ -7,17 +7,21 @@ import { Button, FileInput } from "flowbite-react";
 import DropDownSearch from "./DropDownSearch";
 import ProblemsInput from "./ProblemsInput";
 import { useRouter } from "next/navigation";
+import { Alert } from "flowbite-react";
+import { HiInformationCircle } from "react-icons/hi";
 export const ExercicesComponens: FC<{
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
   courseName: string;
   isUpdated: boolean;
   exercicesName: string;
-  professorEmail:string;
-}> = ({ setDialog, courseName, isUpdated, exercicesName,professorEmail }) => {
+  professorEmail: string;
+}> = ({ setDialog, courseName, isUpdated, exercicesName, professorEmail }) => {
   const [exemples, setExemples] = useState(["Input:\nOutput:"]);
   const [inputs, setInputs] = useState<string[] | null>([]);
   const [funtionInputs, setFuntionInputs] = useState<string[]>([]);
   const [combineParams, setCombineParams] = useState<string[]>([]);
+  const [isAllRight, setIsAllRight] = useState(true);
+  const [warning, setWarning] = useState("");
   const [exercices, setExercices] = useState<ICompilator>({
     title: "",
     problemRequire: "",
@@ -77,16 +81,30 @@ export const ExercicesComponens: FC<{
   };
   const rout = useRouter();
   const send = async () => {
-    const id = getCookie("id")?.toString();
-    console.log(finalUpdate());
-    const api = await fetch(
-      "/api/handleNewExercicesApi",
-      sendToServerCookies(finalUpdate(), id)
-    );
-    const{text}=await api.json();
-    rout.push(`/CoursView/${professorEmail}/${courseName}/${text}/view`);
+    const final = finalUpdate();
+    if (
+      final.title &&
+      final.problemRequire &&
+      final.problemInputs.length &&
+      final.problemOutputs.length &&
+      final.funtionProblemModel
+    ) {
+      const id = getCookie("id")?.toString();
+      const api = await fetch(
+        "/api/handleNewExercicesApi",
+        sendToServerCookies(final, id)
+      );
+      const { text } = await api.json();
+      rout.push(`/CoursView/${professorEmail}/${courseName}/${text}/view`);
+    } else {
+      setIsAllRight(false);
+      setWarning("Please fill all the fields correctly.");
+    }
   };
   const sendUpdate = async () => {
+    if (!isAllRight) {
+      return;
+    }
     const id = getCookie("id")?.toString();
     const exerciesUpdate: any = finalUpdate();
     delete exerciesUpdate.urlName;
@@ -117,7 +135,6 @@ export const ExercicesComponens: FC<{
     });
   };
   return (
-    
     <div className="flex overflow-auto flex-col w-full max-w-2xl  p-8 bg-white border rounded-lg shadow sm:p-12 md:p-16">
       <h5 className="text-2xl font-medium text-gray-900">Upload video</h5>
       <ProblemsInput
@@ -173,11 +190,27 @@ export const ExercicesComponens: FC<{
           className="mt-4"
           onChange={(e: any) => {
             const file = e.target.files[0];
-            hndleExel.readExcel(file, setItems);
+            if (
+              file.type ===
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+              file.type === "application/vnd.ms-excel"
+            ) {
+              setIsAllRight(true);
+              hndleExel.readExcel(file, setItems);
+            } else {
+              setIsAllRight(false);
+              setWarning("Please upload a file with excel format.");
+            }
           }}
         />
       </div>
-
+      {!isAllRight ? (
+        <Alert color="failure" icon={HiInformationCircle} className="mt-4">
+          <span className="font-medium">{warning}</span>
+        </Alert>
+      ) : (
+        <></>
+      )}
       <Button
         color="blue"
         onClick={!isUpdated ? send : sendUpdate}

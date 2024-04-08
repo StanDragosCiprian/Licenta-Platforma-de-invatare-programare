@@ -6,6 +6,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { AdminsService } from './admins.service';
 import { LogDto } from 'src/Schemas/DTO/log.dto';
@@ -20,7 +21,8 @@ import { Types } from 'mongoose';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IAdmin } from 'src/Schemas/Entity/IAdmin';
 import { diskStorage } from 'multer';
-
+import { EmailAlreadyExistsException } from '../ErrorInterceptor';
+import { Response } from 'express';
 @Controller('admin')
 export class AdminsController {
   constructor(
@@ -99,6 +101,14 @@ export class AdminsController {
     }
     return { path: true };
   }
+  @Post('/is/email/exist')
+  async isEmailExist(@Body() body: { email: string }, @Res() res: Response) {
+    const isEmail = await this.adminService.isEmailExist(body.email);
+    if (isEmail) {
+      throw new EmailAlreadyExistsException();
+    }
+    return res.status(200).send(true);
+  }
   @Post('/update/username')
   @UseGuards(AdminGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
@@ -175,16 +185,6 @@ export class AdminsController {
   @Post('/exel')
   @UseInterceptors(
     FileInterceptor('file', {
-      // storage: diskStorage({
-      //   destination: './uploads',
-      //   filename: (req, file, cb) => {
-      //     const name = file.originalname.split('.')[0];
-      //     const fileExtension = file.originalname.split('.')[1];
-      //     const newFileName =
-      //       name.split(' ').join('_') + '_' + Date.now() + '.' + fileExtension;
-      //     cb(null, newFileName);
-      //   },
-      // }),
       fileFilter: (req, file, cb) => {
         const allowedMimeTypes = [
           'application/vnd.ms-excel', // for older Excel files (xls)
@@ -204,9 +204,21 @@ export class AdminsController {
     const buffer = file.buffer;
     await workbook.xlsx.load(buffer);
     const worksheet = workbook.getWorksheet(1);
+    const promises = [];
 
-    worksheet.eachRow((row, rowNumber) => {
-      if (rowNumber !== 1) {
+    worksheet.eachRow(async (row, rowNumber) => {
+      if (rowNumber === 1) {
+        if (
+          row.getCell(1).value !== 'username' ||
+          row.getCell(2).value !== 'email' ||
+          row.getCell(3).value !== 'password'
+        ) {
+          promises.push(
+            Promise.resolve("Your excel didn't respect the format"),
+          );
+          return;
+        }
+      } else {
         const professor: ProfessorDto = {
           _id: new Types.ObjectId(),
           username: 'professor',
@@ -221,14 +233,27 @@ export class AdminsController {
 
         professor.username = row.getCell(1).value.toString();
 
-        const email =
+        const emailValue =
           typeof row.getCell(2).value === 'string'
             ? row.getCell(2).value
             : JSON.parse(JSON.stringify(row.getCell(2).value));
+        const email =
+          emailValue.text === undefined ? emailValue : emailValue.text;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+          promises.push(Promise.resolve('Invalid email format'));
+          return;
+        }
+
         professor.password = row.getCell(3).value.toString();
-        professor.email = email.text === undefined ? email : email.text;
-        this.adminService.addNewProfessor(professor);
+        professor.email = email;
+        const promise = this.adminService.addNewProfessor(professor);
+        promises.push(promise);
       }
     });
+
+    const results = await Promise.all(promises);
+    return results.filter((result) => result !== true);
   }
 }

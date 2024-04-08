@@ -9,6 +9,7 @@ import {
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { JoinCours } from "./JoinCours";
+import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
 const courses = new CoursManager();
 const takeCoursesName = async (cursName: string) => {
   return await courses.getCourseTitles(cursName);
@@ -61,8 +62,10 @@ export default async function CursViewList({ params }: any) {
       <div className="flex justify-center items-center h-screen mx-[26vw]">
         <div className="relative flex bg-clip-border rounded-xl bg-white text-gray-700 shadow-md w-[600px] h-[500px]">
           <div className="flex flex-col flex-1 p-4">
-            <h2 className="text-4xl font-extrabold mb-4">{course.title}</h2>
-            <p className="mb-4 text-lg font-normal text-gray-500 dark:text-gray-400">
+            <h2 className="text-4xl font-extrabold mb-4">
+              {HandleGenericFuntion.replaceUnderlineWithSpace(course.title)}
+            </h2>
+            <p className="mb-4 text-lg font-normal text-gray-500 break-all dark:text-gray-400 ">
               {course.description}
             </p>
             {!isStudentInCours && !isProfessorCours ? (
@@ -75,6 +78,7 @@ export default async function CursViewList({ params }: any) {
                 courseTitles={courseTitles}
                 coursName={params.curs}
                 coursProfessor={params.professor}
+                isProfessorCours={isProfessorCours}
               />
               {isProfessorCours ? (
                 <Link

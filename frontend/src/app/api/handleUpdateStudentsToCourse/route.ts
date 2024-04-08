@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const bodyCours = await req.json();
   const cookie = req.cookies.get("id");
-
+  const {grad}=bodyCours;
+  delete bodyCours.grad;
   const option = {
     method: "POST",
     credentials: "include" as RequestCredentials,
@@ -14,18 +15,21 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify(bodyCours),
   };
-  if (bodyCours.grad === "Professor") {
+  console.log(bodyCours);
+  if (grad === "Professor") {
     const res = await fetch(
       `${urlBackend}courses/add/professors/to/couses`,
       option
     );
     const r = await res.text();
-  } else if (bodyCours.grad === "Student") {
+    console.log('r: ', r);
+  } else if (grad === "Student") {
     const res = await fetch(
       `${urlBackend}courses/add/students/to/couses`,
       option
     );
     const r = await res.text();
+    console.log('r: ', r);
   }
   return new NextResponse(JSON.stringify({ text: 5 }));
 }

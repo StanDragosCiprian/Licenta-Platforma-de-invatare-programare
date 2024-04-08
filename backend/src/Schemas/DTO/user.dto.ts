@@ -1,6 +1,5 @@
 import { IsIn, IsEmail, IsString, MaxLength } from 'class-validator';
 import { Types } from 'mongoose';
-
 export class UserDto {
   _id: Types.ObjectId;
   @IsString()

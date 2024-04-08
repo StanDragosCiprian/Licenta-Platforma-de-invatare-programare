@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
-import { ErrorInterceptor } from '../ErrorInterceptor';
 import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
 import { LogDto } from 'src/Schemas/DTO/log.dto';
 import { Cookies } from 'src/Cookie/cookie';
@@ -19,13 +18,13 @@ import { ProfessorGuard } from 'src/auth/professor.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
-
+import { EmailAlreadyExistsException } from '../ErrorInterceptor';
+import { Response } from 'express';
 @Controller('professor')
 export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
   private resp = new ResponseStatus();
   @Post('/new')
-  @UseInterceptors(ErrorInterceptor)
   async createStudent(
     @Body() createProfessorDto: ProfessorDto,
   ): Promise<{ access_token: string }> {
@@ -34,12 +33,18 @@ export class ProfessorController {
     return this.professorService.makeJwt(newProfessor._id);
   }
   @Post('/log')
-  @UseInterceptors(ErrorInterceptor)
   async logProfessor(@Body() log: LogDto): Promise<{ access_token: string }> {
     const user = await this.professorService.logUser(log.email, log.password);
     return this.professorService.makeJwt(user);
   }
-
+  @Post('/is/email/exist')
+  async isEmailExist(@Body() body: { email: string }, @Res() res: Response) {
+    const isEmail = await this.professorService.isEmailExist(body.email);
+    if (isEmail) {
+      throw new EmailAlreadyExistsException();
+    }
+    return res.status(200).send(true);
+  }
   @Post('/update/username')
   @UseGuards(ProfessorGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
@@ -129,7 +134,6 @@ export class ProfessorController {
     return this.professorService.encryptProfessor(professor.email);
   }
   @Get('/get')
-  @UseInterceptors(ErrorInterceptor)
   async getProfessor(@Cookies('id') id: string): Promise<any> {
     const decodedToken = await this.professorService.decriptJwt(id);
     const professor = await this.professorService.getProfessor(decodedToken);

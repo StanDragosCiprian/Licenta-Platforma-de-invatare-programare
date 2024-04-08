@@ -24,7 +24,7 @@ export const CoursCard: FC<ICourseCard> = ({
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">
             {title}
           </h5>
-          <p className="mb-3 font-normal text-gray-700">{description}</p>
+          <p className="mb-3 font-normal text-gray-700 overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[25ch]">{description}</p>
         </div>
       </div>
     </>

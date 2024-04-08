@@ -1,16 +1,15 @@
 "use client";
 
 import { ExelHandle } from "@/app/Entity/ExelHandle";
+import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
 import { Button, FileInput, Label, Modal } from "flowbite-react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 
-const EntityAddModal: FC<
- {
-    courseName: string;
-    EntityName: string;
-    setDialog: Dispatch<SetStateAction<JSX.Element | undefined>>;
-  }
-> = ({  courseName, EntityName, setDialog }) => {
+const EntityAddModal: FC<{
+  courseName: string;
+  EntityName: string;
+  setDialog: Dispatch<SetStateAction<JSX.Element | undefined>>;
+}> = ({ courseName, EntityName, setDialog }) => {
   const [studentEmail, setStudentEmail] = useState([[]]);
   const handleAddStudent = async () => {
     const option = {
@@ -26,27 +25,26 @@ const EntityAddModal: FC<
       }),
     };
     const req = await fetch("/api/handleUpdateStudentsToCourse/", option);
+    setDialog(undefined);
   };
   return (
     <>
-      <Modal
-        show={true}
-        onClose={() => setDialog(undefined)}
-      >
-        <Modal.Header>Add {EntityName} to {courseName}</Modal.Header>
+      <Modal show={true} onClose={() => setDialog(undefined)}>
+        <Modal.Header>
+          Add {EntityName} to{" "}
+          {HandleGenericFuntion.replaceUnderlineWithSpace(courseName)}
+        </Modal.Header>
         <Modal.Body>
           <div className="space-y-6">
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              With less than a month to go before the European Union enacts new
-              consumer privacy laws for its citizens, companies around the world
-              are updating their terms of service agreements to comply.
+              Welcome to the {EntityName} addition feature. Here, you can add
+              multiple {EntityName} to the system in a quick and efficient manner.
             </p>
             <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              The European Union’s General Data Protection Regulation (G.D.P.R.)
-              goes into effect on May 25 and is meant to ensure a common set of
-              data rights in the European Union. It requires organizations to
-              notify users as soon as possible of high-risk data breaches that
-              could personally affect them.
+              To do this, simply upload an Excel file. The first column of this
+              file should be filled with the email addresses of the {EntityName} you
+              wish to add. Once uploaded, the system will automatically process
+              the file and add the {EntityName} to the database.
             </p>
           </div>
           <div>
@@ -65,10 +63,7 @@ const EntityAddModal: FC<
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={handleAddStudent}>Add</Button>
-          <Button
-            color="gray"
-            onClick={() => setDialog(undefined)}
-          >
+          <Button color="gray" onClick={() => setDialog(undefined)}>
             Decline
           </Button>
         </Modal.Footer>

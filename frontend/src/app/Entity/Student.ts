@@ -17,12 +17,15 @@ export class Student implements IStudent {
     this.password = user.password;
   }
   public NewStudent = async (): Promise<any> => {
-    const response = await fetch(`${urlBackend}student/new`, sendToServer(this));
+    const response = await fetch('/api/handleStudent/NewStudent', sendToServer(this));
     const data = await response.json();
-    return data.access_token;
+    return data.studentData;
   };
   public logStudent = async (): Promise<any> => {
-    const response = await fetch(`${urlBackend}student/log`, sendToServer(this));
+    const response = await fetch(
+      `${urlBackend}student/log`,
+      sendToServer(this)
+    );
     const data = await response.json();
     return data.access_token;
   };

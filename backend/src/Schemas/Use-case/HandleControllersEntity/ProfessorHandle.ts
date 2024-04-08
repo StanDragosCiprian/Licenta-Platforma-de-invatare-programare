@@ -171,7 +171,7 @@ export class ProfessorHandle implements IProfessorHandle {
     courseModel: Model<any>,
     callback: (course: ICurs) => void,
   ) {
-    const professorCourses: ICurs[] = await this.fetchProfessorVisibleCourses(
+    const professorCourses: ICurs[] = await this.fetchProfessorCourses(
       professorId,
       courseModel,
     );
@@ -184,7 +184,7 @@ export class ProfessorHandle implements IProfessorHandle {
             courseModel,
           );
           c.colaborationId.push(
-            (await this.professorService.getProfessorById(s))._id,
+            (await this.professorService.getProfessorByEmail(s))._id,
           );
           callback(c);
         }
@@ -228,11 +228,13 @@ export class ProfessorHandle implements IProfessorHandle {
     courseModel: Model<any>,
     callback: (course: ICurs) => void,
   ) {
-    const professorCourses: ICurs[] = await this.fetchProfessorVisibleCourses(
+    const professorCourses: ICurs[] = await this.fetchProfessorCourses(
       professorId,
       courseModel,
     );
-    const s = Promise.all(await this.professorService.getStudentsId(student));
+    const s = await Promise.all(
+      await this.professorService.getStudentsId(student),
+    );
     for (const stud of await s) {
       for (const courses of professorCourses) {
         if (courseName === courses.name) {

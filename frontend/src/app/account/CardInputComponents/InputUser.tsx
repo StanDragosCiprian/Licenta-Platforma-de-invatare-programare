@@ -21,6 +21,10 @@ export const InputUser: FC<IRegister> = ({ reg, setUser, user }) => {
     }else{
       setColor("red");
     }
+    console.log(key);
+    if(key==='Name'){
+     console.log(newValue)
+    }
   };
   return (
     <div className="w-72">

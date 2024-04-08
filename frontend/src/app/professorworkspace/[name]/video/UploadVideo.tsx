@@ -7,30 +7,38 @@ import { UploadVideoInput } from "./Components/UploadVideoInput";
 import { VideoCard } from "./VideoCard";
 import { VideoManaging } from "../../../Entity/VideoManaging";
 import { useRouter } from "next/navigation";
+import { Alert } from "flowbite-react";
+import { HiInformationCircle } from "react-icons/hi";
 export const UploadVideo: FC<{
   isUpdated: boolean;
   videoName: string;
   coursName: string;
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
-  professorEmail:string;
-}> = ({ isUpdated, videoName, coursName, setDialog,professorEmail }) => {
+  professorEmail: string;
+}> = ({ isUpdated, videoName, coursName, setDialog, professorEmail }) => {
   const [videoDescription, setVideoDescription] = useState({
     title: "",
     filePath: "",
     description: "",
   });
   const rout = useRouter();
+  const [isAllRight, setIsAllRight] = useState(true);
+  const [warning, setWarning] = useState("");
   const handeNewVideo = async () => {
-
-    const videoText: VideoManaging = new VideoManaging(coursName);
-    const videoId = await videoText.sendText(
-      videoDescription.title,
-      videoDescription.description,
-      videoDescription.filePath
-    );
-     rout.push(`/CoursView/${professorEmail}/${coursName}/${videoId}/view`);
+    const { title, description, filePath } = videoDescription;
+    if (title !== "" && description !== "" && filePath !== "") {
+      const videoText: VideoManaging = new VideoManaging(coursName);
+      const videoId = await videoText.sendText(title, description, filePath);
+      rout.push(`/CoursView/${professorEmail}/${coursName}/${videoId}/view`);
+    } else {
+      setIsAllRight(false);
+      setWarning("Please fill all the fields correctly.");
+    }
   };
   const handleVideoUpdate = async () => {
+    if(!isAllRight){
+      return;
+    }
     const videoText: VideoManaging = new VideoManaging(videoName);
     await videoText.sendTextUpdate(
       videoDescription.title,
@@ -47,7 +55,18 @@ export const UploadVideo: FC<{
       <VideoCard>
         <TitileInput setVideoDescription={setVideoDescription} />
         <TextareaInput setVideoDescription={setVideoDescription} />
-        <UploadVideoInput setVideoDescription={setVideoDescription} />
+        <UploadVideoInput
+          setVideoDescription={setVideoDescription}
+          setWarning={setWarning}
+          setIsAllRight={setIsAllRight}
+        />
+        {!isAllRight ? (
+          <Alert color="failure" icon={HiInformationCircle} className="mt-4">
+            <span className="font-medium">{warning}</span>
+          </Alert>
+        ) : (
+          <></>
+        )}
         <button
           type="submit"
           className=" my-4 relative h-12 w-full min-w-[200px] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -56,30 +75,6 @@ export const UploadVideo: FC<{
           Submit
         </button>
       </VideoCard>
-      {/* <div className="flex justify-center items-center h-screen w-screen">
-        <div className="w-full max-w-2xl p-8 bg-white border rounded-lg shadow sm:p-12 md:p-16">
-          <h5 className="text-2xl font-medium text-gray-900">Upload video</h5>
-          <div className="w-full grid grid-rows-3 grid-flow-col">
-            <div className="col-span-2">
-              <TitileInput />
-            </div>
-            <div className="row-span-2 col-span-2">
-              <TextareaInput />
-            </div>
-            <div className="row-span-3 ml-4">
-              <UploadVideoInput />
-            </div>
-            <div className="row-start-4 col-start-1 col-end-5 ">
-              <button
-                type="submit"
-                className=" my-4 relative h-12 w-full min-w-[200px] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </>
   );
 };

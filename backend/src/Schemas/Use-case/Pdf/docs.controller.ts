@@ -95,7 +95,7 @@ export class DocsController {
       title: `${title}`,
       documentFormatName: `${professorName}/${coursName}/${filename}`,
     };
-    const t=await this.docsService.addMediaFormat(cursId, pdfDto);
+    const t = await this.docsService.addMediaFormat(cursId, pdfDto);
     console.log('t: ', t);
     return t;
   }

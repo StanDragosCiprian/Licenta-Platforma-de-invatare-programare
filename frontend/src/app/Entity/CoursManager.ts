@@ -3,7 +3,7 @@ import { urlBackend } from "@/app/UserServer/ServerRequest";
 export class CoursManager {
   private async fetchCourseTitles(path: string): Promise<any> {
     const name = await fetch(`${urlBackend}courses/video/${path}/videoCourse`, {
-      next: { revalidate: 5 },
+      next: { revalidate: 0 },
     });
     const text: any = await name.json();
     const titles = text.map((obj: { title: string }) => obj.title);
@@ -15,7 +15,7 @@ export class CoursManager {
   }
   private async fetchCourse(path: string): Promise<any> {
     const name = await fetch(`${urlBackend}courses/${path}/fullCours`, {
-      next: { revalidate: 5 },
+      next: { revalidate: 0 },
     });
     const text: any = await name.json();
 
@@ -25,7 +25,7 @@ export class CoursManager {
     const name = await fetch(
       `${urlBackend}courses/${cursName}/${drag}/${drop}/dragAndDrop`,
       {
-        next: { revalidate: 5 },
+        next: { revalidate: 0 },
       }
     );
   }

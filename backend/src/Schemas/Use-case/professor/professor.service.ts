@@ -6,19 +6,32 @@ import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { StudentService } from '../student/student.service';
 import { ProfessorHandle } from '../HandleControllersEntity/ProfessorHandle';
-
 @Injectable()
 export class ProfessorService implements OnModuleInit {
+  async isEmailExist(email: string): Promise<boolean> {
+    const professor = await this.professorModel.findOne({ email });
+    return !!professor;
+  }
   @Inject(StudentService)
   private readonly studentService: StudentService;
   constructor(
     @InjectModel('Professor') private professorModel: Model<IProfessor>,
     private jwtService: JwtService,
   ) {}
-  async createProfessor(createProfessorDto: ProfessorDto): Promise<IProfessor> {
-    const newProfessor = await new this.professorModel(createProfessorDto);
-    return newProfessor.save();
+  async createProfessor(createProfessorDto: ProfessorDto): Promise<any> {
+    const existingProfessor = await this.professorModel.findOne({
+      email: createProfessorDto.email,
+    });
+
+    if (existingProfessor) {
+      return `Professor with email ${createProfessorDto.email} already exists.`;
+    }
+
+    const newProfessor = new this.professorModel(createProfessorDto);
+    await newProfessor.save();
+    return true;
   }
+
   async deleteProfessor(email: string) {
     await this.professorModel.findOneAndDelete({
       email: email,

@@ -12,6 +12,7 @@ export const VideoCard: FC<any> = ({ children }) => {
             <div className="row-span-3 ml-4">{children[2]}</div>
             <div className="row-start-4 col-start-1 col-end-5 ">
             {children[3]}
+            {children[4]}
             </div>
           </div>
         </div>

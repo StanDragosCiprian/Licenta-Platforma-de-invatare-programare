@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useState } from "react";
 import { IRegister } from "../core/IRegister";
 
 export const TextareaWithLimit: FC<IRegister> = ({ setUser, user }) => {
-  const maxLength = 100;
+  const maxLength = 250;
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = event.target.value;

@@ -5,8 +5,10 @@ import { Submit } from "../CardInputComponents/Submit";
 import { TextBox } from "../CardInputComponents/TextBox";
 import { RedirectComponents } from "../CardInputComponents/RedirectComponents";
 import { UserAuthenticationManager } from "../../Entity/UserAuthenticationManager";
-
+import { HiInformationCircle } from "react-icons/hi";
+import { Alert } from "flowbite-react";
 export const LogIn = () => {
+  const [isEmailExist, setIsEmailExist] = useState(false);
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -28,7 +30,7 @@ export const LogIn = () => {
   }, [user,isEmail]);
   const handleUser = (user: any) => {
     if (userAuthentication.isEmailVerify(user.email)) {
-      userAuthentication.logUser(user);
+      userAuthentication.logUser(user,setIsEmailExist);
     } else {
       setIsEmail(true);
     }
@@ -46,6 +48,11 @@ export const LogIn = () => {
             redirectHref={"/account/sign"}
             name={"You have an account?"}
           />
+                 {isEmailExist ? (
+          <Alert color="failure" icon={HiInformationCircle}>
+            <span className="font-medium">Your email or password are incorect!</span> 
+          </Alert>
+        ) : <></>}
           <Submit
             registerType={[]}
             reg={null}

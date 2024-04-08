@@ -8,6 +8,10 @@ import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 
 @Injectable()
 export class AdminsService {
+  async isEmailExist(email: string): Promise<boolean> {
+    const admin = await this.adminModel.findOne({ email });
+    return !!admin;
+  }
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
   constructor(
@@ -97,6 +101,6 @@ export class AdminsService {
     return decodedToken.sub;
   }
   async addNewProfessor(professor: ProfessorDto) {
-    await this.professorService.createProfessor(professor);
+    return await this.professorService.createProfessor(professor);
   }
 }
