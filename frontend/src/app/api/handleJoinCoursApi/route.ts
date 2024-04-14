@@ -10,8 +10,7 @@ export async function POST(req: NextRequest) {
   const cookie: any = await req.cookies.get("id");
   const f = await fetch(
     `${urlBackend}courses/${professor}/${coursName}/join/cours`,
-    sendToServerCookies({ id: cookie }, undefined)
+    sendToServerCookies(JSON.stringify({ id: cookie }), undefined)
   );
-  return new NextResponse(JSON.stringify({ t: 5 }));
-}
+  return new NextResponse(JSON.stringify({ ok: f.ok }));}
 

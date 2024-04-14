@@ -15,31 +15,47 @@ import {
 export class VideoServices {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
-  constructor(@InjectModel('Curs') private videoModel: Model<ICurs>) {}
+  constructor(@InjectModel('Courses') private videoModel: Model<ICurs>) {}
   private videoHandle: IVideoHandle = new VideoHandle();
   async takeFullCurs(cursId: string): Promise<ICurs> {
-    const name = await this.videoModel.findOne({ name: cursId });
-    return name;
+    try {
+      const name = await this.videoModel.findOne({ name: cursId });
+      return name;
+    } catch (error) {
+      throw new Error('Failed to retrieve full course');
+    }
   }
   async takeCoursId(cursName: string): Promise<Types.ObjectId> {
-    return (await this.videoModel.findOne({ name: cursName }))._id;
+    try {
+      return (await this.videoModel.findOne({ name: cursName }))._id;
+    } catch (error) {
+      throw new Error('Failed to retrieve course ID');
+    }
   }
   async addMediaFormat(
     cursId: Types.ObjectId,
     media: IVideo | IDocumentFormat | ICompilators,
   ) {
-    const curs: ICurs = await this.videoModel.findById(cursId);
-    curs.curs.push(media);
-    curs.save();
-    return curs.curs.length - 1;
+    try {
+      const curs: ICurs = await this.videoModel.findById(cursId);
+      curs.curs.push(media);
+      await curs.save();
+      return curs.curs.length - 1;
+    } catch (error) {
+      throw new Error('Failed to add media format');
+    }
   }
   async getProfessorMedia(id: string, courseName: string): Promise<IVideo[]> {
-    this.videoHandle.setProfessorService(this.professorService);
-    return await this.videoHandle.getProfessorVide(
-      id,
-      courseName,
-      this.videoModel,
-    );
+    try {
+      this.videoHandle.setProfessorService(this.professorService);
+      return await this.videoHandle.getProfessorVide(
+        id,
+        courseName,
+        this.videoModel,
+      );
+    } catch (error) {
+      throw new Error('Failed to retrieve professor media');
+    }
   }
 
   async getVideoPathFromCourse(
@@ -47,13 +63,17 @@ export class VideoServices {
     courseName: string,
     videoTitle: string,
   ) {
-    this.videoHandle.setProfessorService(this.professorService);
-    return await this.videoHandle.getVideoPathFromCourse(
-      professorId,
-      courseName,
-      videoTitle,
-      this.videoModel,
-    );
+    try {
+      this.videoHandle.setProfessorService(this.professorService);
+      return await this.videoHandle.getVideoPathFromCourse(
+        professorId,
+        courseName,
+        videoTitle,
+        this.videoModel,
+      );
+    } catch (error) {
+      throw new Error('Failed to retrieve video path from course');
+    }
   }
   async updateVideoFromCourse(
     video: IVideo,
@@ -61,13 +81,17 @@ export class VideoServices {
     professorId: string,
     courseName: string,
   ) {
-    this.videoHandle.setProfessorService(this.professorService);
-    await this.videoHandle.updateVideoFromCourse(
-      video,
-      videoTitle,
-      professorId,
-      courseName,
-      this.videoModel,
-    );
+    try {
+      this.videoHandle.setProfessorService(this.professorService);
+      await this.videoHandle.updateVideoFromCourse(
+        video,
+        videoTitle,
+        professorId,
+        courseName,
+        this.videoModel,
+      );
+    } catch (error) {
+      throw new Error('Failed to update video from course');
+    }
   }
 }

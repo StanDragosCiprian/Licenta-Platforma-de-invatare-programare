@@ -14,9 +14,17 @@ export class CompilatorController {
     @Cookies('id') id: string,
     @Param('courseName') courseName: string,
   ) {
-    const compilator: string[] =
-      await this.compilatorService.getProfessorCompilator(id, courseName);
-    return compilator;
+    try {
+      const compilator: string[] =
+        await this.compilatorService.getProfessorCompilator(id, courseName);
+      return compilator;
+    } catch (error) {
+      // Handle the exception here
+      console.error(error);
+      throw new Error(
+        'An error occurred while fetching the professor compilator',
+      );
+    }
   }
   @Post('/coursesProfessor/:courseName/Update/compile')
   async coursesProfessorUpdateCompile(
@@ -24,11 +32,18 @@ export class CompilatorController {
     @Param('courseName') courseName: string,
     @Body() body: ICompilators & { oldTitle: string },
   ) {
-    await this.compilatorService.updateCompilatorFromCourse(
-      body,
-      id,
-      courseName,
-    );
+    try {
+      await this.compilatorService.updateCompilatorFromCourse(
+        body,
+        id,
+        courseName,
+      );
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        'An error occurred while updating the professor compilator',
+      );
+    }
   }
 
   @Get('/:professor/:coursName/:language/:id/compile')
@@ -38,17 +53,22 @@ export class CompilatorController {
     @Param('professor') professor: string,
     @Param('coursName') coursName: string,
   ): Promise<string> {
-    const curs: ICompilators =
-      await this.compilatorService.getCoursFromProfessor(
-        professor,
-        coursName,
-        id,
-      );
+    try {
+      const curs: ICompilators =
+        await this.compilatorService.getCoursFromProfessor(
+          professor,
+          coursName,
+          id,
+        );
 
-    const choose = await this.compilatorService.chooseCompiler(
-      this.makeCompilerDto(curs, language, ''),
-    );
-    return choose;
+      const choose = await this.compilatorService.chooseCompiler(
+        this.makeCompilerDto(curs, language, ''),
+      );
+      return choose;
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while choosing the compiler');
+    }
   }
 
   private makeCompilerDto(
@@ -79,38 +99,45 @@ export class CompilatorController {
     @Param('professor') professor: string,
     @Param('coursName') coursName: string,
   ) {
-    const curs: ICompilators =
-      await this.compilatorService.getCoursFromProfessor(
-        professor,
-        coursName,
-        id,
-      );
-    const output = this.takeParameterValue(curs.problemOutputs, 'Output');
+    try {
+      const curs: ICompilators =
+        await this.compilatorService.getCoursFromProfessor(
+          professor,
+          coursName,
+          id,
+        );
+      const output = this.takeParameterValue(curs.problemOutputs, 'Output');
 
-    const inputs = this.takeParameterValue(curs.problemInputs, 'Input');
-    for (let index = 0; index < inputs.length; index++) {
-      const input = inputs[index];
-      const exec = await this.compilatorService.executeScripts(
-        this.makeCompilerDto(curs, language, scripts.script),
-        input,
-      );
-      const e = exec.toString().replace('\r\n', '');
-      if (e.replace('\n', '') !== output[index]) {
-        return {
-          isAlgorithmOk: false,
-          input: input,
-          yourOutput: e,
-          expected: output[index],
-        };
+      const inputs = this.takeParameterValue(curs.problemInputs, 'Input');
+      for (let index = 0; index < inputs.length; index++) {
+        const input = inputs[index];
+        const exec = await this.compilatorService.executeScripts(
+          this.makeCompilerDto(curs, language, scripts.script),
+          input,
+        );
+        console.log(exec);
+        const e = exec.toString().replace('\r\n', '');
+        console.log(e);
+        if (e.replace('\n', '') !== output[index]) {
+          return {
+            isAlgorithmOk: false,
+            input: input,
+            yourOutput: e,
+            expected: output[index],
+          };
+        }
       }
-    }
 
-    return {
-      isAlgorithmOk: true,
-      input: '',
-      yourOutput: '',
-      expected: '',
-    };
+      return {
+        isAlgorithmOk: true,
+        input: '',
+        yourOutput: '',
+        expected: '',
+      };
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while executing the scripts');
+    }
   }
   private takeParameterValue(input: string[], type: string): string[] {
     return input.map((item) => {
@@ -123,9 +150,14 @@ export class CompilatorController {
     @Body() exercices: ICompilators,
     @Param('coursName') coursName: string,
   ) {
-    const cursId: Types.ObjectId =
-      await this.compilatorService.takeCoursId(coursName);
-    return await this.compilatorService.addMediaFormat(cursId, exercices);
+    try {
+      const cursId: Types.ObjectId =
+        await this.compilatorService.takeCoursId(coursName);
+      return await this.compilatorService.addMediaFormat(cursId, exercices);
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while adding new exercises');
+    }
   }
   @Get('/:professor/:coursName/:id/get/exercices/format')
   async getCompilerFormat(
@@ -133,17 +165,22 @@ export class CompilatorController {
     @Param('professor') professor: string,
     @Param('id') id: string,
   ) {
-    const curs: ICompilators =
-      await this.compilatorService.getCoursFromProfessor(
-        professor,
-        coursName,
-        id,
-      );
-    return {
-      title: curs.title,
-      problemRequire: curs.problemRequire,
-      problemExemples: curs.problemExemples,
-      format: curs.format,
-    };
+    try {
+      const curs: ICompilators =
+        await this.compilatorService.getCoursFromProfessor(
+          professor,
+          coursName,
+          id,
+        );
+      return {
+        title: curs.title,
+        problemRequire: curs.problemRequire,
+        problemExemples: curs.problemExemples,
+        format: curs.format,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while getting the compiler format');
+    }
   }
 }

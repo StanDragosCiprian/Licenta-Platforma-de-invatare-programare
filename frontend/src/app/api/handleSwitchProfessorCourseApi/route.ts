@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify(body),
     };
-    await fetch(`${urlBackend}admin/switch/professor/courses`, option);
-    return new NextResponse(JSON.stringify({ videos: 5 }));
+   const r= await fetch(`${urlBackend}admin/switch/professor/courses`, option);
+
+    return new NextResponse(JSON.stringify({ videos: 5 , ok: r.ok }));
 }

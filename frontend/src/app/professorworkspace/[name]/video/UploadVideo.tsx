@@ -24,18 +24,20 @@ export const UploadVideo: FC<{
   const rout = useRouter();
   const [isAllRight, setIsAllRight] = useState(true);
   const [warning, setWarning] = useState("");
-  const handeNewVideo = async () => {
+  const handeNewVideo = async (event:any) => {
+    event.preventDefault();
     const { title, description, filePath } = videoDescription;
     if (title !== "" && description !== "" && filePath !== "") {
       const videoText: VideoManaging = new VideoManaging(coursName);
       const videoId = await videoText.sendText(title, description, filePath);
-      rout.push(`/CoursView/${professorEmail}/${coursName}/${videoId}/view`);
+       rout.push(`/CoursView/${professorEmail}/${coursName}/${videoId}/view`);
     } else {
       setIsAllRight(false);
       setWarning("Please fill all the fields correctly.");
     }
   };
-  const handleVideoUpdate = async () => {
+  const handleVideoUpdate = async (event:any) => {
+    event.preventDefault();
     if(!isAllRight){
       return;
     }
@@ -67,13 +69,15 @@ export const UploadVideo: FC<{
         ) : (
           <></>
         )}
+        <form onSubmit={isUpdated ? handleVideoUpdate : handeNewVideo}>
         <button
           type="submit"
           className=" my-4 relative h-12 w-full min-w-[200px] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          onClick={!isUpdated ? handeNewVideo : handleVideoUpdate}
+          // onClick={!isUpdated ? handeNewVideo : handleVideoUpdate}
         >
           Submit
         </button>
+        </form>
       </VideoCard>
     </>
   );

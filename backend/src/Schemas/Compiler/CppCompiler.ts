@@ -35,7 +35,7 @@ export class CppCompier implements ICppCompier {
       stringKey += ',' + `${value[index]}  ${k}`;
     });
     const funtionForms = this.funtionName.split('.');
-    this.script = `#include <iostream>\nusing namespace std;\n
+    this.script = `#include <iostream>\n#include <string>\nusing namespace std;\n
     ${funtionForms[0]} ${funtionForms[1]}(${stringKey.substring(1)}){\n\n}
     int main() {
         

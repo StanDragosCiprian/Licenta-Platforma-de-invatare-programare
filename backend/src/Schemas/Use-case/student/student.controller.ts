@@ -21,7 +21,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { IStudent } from 'src/Schemas/Entity/IStudent';
 import { EmailAlreadyExistsException } from '../ErrorInterceptor';
-
+import * as fs from 'fs';
 @Controller('student')
 export class StudentController {
   constructor(
@@ -45,14 +45,20 @@ export class StudentController {
     }
   }
   @Get('profile/:name/:format')
-  studentProfileImage(
+  async studentProfileImage(
     @Res() response,
     @Param('name') name: string,
     @Param('format') format: string,
   ) {
-    response.sendFile(
-      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Student\\${name}.${format}`,
-    );
+    try {
+      response.sendFile(
+        `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Student\\${name}.${format}`,
+      );
+    } catch (error) {
+      // Handle the exception here
+      console.error(error);
+      response.status(500).send('Internal Server Error');
+    }
   }
   @Post('/upload/profile/image')
   @UseGuards(StudentGuard)
@@ -75,11 +81,26 @@ export class StudentController {
     }),
   )
   async upload(@UploadedFile() file, @Cookies('id') id: string) {
-    const student: IStudent = await this.getStudent(id);
-    const test = this.extractFilenameParts(file.path);
-    student.profileImage = `http://localhost:3000/student/profile/${test[0]}/${test[1]}`;
-    student.save();
-    return { path: true };
+    try {
+      const student: IStudent = await this.getStudent(id);
+      if (student.profileImage !== 'http://localhost:3000/default/img') {
+        student.profileImage = student.profileImage.replace(
+          'http://localhost:3000/student/profile/',
+          'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Student\\',
+        );
+        student.profileImage = student.profileImage.replace(/[/\\]/g, '\\');
+        const profileImage = student.profileImage.replace(/\\jpg$/, '.jpg');
+
+        fs.unlinkSync(profileImage);
+      }
+      const test = this.extractFilenameParts(file.path);
+      student.profileImage = `http://localhost:3000/student/profile/${test[0]}/${test[1]}`;
+      await student.save();
+      return { path: true };
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal Server Error');
+    }
   }
   private extractFilenameParts(imagePath: string): string[] {
     const parts = imagePath.split(/\/|\\/);
@@ -90,51 +111,76 @@ export class StudentController {
   @Post('/update/username')
   @UseGuards(StudentGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
-    const student = await this.getStudent(id);
-    if (student.email === body.email) {
-      return await this.studentService.updateUsername(
-        body.email,
-        body.newValue,
-      );
+    try {
+      const student = await this.getStudent(id);
+      if (student.email === body.email) {
+        return await this.studentService.updateUsername(
+          body.email,
+          body.newValue,
+        );
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal Server Error');
     }
-    return false;
   }
   @Post('/update/email')
   @UseGuards(StudentGuard)
   async updateEmail(@Body() body: any, @Cookies('id') id: string) {
-    const student = await this.getStudent(id);
-    if (student.email === body.email) {
-      return await this.studentService.updateEmail(body.email, body.newValue);
+    try {
+      const student = await this.getStudent(id);
+      if (student.email === body.email) {
+        return await this.studentService.updateEmail(body.email, body.newValue);
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal Server Error');
     }
-    return false;
   }
   @Post('/update/password')
   @UseGuards(StudentGuard)
   async updatePassword(@Body() body: any, @Cookies('id') id: string) {
-    const student = await this.getStudent(id);
-    if (student.email === body.email) {
-      return await this.studentService.updatePassword(
-        body.email,
-        body.newValue,
-      );
+    try {
+      const student = await this.getStudent(id);
+      if (student.email === body.email) {
+        return await this.studentService.updatePassword(
+          body.email,
+          body.newValue,
+        );
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal Server Error');
     }
-    return false;
   }
   @Post('/log')
   async logStudent(@Body() log: LogDto): Promise<{ access_token: string }> {
-    const logStudent = await this.studentService.logUser(
-      log.email,
-      log.password,
-    );
-    return this.studentService.makeJwt(logStudent);
+    try {
+      const logStudent = await this.studentService.logUser(
+        log.email,
+        log.password,
+      );
+      return this.studentService.makeJwt(logStudent);
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal Server Error');
+    }
   }
   @Get('get')
   async getStudent(@Cookies('id') id: string): Promise<any> {
-    const decodedToken = await this.studentService.decriptJwt(id);
-    const student = await this.studentService.getStudent(decodedToken);
-    if (student === null) {
-      return ' ';
+    try {
+      const decodedToken = await this.studentService.decriptJwt(id);
+      const student = await this.studentService.getStudent(decodedToken);
+      if (student === null) {
+        return ' ';
+      }
+      return student;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal Server Error');
     }
-    return student;
   }
 }

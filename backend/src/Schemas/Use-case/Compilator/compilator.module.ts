@@ -8,7 +8,7 @@ import { CursSchema } from 'src/Schemas/Entity.schema/curs.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Curs', schema: CursSchema }]),
+    MongooseModule.forFeature([{ name: 'Courses', schema: CursSchema }]),
     ProfessorModule,
     JwtModule.register({
       secret: 'your-secret-key',

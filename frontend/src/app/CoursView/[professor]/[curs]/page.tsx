@@ -10,6 +10,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { JoinCours } from "./JoinCours";
 import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
+import { title } from "process";
 const courses = new CoursManager();
 const takeCoursesName = async (cursName: string) => {
   return await courses.getCourseTitles(cursName);
@@ -47,6 +48,7 @@ const verifyIfStudentHaveCours = async (
 export default async function CursViewList({ params }: any) {
   const courseTitles = await takeCoursesName(params.curs);
   const course = await getCours(params.curs);
+
   const isProfessorCours: boolean = await verifyProfessorCours(params.curs);
   const isPage = await verifyPage(params.professor, course.title);
   const i = await isPage.json();
@@ -75,10 +77,15 @@ export default async function CursViewList({ params }: any) {
           {isStudentInCours || isProfessorCours ? (
             <nav className="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-blue-gray-700 flex-2 overflow-auto h-[500px]">
               <DragDropComponenst
-                courseTitles={courseTitles}
+                courseTitles={courseTitles.map(
+                  (title: { title: string; format: string }) => title.title
+                )}
                 coursName={params.curs}
                 coursProfessor={params.professor}
                 isProfessorCours={isProfessorCours}
+                format={courseTitles.map(
+                  (title: { title: string; format: string }) => title.format
+                )}
               />
               {isProfessorCours ? (
                 <Link

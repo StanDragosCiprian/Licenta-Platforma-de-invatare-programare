@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next";
 import ImageProfile from "./ImageProfile";
 import EditUserData from "./EditUserData";
-
+import { Alert } from "flowbite-react";
+import { HiInformationCircle } from "react-icons/hi";
 export const ProfileComponent: FC<{
   username: string;
   email: string;
@@ -16,7 +17,7 @@ export const ProfileComponent: FC<{
   role: string;
   profileImage: string;
 }> = ({ username, email, password, role, profileImage }) => {
-  const [isEditMode, setEditMode] = useState<boolean>(false);
+  const [warning, setWarning] = useState<boolean>(false);
   const router = useRouter();
   const uploadImage = async (fileInput: any) => {
     const file = fileInput.target.files[0];
@@ -28,13 +29,18 @@ export const ProfileComponent: FC<{
       credentials: "include" as RequestCredentials,
       body: formData,
     });
-    setEditMode(false);
+    setWarning(false);
     router.refresh();
   };
   return (
     <>
       <div className=" max-w-2xl p-8 bg-white border rounded-lg shadow sm:p-12 md:p-16">
-        <ImageProfile profileImage={profileImage} role={role} />
+        <ImageProfile
+          profileImage={profileImage}
+          role={role}
+          setEditMode={setWarning}
+        />
+
         <EditUserData
           userModifyData={username}
           role={role}
@@ -42,6 +48,7 @@ export const ProfileComponent: FC<{
           url={"/api/updateProfile/handleProfileUpdateUsername"}
           urlApi={"/update/username"}
           nameOfEditor="username"
+          setEditMode={setWarning}
         />
         <EditUserData
           userModifyData={email}
@@ -50,6 +57,7 @@ export const ProfileComponent: FC<{
           url={"/api/updateProfile/handleProfileUpdateUsername"}
           urlApi={"/update/email"}
           nameOfEditor="email"
+          setEditMode={setWarning}
         />
         <EditUserData
           userModifyData={password}
@@ -58,8 +66,13 @@ export const ProfileComponent: FC<{
           url={"/api/updateProfile/handleProfileUpdateUsername"}
           urlApi={"/update/password"}
           nameOfEditor="password"
+          setEditMode={setWarning}
         />
-
+        {warning && (
+          <Alert color="failure" icon={HiInformationCircle} className="my-4">
+            <span className="font-medium">Something is wrong</span>
+          </Alert>
+        )}
         <LogOut />
       </div>
     </>

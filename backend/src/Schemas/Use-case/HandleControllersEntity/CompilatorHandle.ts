@@ -62,12 +62,12 @@ export class CompilatorHandle extends ProfessorHandle {
               compile,
               'problemParameter',
             );
-            compileComponent.problemOutputs = this.assignProperty(
+            compileComponent.problemOutputs = this.arrayAssignProperty(
               compileComponent,
               compile,
               'problemOutputs',
             );
-            compileComponent.problemInputs = this.assignProperty(
+            compileComponent.problemInputs = this.arrayAssignProperty(
               compileComponent,
               compile,
               'problemInputs',

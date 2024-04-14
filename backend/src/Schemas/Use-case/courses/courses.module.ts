@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Curs', schema: CursSchema }]),
+    MongooseModule.forFeature([{ name: 'Courses', schema: CursSchema }]),
     ProfessorModule,
     JwtModule.register({
       secret: 'your-secret-key',

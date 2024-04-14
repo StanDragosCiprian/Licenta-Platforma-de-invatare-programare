@@ -19,14 +19,12 @@ export const sendToServerCookies = (
     credentials: "include" as RequestCredentials,
     headers: {
       "Content-Type": "application/json",
-      "Cookies":`id=${id}`,
+      Cookies: `id=${id}`,
     },
-    body: JSON.stringify(bodyContent),
+    body: bodyContent,
   };
 };
-export const sendToServerFile = (blob:any,
-  file: any,
-) => {
+export const sendToServerFile = (blob: any, file: any) => {
   return {
     method: "POST",
     credentials: "include" as RequestCredentials,
@@ -36,16 +34,14 @@ export const sendToServerFile = (blob:any,
     body: JSON.stringify(blob),
   };
 };
-export const sendFiles = (file: any) => {
-  const body = new FormData();
-  body.append("file", file);
+export const sendFiles = (file: any, id: string | undefined) => {
   return {
     method: "POST",
     credentials: "include" as RequestCredentials,
-    // headers: {
-    //   Cookie: `id=${id}`,
-    // },
-    body: body,
+    headers: {
+      Cookie: `id=${id}`,
+    },
+    body: file,
   };
 };
 

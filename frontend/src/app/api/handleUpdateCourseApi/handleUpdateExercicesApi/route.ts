@@ -15,9 +15,9 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify(bodyCours),
   };
-  await fetch(
+  const res = await fetch(
     `${urlBackend}courses/compilator/coursesProfessor/${courseName}/Update/compile`,
     option
   );
-  return new NextResponse(JSON.stringify({ text: 5 }));
+  return new NextResponse(JSON.stringify({ ok: res.ok }));
 }

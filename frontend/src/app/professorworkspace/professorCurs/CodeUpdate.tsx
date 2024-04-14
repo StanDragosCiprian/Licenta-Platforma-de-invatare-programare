@@ -3,6 +3,7 @@ import { Modal } from "flowbite-react";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { DocumentComponents } from "../[name]/docs/DocumentComponents";
 import { ExercicesComponens } from "../[name]/exercices/ExercicesComponents";
+import { notFound } from "next/navigation";
 const CodeUpdate: FC<{
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>>;
   courseName: string;
@@ -25,8 +26,9 @@ const CodeUpdate: FC<{
         "/api/handleUpdateCourseApi/handleGetCompileApi",
         option
       );
-      const { videos } = await req.json();
-      setVideo(videos);
+      const { videos, ok } = await req.json();
+      if (ok) setVideo(videos);
+      else notFound();
     };
 
     fetchVideo();
@@ -50,6 +52,7 @@ const CodeUpdate: FC<{
                               courseName={courseName}
                               isUpdated={true}
                               exercicesName={c}
+                              professorEmail={""} // Add the missing professorEmail property
                             />
                           </div>
                         )

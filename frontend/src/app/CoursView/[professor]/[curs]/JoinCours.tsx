@@ -1,7 +1,7 @@
 "use client";
 import { sendToServerCookies } from "@/app/UserServer/ServerRequest";
 import React, { FC } from "react";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { getCookie } from "cookies-next";
 
 interface JoinCoursProps {
@@ -19,8 +19,12 @@ if(getCookie('id')!==undefined){
     };
     const api = await fetch(
       "/api/handleJoinCoursApi",
-      sendToServerCookies(option, undefined)
+      sendToServerCookies(JSON.stringify(option), undefined)
     );
+    const { ok } = await api.json();
+    if (!ok) {
+      notFound();
+    }
     }else{
       router.push("/account/log");
     }

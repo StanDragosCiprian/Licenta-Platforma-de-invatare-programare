@@ -1,4 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -18,10 +18,16 @@ export class AppController {
     );
   }
   //defaultCours1.jpg
-  @Get('default/cours1')
-  defaultCoursImage1(@Res() response) {
+  @Get('default/cours/:id')
+  defaultCoursImage1(@Res() response, @Param('id') id: string) {
     response.sendFile(
-      'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Images\\Default\\defaultCours1.jpg',
+      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Images\\Default\\defaultCours${id}.jpg`,
+    );
+  }
+  @Get('error')
+  errorImage(@Res() response) {
+    response.sendFile(
+      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Images\\Default\\error.png`,
     );
   }
   @Get('editcourses/pdfImg')

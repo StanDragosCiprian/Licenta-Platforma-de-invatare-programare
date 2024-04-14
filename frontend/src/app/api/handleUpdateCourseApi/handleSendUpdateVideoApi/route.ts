@@ -28,5 +28,5 @@ export async function POST(req: NextRequest) {
     `${urlBackend}courses/video/${coursName}/${videoName}/update/video`,
     option
   );
-  return new NextResponse(JSON.stringify({ videos: 5 }));
+  return new NextResponse(JSON.stringify({ text: await response.text(), ok: response.ok }));
 }

@@ -10,54 +10,85 @@ import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 export class DocsService {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
-  constructor(@InjectModel('Curs') private docsModel: Model<ICurs>) {}
+  constructor(@InjectModel('Courses') private docsModel: Model<ICurs>) {}
   private docsHandle = new DocsHandle();
   async takeCoursId(cursName: string): Promise<Types.ObjectId> {
-    return (await this.docsModel.findOne({ name: cursName }))._id;
+    try {
+      const curs = await this.docsModel.findOne({ name: cursName });
+      if (!curs) {
+        throw new Error('Course not found');
+      }
+      return curs._id;
+    } catch (error) {
+      throw new Error(`Failed to get course ID: ${error}`);
+    }
   }
+
   async getPdfPathFromCourse(
     professorId: string,
     courseName: string,
     videoTitle: string,
   ) {
-    this.docsHandle.setProfessorService(this.professorService);
-    return await this.docsHandle.getPdfPathFromCourse(
-      professorId,
-      courseName,
-      videoTitle,
-      this.docsModel,
-    );
+    try {
+      this.docsHandle.setProfessorService(this.professorService);
+      return await this.docsHandle.getPdfPathFromCourse(
+        professorId,
+        courseName,
+        videoTitle,
+        this.docsModel,
+      );
+    } catch (error) {
+      throw new Error(`Failed to get PDF path from course: ${error}`);
+    }
   }
+
   async getProfessorMedia(
     id: string,
     courseName: string,
   ): Promise<IDocumentFormat[]> {
-    this.docsHandle.setProfessorService(this.professorService);
-    return await this.docsHandle.getProfessorPdf(
-      id,
-      courseName,
-      this.docsModel,
-    );
+    try {
+      this.docsHandle.setProfessorService(this.professorService);
+      return await this.docsHandle.getProfessorPdf(
+        id,
+        courseName,
+        this.docsModel,
+      );
+    } catch (error) {
+      throw new Error(`Failed to get professor media: ${error}`);
+    }
   }
+
   async addMediaFormat(cursId: Types.ObjectId, media: IDocumentFormat) {
-    const curs: ICurs = await this.docsModel.findById(cursId);
-    curs.curs.push(media);
-    curs.save();
-    return curs.curs.length - 1;
+    try {
+      const curs: ICurs = await this.docsModel.findById(cursId);
+      if (!curs) {
+        throw new Error('Course not found');
+      }
+      curs.curs.push(media);
+      await curs.save();
+      return curs.curs.length - 1;
+    } catch (error) {
+      throw new Error(`Failed to add media format: ${error}`);
+    }
   }
+
   async updatePdfFromCourse(
     newPdf: IDocumentFormat,
     pdfTitle: string,
     professorId: string,
     courseName: string,
   ) {
-    this.docsHandle.setProfessorService(this.professorService);
-    await this.docsHandle.updatePdfFromCourse(
-      newPdf,
-      pdfTitle,
-      professorId,
-      courseName,
-      this.docsModel,
-    );
+    try {
+      this.docsHandle.setProfessorService(this.professorService);
+      await this.docsHandle.updatePdfFromCourse(
+        newPdf,
+        pdfTitle,
+        professorId,
+        courseName,
+        this.docsModel,
+      );
+    } catch (error) {
+      throw new Error(`Failed to update PDF from course: ${error}`);
+    }
   }
 }

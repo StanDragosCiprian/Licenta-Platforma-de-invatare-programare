@@ -2,7 +2,7 @@
 import { Button } from "flowbite-react";
 import { FC, useState } from "react";
 import { IconeDelete } from "../IconsComponents/IconeDelete";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import IconUpdate from "../IconsComponents/IconUpdate";
 import ReverseCourse from "./ReverseCourse";
 
@@ -23,7 +23,12 @@ const EmailTablr: FC<{
       body: JSON.stringify({ email: email, role: role }),
     };
     const req = await fetch("/api/handleDeleteUserApi", option);
-    rout.refresh();
+    const { ok } = await req.json();
+    if (ok) {
+      rout.refresh();
+    } else {
+      notFound();
+    }
   };
 
   return (
@@ -117,7 +122,6 @@ const EmailTablr: FC<{
                     >
                       <IconeDelete />
                     </Button>
-                    
                   </th>
                   <th
                     scope="row"
@@ -125,13 +129,19 @@ const EmailTablr: FC<{
                   >
                     <Button
                       color="blue"
-                      onClick={() => setDialog(
-                        <ReverseCourse professor={professor} setDialog={setDialog} email={e.email}/>
-                      )}
+                      onClick={() =>
+                        setDialog(
+                          <ReverseCourse
+                            professor={professor}
+                            setDialog={setDialog}
+                            email={e.email}
+                            myProfessor={e.username}
+                          />
+                        )
+                      }
                     >
                       <IconUpdate />
                     </Button>
-                    
                   </th>
                 </tr>
               )

@@ -2,7 +2,7 @@
 import { ExelHandle } from "@/app/Entity/ExelHandle";
 import { Button, FileInput, Label, Modal } from "flowbite-react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 const DeleteCourse: FC<{
   courseName: string;
   EntityName: string;
@@ -22,10 +22,13 @@ const DeleteCourse: FC<{
       }),
     };
     const req = await fetch("/api/handleDeleteCourse/", option);
-    await req.json();
-    setDialog(undefined);
-    // Declare the 'route' variable
-    route.refresh(); // Use the 'route' variable
+    const { ok } = await req.json();
+    if (ok) {
+      setDialog(undefined);
+      route.refresh();
+    } else {
+      notFound();
+    }
   };
   return (
     <>

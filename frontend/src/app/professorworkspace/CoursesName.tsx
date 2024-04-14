@@ -20,7 +20,7 @@ export const CoursesName: FC<{
     name: "",
     vizibility: false,
     description: "",
-    imagePath: `${urlBackend}default/cours1`,
+    imagePath: `${urlBackend}default/cours/1`,
     studentId: [],
     colaborationId: [],
     curs: [],
@@ -32,13 +32,17 @@ export const CoursesName: FC<{
     rout.push(`http://localhost:3001/professorworkspace/${path}`);
     rout.refresh();
   };
+  function randomIntFromInterval(min:number, max:number) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+  }
   const handleUser = async (user: any) => {
     course.name = HandleGenericFuntion.replaceSpaceWithUnderline(
       nameCours.Name
     );
-    console.log(course.name);
+
     if (course.name && course.description) {
       setIsAllRight(true);
+      course.imagePath = `${urlBackend}default/cours/${randomIntFromInterval(1,7)}`;
       const test = new Courses(user);
       const t = await test.newCourse();
       isId(t);

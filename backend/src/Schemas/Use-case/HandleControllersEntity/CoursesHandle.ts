@@ -82,12 +82,14 @@ export class CoursesHandle {
   }
   async updateCourse(cursBody: any, professorCourses: ICurs[]) {
     for (const c of professorCourses) {
-      if (c.name === cursBody.oldCoursName) {
-        const course = await this.courseModel.findById(c._id);
-        course.name = this.assignProperty(c, cursBody, 'name');
-        course.vizibility = this.assignProperty(c, cursBody, 'vizibility');
-        course.description = this.assignProperty(c, cursBody, 'description');
-        await course.save();
+      if (c !== null && c !== undefined) {
+        if (c.name === cursBody.oldCoursName) {
+          const course = await this.courseModel.findById(c._id);
+          course.name = this.assignProperty(c, cursBody, 'name');
+          course.vizibility = this.assignProperty(c, cursBody, 'vizibility');
+          course.description = this.assignProperty(c, cursBody, 'description');
+          await course.save();
+        }
       }
     }
   }

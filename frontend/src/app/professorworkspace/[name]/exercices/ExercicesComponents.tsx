@@ -6,7 +6,7 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 import { Button, FileInput } from "flowbite-react";
 import DropDownSearch from "./DropDownSearch";
 import ProblemsInput from "./ProblemsInput";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { Alert } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 export const ExercicesComponens: FC<{
@@ -92,10 +92,14 @@ export const ExercicesComponens: FC<{
       const id = getCookie("id")?.toString();
       const api = await fetch(
         "/api/handleNewExercicesApi",
-        sendToServerCookies(final, id)
+        sendToServerCookies(JSON.stringify(final), id)
       );
-      const { text } = await api.json();
-      rout.push(`/CoursView/${professorEmail}/${courseName}/${text}/view`);
+      const { text, ok } = await api.json();
+      if (ok) {
+        rout.push(`/CoursView/${professorEmail}/${courseName}/${text}/view`);
+      } else {
+        notFound();
+      }
     } else {
       setIsAllRight(false);
       setWarning("Please fill all the fields correctly.");
@@ -112,8 +116,11 @@ export const ExercicesComponens: FC<{
     exerciesUpdate["oldTitle"] = exercicesName;
     const api = await fetch(
       "/api/handleUpdateCourseApi/handleUpdateExercicesApi",
-      sendToServerCookies(exerciesUpdate, id)
+      sendToServerCookies(JSON.stringify(exerciesUpdate), id)
     );
+    const { ok } = await api.json();
+    console.log('ok: ', ok);
+    if (!ok) notFound();
     if (setDialog !== undefined) {
       setDialog(undefined);
     }

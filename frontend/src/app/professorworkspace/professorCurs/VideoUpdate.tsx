@@ -3,6 +3,7 @@ import { Modal } from "flowbite-react";
 import { Dispatch, FC, SetStateAction } from "react";
 import { IVidePreview } from "@/app/core/IVidePreview";
 import { UploadVideo } from "../[name]/video/UploadVideo";
+import { notFound } from "next/navigation";
 
 const VideoUpdatePage: FC<{
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>>;
@@ -26,7 +27,8 @@ const VideoUpdatePage: FC<{
         "/api/handleUpdateCourseApi/handleGetUpdateVideoApi",
         option
       );
-      const { videos } = await req.json();
+      const { videos,ok } = await req.json();
+      if (!ok) notFound();
       setVideo(videos);
     };
 
@@ -52,6 +54,7 @@ const VideoUpdatePage: FC<{
                               videoName={video.title}
                               coursName={courseName}
                               setDialog={setDialog}
+                              professorEmail=""
                             />
                           </div>
                         )

@@ -9,7 +9,7 @@ import { VideoController } from './video.controller';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Curs', schema: CursSchema }]),
+    MongooseModule.forFeature([{ name: 'Courses', schema: CursSchema }]),
     ProfessorModule,
     JwtModule.register({
       secret: 'your-secret-key',

@@ -42,7 +42,6 @@ export class UserAuthenticationManager {
   public emilExist: boolean = false;
 
   getEmilExist(): boolean {
-    console.log(this.emilExist);
     return this.emilExist;
   }
   public async signUser(
@@ -50,13 +49,11 @@ export class UserAuthenticationManager {
     setIsEmailExist: Dispatch<SetStateAction<boolean>>
   ): Promise<any> {
     const id = await this.verifyStudentSign(user);
-    console.log(id);
     if (id !== "Your email already exists") {
       setIsEmailExist(false);
       this.isId(id);
     } else {
       setIsEmailExist(true);
-      console.log(this.emilExist);
     }
   }
   private async verifyUser(user: any): Promise<any> {

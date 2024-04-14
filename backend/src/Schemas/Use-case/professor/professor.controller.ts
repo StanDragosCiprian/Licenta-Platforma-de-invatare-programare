@@ -20,6 +20,7 @@ import { diskStorage } from 'multer';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { EmailAlreadyExistsException } from '../ErrorInterceptor';
 import { Response } from 'express';
+import * as fs from 'fs';
 @Controller('professor')
 export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) {}
@@ -28,61 +29,95 @@ export class ProfessorController {
   async createStudent(
     @Body() createProfessorDto: ProfessorDto,
   ): Promise<{ access_token: string }> {
-    const newProfessor =
-      await this.professorService.createProfessor(createProfessorDto);
-    return this.professorService.makeJwt(newProfessor._id);
+    try {
+      const newProfessor =
+        await this.professorService.createProfessor(createProfessorDto);
+      return this.professorService.makeJwt(newProfessor._id);
+    } catch (error) {
+      // Handle the exception here
+      console.error(error);
+      throw error;
+    }
   }
   @Post('/log')
   async logProfessor(@Body() log: LogDto): Promise<{ access_token: string }> {
-    const user = await this.professorService.logUser(log.email, log.password);
-    return this.professorService.makeJwt(user);
+    try {
+      const user = await this.professorService.logUser(log.email, log.password);
+      return this.professorService.makeJwt(user);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   @Post('/is/email/exist')
   async isEmailExist(@Body() body: { email: string }, @Res() res: Response) {
-    const isEmail = await this.professorService.isEmailExist(body.email);
-    if (isEmail) {
-      throw new EmailAlreadyExistsException();
+    try {
+      const isEmail = await this.professorService.isEmailExist(body.email);
+      if (isEmail) {
+        throw new EmailAlreadyExistsException();
+      }
+      return res.status(200).send(true);
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    return res.status(200).send(true);
   }
   @Post('/update/username')
   @UseGuards(ProfessorGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
-    const professor = await this.professorService.getProfessor(
-      await this.professorService.decriptJwt(id),
-    );
-    if (professor.email === body.email) {
-      return await this.professorService.updateUsername(
-        body.email,
-        body.newValue,
+    try {
+      const professor = await this.professorService.getProfessor(
+        await this.professorService.decriptJwt(id),
       );
+      if (professor.email === body.email) {
+        return await this.professorService.updateUsername(
+          body.email,
+          body.newValue,
+        );
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    return false;
   }
   @Post('/update/email')
   @UseGuards(ProfessorGuard)
   async updateEmail(@Body() body: any, @Cookies('id') id: string) {
-    const student = await this.professorService.getProfessor(
-      await this.professorService.decriptJwt(id),
-    );
-    if (student.email === body.email) {
-      return await this.professorService.updateEmail(body.email, body.newValue);
+    try {
+      const professor = await this.professorService.getProfessor(
+        await this.professorService.decriptJwt(id),
+      );
+      if (professor.email === body.email) {
+        return await this.professorService.updateEmail(
+          body.email,
+          body.newValue,
+        );
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    return false;
   }
   @Post('/update/password')
   @UseGuards(ProfessorGuard)
   async updatePassword(@Body() body: any, @Cookies('id') id: string) {
-    const student = await this.professorService.getProfessor(
-      await this.professorService.decriptJwt(id),
-    );
-    if (student.email === body.email) {
-      return await this.professorService.updatePassword(
-        body.email,
-        body.newValue,
+    try {
+      const professor = await this.professorService.getProfessor(
+        await this.professorService.decriptJwt(id),
       );
+      if (professor.email === body.email) {
+        return await this.professorService.updatePassword(
+          body.email,
+          body.newValue,
+        );
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    return false;
   }
   @Get('profile/:name/:format')
   studentProfileImage(
@@ -90,9 +125,14 @@ export class ProfessorController {
     @Param('name') name: string,
     @Param('format') format: string,
   ) {
-    response.sendFile(
-      `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Professor\\${name}.${format}`,
-    );
+    try {
+      response.sendFile(
+        `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Professor\\${name}.${format}`,
+      );
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   @Post('/upload/profile/image')
   @UseGuards(ProfessorGuard)
@@ -115,11 +155,26 @@ export class ProfessorController {
     }),
   )
   async upload(@UploadedFile() file, @Cookies('id') id: string) {
-    const professor: IProfessor = await this.getProfessor(id);
-    const test = this.extractFilenameParts(file.path);
-    professor.profileImage = `http://localhost:3000/professor/profile/${test[0]}/${test[1]}`;
-    professor.save();
-    return { path: true };
+    try {
+      const professor: IProfessor = await this.getProfessor(id);
+      if (professor.profileImage !== 'http://localhost:3000/default/img') {
+        professor.profileImage = professor.profileImage.replace(
+          'http://localhost:3000/professor/profile',
+          'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Professor\\',
+        );
+        professor.profileImage = professor.profileImage.replace(/[/\\]/g, '\\');
+        const profileImage = professor.profileImage.replace(/\\jpg$/, '.jpg');
+
+        fs.unlinkSync(profileImage);
+      }
+      const test = this.extractFilenameParts(file.path);
+      professor.profileImage = `http://localhost:3000/professor/profile/${test[0]}/${test[1]}`;
+      await professor.save();
+      return { path: true };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   private extractFilenameParts(imagePath: string): string[] {
     const parts = imagePath.split(/\/|\\/);
@@ -130,28 +185,43 @@ export class ProfessorController {
   @Get('/get/email/encripted')
   @UseGuards(ProfessorGuard)
   async getEmailEncrypted(@Cookies('id') id: string) {
-    const professor = await this.getProfessor(id);
-    return this.professorService.encryptProfessor(professor.email);
+    try {
+      const professor = await this.getProfessor(id);
+      return this.professorService.encryptProfessor(professor.email);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   @Get('/get')
   async getProfessor(@Cookies('id') id: string): Promise<any> {
-    const decodedToken = await this.professorService.decriptJwt(id);
-    const professor = await this.professorService.getProfessor(decodedToken);
+    try {
+      const decodedToken = await this.professorService.decriptJwt(id);
+      const professor = await this.professorService.getProfessor(decodedToken);
 
-    if (professor === null) {
-      return ' ';
+      if (professor === null) {
+        return ' ';
+      }
+      return professor;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    return professor;
   }
 
   @Get('/isProfessor')
   async verifyAdmin(@Cookies('id') id: string): Promise<boolean> {
-    const decodedToken = await this.professorService.decriptJwt(id);
-    const professor = await this.professorService.getProfessor(decodedToken);
+    try {
+      const decodedToken = await this.professorService.decriptJwt(id);
+      const professor = await this.professorService.getProfessor(decodedToken);
 
-    if (professor === null) {
-      return false;
+      if (professor === null) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    return true;
   }
 }

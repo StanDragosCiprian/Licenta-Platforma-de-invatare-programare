@@ -48,6 +48,16 @@ export class ProfessorHandle implements IProfessorHandle {
       ? media[property]
       : mediaComponent[property];
   }
+  protected arrayAssignProperty(
+    mediaComponent: any,
+    media: any,
+    property: string,
+  ): any {
+    return media[property].length !== 0 &&
+      media[property] !== mediaComponent[property]
+      ? media[property]
+      : mediaComponent[property];
+  }
   protected arraysEqual(a: any[], b: any[]): boolean {
     return a.length === b.length && a.every((val, index) => val === b[index]);
   }
@@ -175,6 +185,7 @@ export class ProfessorHandle implements IProfessorHandle {
       professorId,
       courseModel,
     );
+    const set = new Set<string>();
     for (const s of professor) {
       for (const courses of professorCourses) {
         if (courseName === courses.name) {
@@ -183,9 +194,13 @@ export class ProfessorHandle implements IProfessorHandle {
             courses.name,
             courseModel,
           );
-          c.colaborationId.push(
-            (await this.professorService.getProfessorByEmail(s))._id,
+          c.colaborationId.forEach((st) => set.add(st.toString()));
+          c.colaborationId = [];
+          set.add(
+            (await this.professorService.getProfessorByEmail(s))._id.toString(),
           );
+          set.forEach((st) => c.colaborationId.push(new Types.ObjectId(st)));
+
           callback(c);
         }
       }
@@ -221,6 +236,7 @@ export class ProfessorHandle implements IProfessorHandle {
       }
     });
   }
+
   async addStudentsToCourses(
     professorId: string,
     student: string[],
@@ -235,6 +251,7 @@ export class ProfessorHandle implements IProfessorHandle {
     const s = await Promise.all(
       await this.professorService.getStudentsId(student),
     );
+    const set = new Set<string>();
     for (const stud of await s) {
       for (const courses of professorCourses) {
         if (courseName === courses.name) {
@@ -243,7 +260,10 @@ export class ProfessorHandle implements IProfessorHandle {
             courses.name,
             courseModel,
           );
-          c.studentId.push(stud);
+          c.studentId.forEach((st) => set.add(st.toString()));
+          c.studentId = [];
+          set.add(stud.toString());
+          set.forEach((st) => c.studentId.push(new Types.ObjectId(st)));
           callback(c);
         }
       }

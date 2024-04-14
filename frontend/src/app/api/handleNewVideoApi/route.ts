@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const bodyCours = await req.json();
-  const {videoName}=bodyCours;
+  const { videoName } = bodyCours;
   delete bodyCours.videoName;
   const cookie = req.cookies.get("id");
 
@@ -16,7 +16,10 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify(bodyCours),
   };
-  const res = await fetch(`${urlBackend}courses/video/${videoName}/add/video/textInput`, option);
+  const res = await fetch(
+    `${urlBackend}courses/video/${videoName}/add/video/textInput`,
+    option
+  );
   const r = await res.text();
-  return new NextResponse(JSON.stringify({"text":r}));
+  return new NextResponse(JSON.stringify({ text: r, ok:res.ok }));
 }

@@ -41,38 +41,53 @@ export class DocsController {
     @Param('coursName') coursName: string,
     @Param('newTitle') newTitle: string,
   ) {
-    const pdfPath = await this.docsService.getPdfPathFromCourse(
-      id,
-      coursName,
-      videName,
-    );
-    if (filename !== undefined) {
-      const pdfPathArray = pdfPath.split('/');
-      const pdfPathString = pdfPathArray.join('\\');
-      fs.unlinkSync(
-        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${pdfPathString}`,
+    try {
+      const pdfPath = await this.docsService.getPdfPathFromCourse(
+        id,
+        coursName,
+        videName,
+      );
+      if (filename !== undefined) {
+        const pdfPathArray = pdfPath.split('/');
+        const pdfPathString = pdfPathArray.join('\\');
+        fs.unlinkSync(
+          `${FILELOCATION}\\backend\\src\\VideoTutorial\\${pdfPathString}`,
+        );
+      }
+      const pdf: IDocumentFormat = {
+        format: 'Pdf',
+        title: newTitle,
+        documentFormatName:
+          filename !== undefined
+            ? `${professorName}/${coursName}/${filename}`
+            : '',
+      };
+      await this.docsService.updatePdfFromCourse(pdf, videName, id, coursName);
+    } catch (error) {
+      // Handle the exception here
+      console.error(error);
+      throw new Error(
+        'An error occurred while updating the PDF from the course.',
       );
     }
-    const pdf: IDocumentFormat = {
-      format: 'Pdf',
-      title: newTitle,
-      documentFormatName:
-        filename !== undefined
-          ? `${professorName}/${coursName}/${filename}`
-          : '',
-    };
-    await this.docsService.updatePdfFromCourse(pdf, videName, id, coursName);
   }
   @Get('/coursesProfessor/:courseName/get/pdf')
   async coursesProfessorPdf(
     @Cookies('id') id: string,
     @Param('courseName') courseName: string,
   ) {
-    const pdf: IDocumentFormat[] = await this.docsService.getProfessorMedia(
-      id,
-      courseName,
-    );
-    return pdf;
+    try {
+      const pdf: IDocumentFormat[] = await this.docsService.getProfessorMedia(
+        id,
+        courseName,
+      );
+      return pdf;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        'An error occurred while retrieving the PDFs for the professor.',
+      );
+    }
   }
   @Post('/:professorName/:coursName/:title/add/document/Docs')
   @UseGuards(ProfessorGuard)
@@ -88,16 +103,23 @@ export class DocsController {
     @Param('professorName') professorName: string,
     @Param('title') title: string,
   ) {
-    const cursId: Types.ObjectId =
-      await this.docsService.takeCoursId(coursName);
-    const pdfDto: IDocumentFormat = {
-      format: 'Pdf',
-      title: `${title}`,
-      documentFormatName: `${professorName}/${coursName}/${filename}`,
-    };
-    const t = await this.docsService.addMediaFormat(cursId, pdfDto);
-    console.log('t: ', t);
-    return t;
+    try {
+      const cursId: Types.ObjectId =
+        await this.docsService.takeCoursId(coursName);
+      const pdfDto: IDocumentFormat = {
+        format: 'Pdf',
+        title: `${title}`,
+        documentFormatName: `${professorName}/${coursName}/${filename}`,
+      };
+      const t = await this.docsService.addMediaFormat(cursId, pdfDto);
+      console.log('t: ', t);
+      return t;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        'An error occurred while creating the PDF for the course.',
+      );
+    }
   }
   @Get('/:professorName/:cursName/:pdfName/pdf')
   async getPdf(
@@ -106,8 +128,13 @@ export class DocsController {
     @Param('cursName') cursName: string,
     @Param('pdfName') videoName: string,
   ) {
-    response.sendFile(
-      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
-    );
+    try {
+      response.sendFile(
+        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
+      );
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while retrieving the PDF.');
+    }
   }
 }

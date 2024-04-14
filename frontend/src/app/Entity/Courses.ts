@@ -3,6 +3,7 @@ import {
   urlBackend,
 } from "@/app/UserServer/ServerRequest";
 import { getCookie } from "cookies-next";
+import { notFound } from "next/navigation";
 
 export class Courses implements ICourses {
   name: string = "";
@@ -33,9 +34,9 @@ export class Courses implements ICourses {
     };
     const api = await fetch(
       `/api/handleUpdateCourseApi`,
-      sendToServerCookies(option, id)
+      sendToServerCookies(JSON.stringify(option), id)
     );
-
+    if (!api.ok) notFound();
   }
   public async newCourse() {
     const id = getCookie("id")?.toString();
@@ -49,9 +50,13 @@ export class Courses implements ICourses {
     };
     const api = await fetch(
       "/api/handleNewCourseApi",
-      sendToServerCookies(this, id)
+      sendToServerCookies(JSON.stringify(this), id)
     );
-    const { text } = await api.json();
-    return text;
+    if (api.ok) {
+      const { text } = await api.json();
+      return text;
+    } else {
+      notFound();
+    }
   }
 }

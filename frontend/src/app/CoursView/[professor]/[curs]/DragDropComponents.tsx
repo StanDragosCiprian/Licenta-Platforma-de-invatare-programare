@@ -8,12 +8,14 @@ export const DragDropComponenst = ({
   courseTitles,
   coursName,
   coursProfessor,
-  isProfessorCours
+  isProfessorCours,
+  format,
 }: {
   courseTitles: string[];
   coursName: string;
   coursProfessor: string;
   isProfessorCours: boolean;
+  format:string[];
 }) => {
   const [courses, setCourses] = useState(courseTitles);
 
@@ -53,6 +55,7 @@ export const DragDropComponenst = ({
             drop={drop}
             dragOver={dragOver}
             isProfessorCours={isProfessorCours}
+            format={format[index]}
           />
         </div>
       ))}

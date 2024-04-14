@@ -14,11 +14,14 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify(body),
   };
+  let stats: boolean=false;
   if (role === "student") {
-    await fetch(`${urlBackend}admin/delete/student`, option);
+    const r = await fetch(`${urlBackend}admin/delete/student`, option);
+    stats=r.ok;
   } else if (role === "professor") {
-    await fetch(`${urlBackend}admin/delete/professor`, option);
+    const r = await fetch(`${urlBackend}admin/delete/professor`, option);
+    stats=r.ok;
   }
 
-  return new NextResponse(JSON.stringify({ videos: 5 }));
+  return new NextResponse(JSON.stringify({ ok: stats }));
 }

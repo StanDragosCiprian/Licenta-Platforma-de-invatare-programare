@@ -1,12 +1,15 @@
 "use client";
 import { Button, Modal } from "flowbite-react";
+import { notFound } from "next/navigation";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 
 const ReverseCourse: FC<{
+  myProfessor: string;
   professor: Array<{ username: string; email: string }>;
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>>;
   email: string;
-}> = ({ professor, setDialog, email }) => {
+}> = ({ professor, setDialog, email, myProfessor }) => {
+  console.log(myProfessor);
   const [selected, setSelected] = useState<string>("");
   const handleSwitchProfessorCourse = async (
     email1: string,
@@ -20,11 +23,15 @@ const ReverseCourse: FC<{
       },
       body: JSON.stringify({ email1: email1, email2: email2 }),
     };
-    await fetch("/api/handleSwitchProfessorCourseApi", option);
+    const r = await fetch("/api/handleSwitchProfessorCourseApi", option);
+    const { ok } = await r.json();
+    if (!ok) {
+      notFound();
+    }
   };
   return (
     <Modal show={true} onClose={() => setDialog(undefined)}>
-      <Modal.Header>Swich professor course </Modal.Header>
+      <Modal.Header>Professor {myProfessor} take courses from ...</Modal.Header>
       <Modal.Body>
         <label
           htmlFor="countries"
@@ -48,7 +55,10 @@ const ReverseCourse: FC<{
             ) : undefined
           )}
         </select>
-        <Button color="blue" onClick={() => handleSwitchProfessorCourse(selected,email)}>
+        <Button
+          color="blue"
+          onClick={() => handleSwitchProfessorCourse(selected, email)}
+        >
           Switch course
         </Button>
       </Modal.Body>

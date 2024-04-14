@@ -1,11 +1,6 @@
 import { getCookie } from "cookies-next";
-import {
-  getFromServerCookie,
-  sendFiles,
-  sendToServerCookies,
-  urlBackend,
-} from "../UserServer/ServerRequest";
-
+import { sendFiles, sendToServerCookies } from "../UserServer/ServerRequest";
+import { notFound } from "next/navigation";
 export class VideoManaging {
   private videoName: string = "";
   constructor(videoName: string) {
@@ -19,18 +14,21 @@ export class VideoManaging {
     const test = await fetch(
       "/api/handleNewVideoApi",
       sendToServerCookies(
-        {
+        JSON.stringify({
           title: title,
           description: description,
           videoPath: video,
           videoName: this.videoName,
-        },
+        }),
         undefined
       )
     );
-    const { text } = await test.json();
-
-    return text;
+    const { text, ok } = await test.json();
+    if (ok) {
+      return text;
+    } else {
+      notFound();
+    }
   }
   private async setVideoTextUpdate(
     title: string,
@@ -41,49 +39,70 @@ export class VideoManaging {
     const test = await fetch(
       "/api/handleUpdateCourseApi/handleSendUpdateVideoApi",
       sendToServerCookies(
-        {
+        JSON.stringify({
           title: title,
           description: description,
           videoPath: video,
           videoName: this.videoName,
           coursName: coursName,
-        },
+        }),
         undefined
       )
     );
-    const { text } = await test.json();
-
+    const { text, ok } = await test.json();
+    if (!ok) notFound();
     return text;
   }
   private async getProfessorName(): Promise<string> {
+    const option = {
+      method: "POST",
+      credentials: "include" as RequestCredentials,
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `id=${getCookie("id")}`,
+      },
+    };
     const professor = await fetch(
-      `${urlBackend}courses/professorName`,
-      getFromServerCookie(getCookie("id"))
+      "/api/handleProfessorApi/professorName",
+      option
     );
-    return await professor.text();
+    const { text, ok } = await professor.json();
+    if (ok) return text;
+    else notFound();
   }
   private async setVideo(
     filePath: string,
     professorName: string
   ): Promise<string> {
+    const body = new FormData();
+    body.set("file", filePath);
+    body.set("professorName", professorName);
+    body.set("videoName", this.videoName);
     const response = await fetch(
-      `${urlBackend}courses/video/${professorName}/${this.videoName}/add/video/videoInput`,
-      sendFiles(filePath)
+      "/api/handleVideoApi/videoInput",
+      sendFiles(body, getCookie("id"))
     );
-    //http://localhost:3000/courses/video/mmm/few/add/video/videoInput',
-    const r=await response.text();
-    return r;
+    const { text, ok } = await response.json();
+    if (!ok) notFound();
+    return text;
   }
   private async setUpdateVideo(
     filePath: string,
     professorName: string,
-    videoName: string
+    courseName: string
   ): Promise<string> {
+    const body = new FormData();
+    body.set("file", filePath);
+    body.set("professorName", professorName);
+    body.set("courseName", courseName);
+    body.set("videoName", this.videoName);
     const response = await fetch(
-      `${urlBackend}courses/video/${professorName}/${this.videoName}/${videoName}/add/video/Update/videoInput`,
-      sendFiles(filePath)
+      "/api/handleVideoApi/videoInputUpdate",
+      sendFiles(body, getCookie("id"))
     );
-    return await response.text();
+    const { text, ok } = await response.json();
+    if (!ok) notFound();
+    return text;
   }
   public async sendTextUpdate(
     title: string,
@@ -93,8 +112,9 @@ export class VideoManaging {
   ) {
     const professorName = await this.getProfessorName();
     let video = "";
-    if (file !== "")
+    if (file !== "") {
       video = await this.setUpdateVideo(file, professorName, coursName);
+    }
     const response: string = await this.setVideoTextUpdate(
       title,
       description,
@@ -107,7 +127,7 @@ export class VideoManaging {
     const professorName = await this.getProfessorName();
     const video = await this.setVideo(file, professorName);
     const response: string = await this.setVideoText(title, description, video);
-    const r=await response;
+    const r = await response;
     return r;
   }
 }

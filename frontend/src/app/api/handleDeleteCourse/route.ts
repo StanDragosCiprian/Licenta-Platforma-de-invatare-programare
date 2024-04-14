@@ -15,5 +15,5 @@ export async function POST(req: NextRequest) {
     },
   };
   const res = await fetch(`${urlBackend}courses/${courseName}/delete`, option);
-  return new NextResponse(JSON.stringify({ test: "test" }));
+  return new NextResponse(JSON.stringify({ ok: res.ok }));
 }

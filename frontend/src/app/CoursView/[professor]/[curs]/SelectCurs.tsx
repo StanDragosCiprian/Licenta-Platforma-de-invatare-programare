@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { Popover } from "./Popover";
+import IconUpdateVideo from "@/app/IconsComponents/IconUpdateVideo";
+import IconPdf from "@/app/IconsComponents/IconPdf";
+import IconCode from "@/app/IconsComponents/IconCode";
 
 export const SelectCourses = ({
   title,
@@ -10,6 +13,7 @@ export const SelectCourses = ({
   drop,
   dragOver,
   isProfessorCours,
+  format,
 }: {
   title: string;
   index: number;
@@ -19,12 +23,26 @@ export const SelectCourses = ({
   dragStart: (e: React.DragEvent<HTMLDivElement>, index: number) => void;
   drop: (e: React.DragEvent<HTMLDivElement>, index: number) => void;
   dragOver: (e: React.DragEvent<HTMLDivElement>) => void;
+  format: string;
 }) => {
+  const handleIcons = () => {
+    switch (format) {
+      case "Video":
+        return <IconUpdateVideo />;
+      case "Pdf":
+        return <IconPdf />;
+      case "Compilator":
+        return <IconCode />;
+      default:
+        return " ";
+    }
+  };
   return (
     <div className="flex items-center">
+      {handleIcons()}
       <Link
         href={`/CoursView/${coursProfessor}/${nameCours}/${index}/view`}
-        className="p-3 rounded-lg text-start leading-tight transition-all hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-300 hover:text-blue-gray-900 focus:text-blue-gray-900 active:text-blue-gray-900 outline-none"
+        className="p-3 rounded-lg text-start leading-tight transition-all hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-300 hover:text-blue-gray-900 focus:text-blue-gray-900 active:text-blue-gray-900 overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[20ch]"
       >
         {title}
       </Link>

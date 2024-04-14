@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
   const f = await fetch(
     `${urlBackend}courses/compilator/${professor}/${coursName}/${language}/${id}/execute/script`,
-    sendToServerCookies(body, undefined)
+    sendToServerCookies(JSON.stringify(body), undefined)
   );
   return new NextResponse(JSON.stringify(await f.json()));
 }

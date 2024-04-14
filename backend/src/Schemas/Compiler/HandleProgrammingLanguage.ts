@@ -1,10 +1,10 @@
 import { ICompilatorUser } from '../Entity/ICompilatorUser';
-import { CCompier } from './CCompiler';
+
 import { CppCompier, ICppCompier } from './CppCompiler';
 import { IJavaCompier, JavaCompier } from './JavaCompiler';
 import { IJavaScriptCompier, JavaScriptCompier } from './JavaScriptCompiler';
 import { IPythonCompier, PythonCompier } from './PythonCompiler';
-import { ICCompier } from './CCompiler';
+
 export interface IHandleProgrammingLanguage {
   chooseLanguage(): Promise<string>;
   executeScripts(): Promise<unknown>;
@@ -42,15 +42,6 @@ export class HandleProgrammingLanguage implements IHandleProgrammingLanguage {
 
         programs.generatePythonFuntion();
         return programs.getScripts();
-      case 'c':
-        programs = new CCompier();
-        programs.setPatern(
-          this.userData.functionName,
-          this.userData.parameterWithType,
-        );
-
-        programs.generatePythonFuntion();
-        return programs.getScripts();
       case 'javaScript':
         programs = new JavaScriptCompier();
         programs.setPatern(
@@ -76,8 +67,7 @@ export class HandleProgrammingLanguage implements IHandleProgrammingLanguage {
       | IPythonCompier
       | ICppCompier
       | IJavaScriptCompier
-      | IJavaCompier
-      | ICCompier;
+      | IJavaCompier;
     switch (this.userData.programmingLanguage) {
       case 'python':
         programs = new PythonCompier();
@@ -90,15 +80,6 @@ export class HandleProgrammingLanguage implements IHandleProgrammingLanguage {
         return programs.execute();
       case 'cpp':
         programs = new CppCompier();
-        programs.setPatern(
-          this.userData.functionName,
-          this.userData.parameterWithType,
-        );
-        programs.setInputOutputs(this.input);
-        programs.setScripts(this.userData.scripts);
-        return programs.execute();
-      case 'c':
-        programs = new CCompier();
         programs.setPatern(
           this.userData.functionName,
           this.userData.parameterWithType,

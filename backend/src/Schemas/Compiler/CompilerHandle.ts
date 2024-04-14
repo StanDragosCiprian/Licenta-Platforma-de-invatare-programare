@@ -3,7 +3,6 @@ import { writeFileSync } from 'fs';
 export interface ICompilerHandler {
   executePythonCode: () => Promise<unknown>;
   executeCppCode: () => Promise<unknown>;
-  executeCCode: () => Promise<unknown>;
   executeJavaScriptCode: () => Promise<unknown>;
   executeJavaCode: () => Promise<unknown>;
 }
@@ -16,75 +15,42 @@ export class CompilerHandler {
     this.script = script;
   }
   public executeCppCode = async () => {
-    return new Promise((resolve, reject) => {
-      const command = `echo '${this.script}' | g++ -x c++ - -mconsole -o myprogram ; ./myprogram`;
-      const ps = spawn('powershell.exe', ['-Command', command]);
-
-      let stdout = '';
-      let stderr = '';
-
-      ps.stdout.on('data', (data) => {
-        stdout += data;
-      });
-
-      ps.stderr.on('data', (data) => {
-        stderr += data;
-      });
-
-      ps.on('close', (code) => {
-        if (code !== 0) {
-          reject(`error: ${stderr}`);
-        } else {
-          resolve(`${stdout}`);
-        }
-      });
-    });
-  };
-
-  public executeCCode = async () => {
     writeFileSync(
-      'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\CFile.c',
+      'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\CppFile.cpp',
       this.script,
     );
-    return new Promise((resolve, reject) => {
-      const compile = spawn('gcc', [
+    return new Promise((resolve) => {
+      const compile = spawn('g++', [
         '-o',
         'output',
-        'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\CFile.c',
+        'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\CppFile.cpp',
       ]);
       let result = '';
-
       compile.on('close', (compileExitStatus) => {
         if (compileExitStatus != 0) {
-          console.log(`GCC exited with status ${compileExitStatus}`);
-          reject(new Error('GCC compilation failed'));
           return;
         }
 
         const run = spawn('./output');
-
         run.stdout.on('data', (data) => {
           result += `${data}`;
-          console.log('result: ', result);
           resolve(result);
         });
 
         run.stderr.on('data', (data) => {
-          console.log(`Error: ${data}`);
           result += `${data}`;
-          console.log('result: ', result);
           resolve(result);
         });
 
         run.on('close', (runExitStatus) => {
           if (runExitStatus != 0) {
-            console.log(`Program exited with status ${runExitStatus}`);
           }
         });
       });
     });
   };
   public executeJavaCode = async () => {
+    this.script = this.script.replace(/string/g, 'String');
     writeFileSync(
       'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\JavaFile.java',
       this.script,
@@ -93,39 +59,38 @@ export class CompilerHandler {
       const child = spawn('javac', [
         'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\JavaFile.java',
       ]);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let result = '';
       child.stdout.on('data', (data) => {
         result += data;
-        console.log(`stdout: ${data}`);
+        resolve(1);
       });
 
       child.stderr.on('data', (data) => {
         result += data;
-        console.error(`stderr: ${data}`);
+
+        resolve(
+          result.replace(
+            'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\JavaFile.',
+            ' ',
+          ),
+        );
       });
 
       child.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
         if (code === 0) {
-          // If the compilation was successful, run the program
           const run = spawn('java', [
             '-cp',
             'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler',
-            'JavaFile', // Notice: no .java extension
+            'JavaFile',
           ]);
 
           run.stdout.on('data', (data) => {
-            console.log(`stdout: ${data}`);
             resolve(data);
           });
 
           run.stderr.on('data', (data) => {
-            console.error(`stderr: ${data}`);
             resolve(data);
-          });
-
-          run.on('close', (code) => {
-            console.log(`child process exited with code ${code}`);
           });
         }
       });
@@ -148,8 +113,6 @@ export class CompilerHandler {
           reject(`stderr: ${stderr}`);
           return;
         }
-
-        console.log(`${stdout}`);
         resolve(stdout);
       });
     });
@@ -170,8 +133,7 @@ export class CompilerHandler {
         resolve(data.toString());
       });
 
-      this.process.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
+      this.process.on('close', () => {
         resolve(result);
       });
     });

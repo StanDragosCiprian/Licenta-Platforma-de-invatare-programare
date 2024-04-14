@@ -3,6 +3,7 @@ import { Modal } from "flowbite-react";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { DocumentComponents } from "../[name]/docs/DocumentComponents";
 import { IDocument } from "@chalkbooks/react-doc-viewer";
+import { notFound } from "next/navigation";
 // Replace "your-modal-package" with the actual package name
 
 const PdfUpdate: FC<{
@@ -27,8 +28,10 @@ const PdfUpdate: FC<{
         "/api/handleUpdateCourseApi/handleGetPdfVideoApi",
         option
       );
-      const { videos } = await req.json();
+      const { videos,ok } = await req.json();
+      if(ok)
       setVideo(videos);
+    else notFound();
     };
 
     fetchVideo();
@@ -53,6 +56,7 @@ const PdfUpdate: FC<{
                               isUpdated={true}
                               documentName={video.title}
                               professorName=""
+                              professorEmail="" // Add the missing professorEmail property
                             />
                           </div>
                         )

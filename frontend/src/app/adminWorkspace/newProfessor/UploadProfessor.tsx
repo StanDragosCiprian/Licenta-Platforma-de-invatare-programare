@@ -5,6 +5,7 @@ import { AdminsService } from "../../Entity/AdminService";
 import { useState } from "react";
 import { HiInformationCircle } from "react-icons/hi";
 import { Alert } from "flowbite-react";
+import { getCookie } from "cookies-next";
 export const UploadProfessor = () => {
   const [warning, setWarning] = useState([
     `You don&apos;t have the right file format!`,
@@ -13,7 +14,7 @@ export const UploadProfessor = () => {
   const [isExel, setIsExel] = useState(false);
   const handleFileChange = async () => {
     const admin = new AdminsService();
-    await admin.sendProfessor(files, setWarning, setIsExel);
+    await admin.sendProfessor(files, setWarning, setIsExel,getCookie("id"));
   };
   const handleSetFiles = (e: any) => {
     const file = e.target.files[0];

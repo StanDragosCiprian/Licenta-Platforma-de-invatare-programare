@@ -10,28 +10,46 @@ export const UpdateTextUser: FC<{
   role: string;
   email: string;
   urlApi: string;
-  nameOfEditor:string;
-  setIsHovered: Dispatch<SetStateAction<boolean>>
-}> = ({ changeContent, url, role, email, urlApi,nameOfEditor,setIsHovered }) => {
+  nameOfEditor: string;
+  setIsHovered: Dispatch<SetStateAction<boolean>>;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
+}> = ({
+  changeContent,
+  url,
+  role,
+  email,
+  urlApi,
+  nameOfEditor,
+  setIsHovered,
+  setEditMode,
+}) => {
   const route = useRouter();
   const handleUpdate = async (newValue: string) => {
+    if (nameOfEditor === "email") {
+      const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+      if (!expression.test(newValue)) {
+        setEditMode(true);
+        return;
+      }
+    }
     const api = await fetch(
       url,
       sendToServerCookies(
-        {
+        JSON.stringify({
           role: role,
           content: changeContent,
           newValue: newValue,
           email: email,
           urlApi: urlApi,
-        },
+        }),
         undefined
       )
     );
-    const { isUpdate } = await api.json();
-    if (isUpdate) {
+    const { isUpdate, ok } = await api.json();
+    if (isUpdate && ok) {
       route.refresh();
-      setIsHovered(false)
+      setIsHovered(false);
+      setEditMode(false);
     }
   };
   const [inputValue, setInputValue] = useState<string>("");

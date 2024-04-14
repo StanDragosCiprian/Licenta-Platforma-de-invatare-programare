@@ -16,8 +16,6 @@ export async function POST(req: NextRequest) {
     option
   );
   const video=await response.json();
-  if (!response.ok) {
-    console.error("Error occurred:", response.status);
-  }
-  return new NextResponse(JSON.stringify({ videos: video }));
+
+  return new NextResponse(JSON.stringify({ videos: video, ok: response.ok }));
 }

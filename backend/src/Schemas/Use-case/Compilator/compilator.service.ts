@@ -18,70 +18,106 @@ import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 export class CompilatorService {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
-  constructor(@InjectModel('Curs') private compilerModel: Model<ICurs>) {}
+  constructor(@InjectModel('Courses') private compilerModel: Model<ICurs>) {}
   private compilatorHandle = new CompilatorHandle();
   async getProfessorCompilator(
     id: string,
     courseName: string,
   ): Promise<string[]> {
-    this.compilatorHandle.setProfessorService(this.professorService);
-    return await this.compilatorHandle.getProfessorCompilator(
-      id,
-      courseName,
-      this.compilerModel,
-    );
+    try {
+      this.compilatorHandle.setProfessorService(this.professorService);
+      return await this.compilatorHandle.getProfessorCompilator(
+        id,
+        courseName,
+        this.compilerModel,
+      );
+    } catch (error) {
+      // Handle the exception here
+      console.error(error);
+      throw error; // Rethrow the exception if needed
+    }
   }
   async updateCompilatorFromCourse(
     compile: any,
     professorId: string,
     courseName: string,
   ): Promise<void> {
-    this.compilatorHandle.setProfessorService(this.professorService);
-    await this.compilatorHandle.updateCompilatorFromCourse(
-      compile,
-      professorId,
-      courseName,
-      this.compilerModel,
-    );
+    try {
+      this.compilatorHandle.setProfessorService(this.professorService);
+      await this.compilatorHandle.updateCompilatorFromCourse(
+        compile,
+        professorId,
+        courseName,
+        this.compilerModel,
+      );
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   async chooseCompiler(userData: ICompilatorUser) {
-    const handleProgrammingLanguage: IHandleProgrammingLanguage =
-      new HandleProgrammingLanguage(userData);
-    return handleProgrammingLanguage.chooseLanguage();
+    try {
+      const handleProgrammingLanguage: IHandleProgrammingLanguage =
+        new HandleProgrammingLanguage(userData);
+      return handleProgrammingLanguage.chooseLanguage();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   async executeScripts(userData: ICompilatorUser, input: string) {
-    const handleProgrammingLanguage: IHandleProgrammingLanguage =
-      new HandleProgrammingLanguage(userData);
-    handleProgrammingLanguage.setInputOutputs(input);
-    return handleProgrammingLanguage.executeScripts();
+    try {
+      const handleProgrammingLanguage: IHandleProgrammingLanguage =
+        new HandleProgrammingLanguage(userData);
+      handleProgrammingLanguage.setInputOutputs(input);
+      return handleProgrammingLanguage.executeScripts();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   async addMediaFormat(
     cursId: Types.ObjectId,
     media: IVideo | IDocumentFormat | ICompilators,
   ) {
-    const curs: ICurs = await this.compilerModel.findById(cursId);
-    curs.curs.push(media);
-    curs.save();
-    return curs.curs.length - 1;
+    try {
+      const curs: ICurs = await this.compilerModel.findById(cursId);
+      curs.curs.push(media);
+      await curs.save();
+      return curs.curs.length - 1;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   async getCoursFromProfessor(
     professor: string,
     coursName: string,
     id: string,
   ) {
-    const courseHandle = new CoursesHandle();
-    courseHandle.setCourseModel(this.compilerModel);
-    return await this.compilatorHandle.getCoursFromProfessor(
-      professor,
-      coursName,
-      id,
-      courseHandle,
-      this.professorService,
-    );
+    try {
+      const courseHandle = new CoursesHandle();
+      courseHandle.setCourseModel(this.compilerModel);
+      return await this.compilatorHandle.getCoursFromProfessor(
+        professor,
+        coursName,
+        id,
+        courseHandle,
+        this.professorService,
+      );
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
   takeCoursId(coursName: string) {
-    const courseId = new CoursesHandle();
-    courseId.setCourseModel(this.compilerModel);
-    return courseId.takeCoursId(coursName);
+    try {
+      const courseId = new CoursesHandle();
+      courseId.setCourseModel(this.compilerModel);
+      return courseId.takeCoursId(coursName);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }

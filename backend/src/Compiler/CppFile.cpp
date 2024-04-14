@@ -1,11 +1,12 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
-    int add(float  a,float  b){
-retrun a+b;
+    int get_first_value(int[]  number_list){
+return number_list[0];
 }
     int main() {
-cout<<add(2,4)<<endl;
+cout<<get_first_value([1, 2, 3])<<endl;
         
         return 0;
     }

@@ -33,14 +33,7 @@ export class VideoController {
   //     const name = await this.videoService.takeFullCurs(coursName);
   //     return name.curs[id];
   //   }
-  @Get('/:coursName/videoCourse')
-  async getCoursFullCurs(@Param('coursName') coursName: string) {
-    const name = await this.videoService.takeFullCurs(coursName);
-    const m = name.curs.map((cours: any) => {
-      return { title: cours.title };
-    });
-    return m;
-  }
+
   @Get('/:professorName/:cursName/:videoName/:extension/get/video')
   async getVideo(
     @Res() response,
@@ -49,12 +42,17 @@ export class VideoController {
     @Param('videoName') videoName: string,
     @Param('extension') extension: string,
   ) {
-    response.sendFile(
-      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
-    );
+    try {
+      response.sendFile(
+        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
+      );
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while fetching the video.');
+    }
   }
   @Post('/:professorName/:coursName/add/video/videoInput')
-  @UseGuards(ProfessorGuard)
+  // @UseGuards(ProfessorGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage(fileHandle.destinationVideo()),
@@ -70,17 +68,24 @@ export class VideoController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Param('coursName') coursName: string,
   ) {
-    const { dest }: any = req.body;
-    const finalDest =
-      dest
-        .replace(
-          'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\',
-          '',
-        )
-        .replace(/\\/g, '/') +
-      '/' +
-      filename;
-    return finalDest;
+    try {
+      const { dest }: any = req.body;
+      const finalDest =
+        dest
+          .replace(
+            'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\',
+            '',
+          )
+          .replace(/\\/g, '/') +
+        '/' +
+        filename;
+      return finalDest;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        'An error occurred while adding the video for the video course.',
+      );
+    }
   }
   @Post('/:coursName/add/video/textInput')
   @UseGuards(ProfessorGuard)
@@ -88,20 +93,33 @@ export class VideoController {
     @Param('coursName') coursId: string,
     @Body() createCursDto: IVideo,
   ): Promise<string> {
-    const cursId: Types.ObjectId = await this.videoService.takeCoursId(coursId);
-    const videoDto = createCursDto;
-    videoDto.format = 'Video';
-    const curs = await this.videoService.addMediaFormat(cursId, videoDto);
-    return await curs.toString();
+    try {
+      const cursId: Types.ObjectId =
+        await this.videoService.takeCoursId(coursId);
+      const videoDto = createCursDto;
+      videoDto.format = 'Video';
+      const curs = await this.videoService.addMediaFormat(cursId, videoDto);
+      return await curs.toString();
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        'An error occurred while creating the text for the video course.',
+      );
+    }
   }
   @Get('/coursesProfessor/:courseName/video')
   async coursesProfessorVideo(
     @Cookies('id') id: string,
     @Param('courseName') courseName: string,
   ) {
-    const video: IVideo[] | IDocumentFormat[] =
-      await this.videoService.getProfessorMedia(id, courseName);
-    return video;
+    try {
+      const video: IVideo[] | IDocumentFormat[] =
+        await this.videoService.getProfessorMedia(id, courseName);
+      return video;
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while fetching the professor videos.');
+    }
   }
   @Post('/:professorName/:videName/:coursName/add/video/Update/videoInput')
   @UseGuards(ProfessorGuard)
@@ -125,10 +143,17 @@ export class VideoController {
     );
     const videoPathArray = videoPath.split('/');
     const videoPathString = videoPathArray.join('\\');
-    fs.unlinkSync(
-      `${FILELOCATION}\\backend\\src\\VideoTutorial\\${videoPathString}`,
-    );
-    return `${professorName}/${coursName}/${filename}`;
+    try {
+      fs.unlinkSync(
+        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${videoPathString}`,
+      );
+      return `${professorName}/${coursName}/${filename}`;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        'An error occurred while updating the video for the video course.',
+      );
+    }
   }
   @Post('/:coursName/:videoName/update/video')
   @UseGuards(ProfessorGuard)
@@ -138,11 +163,16 @@ export class VideoController {
     @Param('coursName') coursName: string,
     @Param('videoName') videoName: string,
   ) {
-    await this.videoService.updateVideoFromCourse(
-      file,
-      videoName,
-      id,
-      coursName,
-    );
+    try {
+      await this.videoService.updateVideoFromCourse(
+        file,
+        videoName,
+        id,
+        coursName,
+      );
+    } catch (error) {
+      console.error(error);
+      throw new Error('An error occurred while updating the video.');
+    }
   }
 }

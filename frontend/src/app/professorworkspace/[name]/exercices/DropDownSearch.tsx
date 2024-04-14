@@ -23,7 +23,7 @@ const DropDownSearch: FC<{
     const n = [...combineParams];
     selectValue[index] =
       selectValue[index] === undefined ? "int" : selectValue[index];
-    console.log("selectValue[index]: ", selectValue[index]);
+
     n[index] = selectValue[index] + "." + inputValue[index];
     setCombineParams(n);
   };
@@ -40,6 +40,11 @@ const DropDownSearch: FC<{
           <option value="string">string</option>
           <option value="double">double</option>
           <option value="char">char</option>
+          <option value="int[]">int[]</option>
+          <option value="float[]">float[]</option>
+          <option value="string[]">string[]</option>
+          <option value="double[]">double[]</option>
+          <option value="char[]">char[]</option>
         </select>
       </div>
       <div className="relative w-full">

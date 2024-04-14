@@ -32,5 +32,5 @@ export async function POST(req: NextRequest) {
     request = await fetch(`${urlBackend}admin${urlApi}`, option);
   }
 
-  return new NextResponse(JSON.stringify({ isUpdate: await request.json() }));
+  return new NextResponse(JSON.stringify({ isUpdate: await request.json() ,ok:request.ok}));
 }

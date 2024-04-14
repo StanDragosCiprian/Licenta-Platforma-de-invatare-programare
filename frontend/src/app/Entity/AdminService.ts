@@ -5,11 +5,13 @@ export class AdminsService {
   public async sendProfessor(
     file: any,
     setWarning: Dispatch<SetStateAction<string[]>>,
-    setIsExel: Dispatch<SetStateAction<boolean>>
+    setIsExel: Dispatch<SetStateAction<boolean>>,
+    id:string|undefined
   ) {
-    const res = await fetch(`${urlBackend}admin/exel`, sendFiles(file));
+    const exel=new FormData();
+    exel.set("file",file);
+    const res = await fetch(`${urlBackend}admin/exel`, sendFiles(exel,id));
     const z = await res.json();
-    console.log("z: ", z);
     if (typeof z !== "boolean") {
       setWarning(z);
       setIsExel(true);

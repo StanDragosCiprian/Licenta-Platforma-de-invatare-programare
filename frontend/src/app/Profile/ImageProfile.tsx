@@ -1,12 +1,13 @@
 "use client";
 import Image from "next/image";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-const ImageProfile: FC<{ profileImage: string; role: string }> = ({
-  profileImage,
-  role,
-}) => {
+const ImageProfile: FC<{
+  profileImage: string;
+  role: string;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
+}> = ({ profileImage, role,setEditMode }) => {
   const router = useRouter();
   const uploadImage = async (fileInput: any) => {
     const file = fileInput.target.files[0];
@@ -18,7 +19,15 @@ const ImageProfile: FC<{ profileImage: string; role: string }> = ({
       credentials: "include" as RequestCredentials,
       body: formData,
     });
-    router.refresh();
+    const { isUpdate } = await test.json();
+    if (isUpdate) {
+      setEditMode(false);
+      router.refresh();
+    }else
+    {
+      setEditMode(true);
+    }
+    
   };
   return (
     <div className="flex items-center justify-center w-full rounded-full w-48 h-48 relative">
@@ -56,7 +65,12 @@ const ImageProfile: FC<{ profileImage: string; role: string }> = ({
             JPEG ONLY (MAX. 800x400px)
           </p>
         </div>
-        <input id="dropzone-file" type="file" className="hidden" onChange={uploadImage}/>
+        <input
+          id="dropzone-file"
+          type="file"
+          className="hidden"
+          onChange={uploadImage}
+        />
       </label>
     </div>
   );

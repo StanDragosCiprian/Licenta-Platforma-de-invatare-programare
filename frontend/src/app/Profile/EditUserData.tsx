@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "flowbite-react";
-import { FC, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
 import { UpdateTextUser } from "./UpdateTextUser";
 const EditUserData: FC<{
@@ -10,7 +10,8 @@ const EditUserData: FC<{
   url: string;
   urlApi: string;
   nameOfEditor: string;
-}> = ({ userModifyData, role, email, url, urlApi,nameOfEditor }) => {
+  setEditMode: Dispatch<SetStateAction<boolean>>
+}> = ({ userModifyData, role, email, url, urlApi,nameOfEditor,setEditMode}) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <div className="flex items-center pb-3">
@@ -24,6 +25,7 @@ const EditUserData: FC<{
                 urlApi={urlApi}
                 nameOfEditor={nameOfEditor}
                 setIsHovered={setIsHovered}
+                setEditMode={setEditMode}
             />
         </div>
     ) : (
