@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Popover } from "./Popover";
 import IconUpdateVideo from "@/app/IconsComponents/IconUpdateVideo";
 import IconPdf from "@/app/IconsComponents/IconPdf";
 import IconCode from "@/app/IconsComponents/IconCode";

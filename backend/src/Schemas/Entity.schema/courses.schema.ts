@@ -4,7 +4,7 @@ import { IVideo } from '../Entity/IVideo';
 import { IDocumentFormat } from '../Entity/IPdf';
 import { ICompilators } from '../Entity/ICompilators';
 @Schema()
-export class Curs {
+export class Courses {
   _id: mongoose.Types.ObjectId;
   @Prop({ type: mongoose.Types.ObjectId })
   studentId: mongoose.Types.ObjectId[];
@@ -19,6 +19,6 @@ export class Curs {
   @Prop({ type: mongoose.Types.ObjectId })
   colaborationId: mongoose.Types.ObjectId[];
   @Prop()
-  curs: [IVideo | IDocumentFormat | ICompilators];
+  courses: [IVideo | IDocumentFormat | ICompilators];
 }
-export const CursSchema = SchemaFactory.createForClass(Curs);
+export const CoursesSchema = SchemaFactory.createForClass(Courses);

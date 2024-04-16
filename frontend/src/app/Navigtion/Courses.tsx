@@ -14,7 +14,7 @@ export const Courses = async () => {
         <li className="flex flex-row mb-4">
           <Link href="/professorworkspace" className="flex items-center">
             <svg
-              className="w-6 h-6 text-gray-500 mr-4"
+              className="w-6 h-6 text-[#fffbeb] mr-4"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

@@ -23,7 +23,7 @@ export const CoursesName: FC<{
     imagePath: `${urlBackend}default/cours/1`,
     studentId: [],
     colaborationId: [],
-    curs: [],
+    courses: [],
   });
   const [nameCours, setNameCours] = useState({ Name: "" });
   const [isAllRight, setIsAllRight] = useState(true);

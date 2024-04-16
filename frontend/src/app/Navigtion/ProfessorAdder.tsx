@@ -7,27 +7,30 @@ export const ProfessorAdder = async () => {
   return (
     <>
       {admin?.role === "admin" ? (
-        <li className="flex flex-row">
-            <Link href="/adminWorkspace/newProfessor" className="flex items-center">
+        <li className="flex flex-row mb-4">
+          <Link
+            href="/adminWorkspace/newProfessor"
+            className="flex items-center"
+          >
             <svg
-              className="w-6 h-6 text-gray-500 mr-4"
+              className="w-6 h-6 text-[#fffbeb] mr-4"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
+
               fill="none"
-              viewBox="0 0 20 20"
+              viewBox="0 0 22 22"
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 5.757v8.486M5.757 10h8.486M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M16 12h4m-2 2v-4M4 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
               />
             </svg>
-            <span className="side-bar-text">
-              Create course
-            </span>
-            </Link>
+
+            <span className="side-bar-text">Add Professors</span>
+          </Link>
         </li>
       ) : null}
     </>

@@ -4,7 +4,7 @@ import { ProfessorHandle } from './ProfessorHandle';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 export interface IVideoHandle {
   getProfessorVide(
     id: string,
@@ -44,7 +44,7 @@ export class VideoHandle extends ProfessorHandle implements IVideoHandle {
       model,
       async (
         component: IVideo | IDocumentFormat | ICompilators,
-        course: ICurs,
+        course: ICourses,
       ) => {
         if (component.format === 'Video') {
           const videoComponent = component as IVideo;

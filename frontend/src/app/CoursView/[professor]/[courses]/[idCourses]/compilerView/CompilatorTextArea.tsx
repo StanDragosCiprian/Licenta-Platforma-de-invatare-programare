@@ -44,6 +44,7 @@ const CompilatorTextArea: FC<{
               <option value="cpp">C++</option>
               <option value="javaScript">javaScript</option>
               <option value="java">Java</option>
+              <option value="javaScript">nodejs</option>
             </select>
           </div>
           <div className="flex flex-col">

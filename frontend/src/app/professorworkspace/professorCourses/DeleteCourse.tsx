@@ -34,12 +34,12 @@ const DeleteCourse: FC<{
     <>
       <Modal show={true} onClose={() => setDialog(undefined)}>
         <Modal.Header>
-          Add {EntityName} to {courseName}
+          Delete course
         </Modal.Header>
         <Modal.Body>
-          <div className="space-y-6">
+          <div className="space-y-6 flex flex-col">
             <Button color="red" onClick={handleAddStudent}>
-              Add
+              Are you sure you want to delete {courseName} course?
             </Button>
             <Button color="gray" onClick={() => setDialog(undefined)}>
               Decline

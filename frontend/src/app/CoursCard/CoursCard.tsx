@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ICourseCard } from "../core/ICursCard";
+import { ICourseCard } from "../core/ICoursesCard";
 import { FC } from "react";
 
 export const CoursCard: FC<ICourseCard> = ({

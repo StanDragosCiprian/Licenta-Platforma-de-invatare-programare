@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CursSchema } from 'src/Schemas/Entity.schema/curs.schema';
+import { CoursesSchema } from 'src/Schemas/Entity.schema/courses.schema';
 
 import { ProfessorModule } from '../professor/professor.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -9,7 +9,7 @@ import { VideoController } from './video.controller';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Courses', schema: CursSchema }]),
+    MongooseModule.forFeature([{ name: 'Courses', schema: CoursesSchema }]),
     ProfessorModule,
     JwtModule.register({
       secret: 'your-secret-key',

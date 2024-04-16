@@ -24,49 +24,37 @@ const fileHandle: IFileHandle = new FileHandle();
 @Controller('/courses/video')
 export class VideoController {
   constructor(private videoService: VideoServices) {}
-
-  //   @Get('/:coursName/:id/get/cours')
-  //   async getCours(
-  //     @Param('coursName') coursName: string,
-  //     @Param('id') id: string,
-  //   ) {
-  //     const name = await this.videoService.takeFullCurs(coursName);
-  //     return name.curs[id];
-  //   }
-
-  @Get('/:professorName/:cursName/:videoName/:extension/get/video')
+  @Get('/:professorName/:courseName/:videoName/:extension/get/video')
   async getVideo(
     @Res() response,
     @Param('professorName') professorName: string,
-    @Param('cursName') cursName: string,
+    @Param('courseName') courseName: string,
     @Param('videoName') videoName: string,
     @Param('extension') extension: string,
   ) {
     try {
       response.sendFile(
-        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.${extension}`,
+        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${courseName}\\${videoName}.${extension}`,
       );
     } catch (error) {
       console.error(error);
       throw new Error('An error occurred while fetching the video.');
     }
   }
-  @Post('/:professorName/:coursName/add/video/videoInput')
-  // @UseGuards(ProfessorGuard)
+  @Post('/:professorName/:courseName/add/video/videoInput')
+  @UseGuards(ProfessorGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage(fileHandle.destinationVideo()),
       fileFilter: fileHandle.filterVideo(),
     }),
   )
-  async addVideoForVideoCurs(
+  async addVideoForVideoCourses(
     @Req() req: Request,
     @Cookies('id') id: string,
     @Body('filename') filename: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Param('professorName') professorName: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Param('coursName') coursName: string,
+    @Param('courseName') courseName: string,
   ) {
     try {
       const { dest }: any = req.body;
@@ -87,19 +75,22 @@ export class VideoController {
       );
     }
   }
-  @Post('/:coursName/add/video/textInput')
+  @Post('/:courseName/add/video/textInput')
   @UseGuards(ProfessorGuard)
-  async createTextForVideoCurs(
-    @Param('coursName') coursId: string,
-    @Body() createCursDto: IVideo,
+  async createTextForVideoCourses(
+    @Param('courseName') courseNameId: string,
+    @Body() createCourseDto: IVideo,
   ): Promise<string> {
     try {
-      const cursId: Types.ObjectId =
-        await this.videoService.takeCoursId(coursId);
-      const videoDto = createCursDto;
+      const courseId: Types.ObjectId =
+        await this.videoService.takeCoursId(courseNameId);
+      const videoDto = createCourseDto;
       videoDto.format = 'Video';
-      const curs = await this.videoService.addMediaFormat(cursId, videoDto);
-      return await curs.toString();
+      const courses = await this.videoService.addMediaFormat(
+        courseId,
+        videoDto,
+      );
+      return await courses.toString();
     } catch (error) {
       console.error(error);
       throw new Error(
@@ -129,7 +120,7 @@ export class VideoController {
       fileFilter: fileHandle.filterVideo(),
     }),
   )
-  async updateVideoForVideoCurs(
+  async updateVideoForVideoCourses(
     @Cookies('id') id: string,
     @Body('filename') filename: string,
     @Param('professorName') professorName: string,

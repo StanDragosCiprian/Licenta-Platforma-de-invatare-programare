@@ -12,7 +12,7 @@ export class Courses implements ICourses {
   description: string = "";
   imagePath: string = "";
   colaborationId: any = [];
-  curs: any = [];
+  courses: any = [];
   constructor(courses: ICourses) {
     this.name = courses.name;
     this.vizibility = courses.vizibility;
@@ -20,7 +20,7 @@ export class Courses implements ICourses {
     this.description = courses.description;
     this.imagePath = courses.imagePath;
     this.colaborationId = courses.colaborationId;
-    this.curs = courses.curs;
+    this.courses = courses.courses;
   }
   public async updateCourse(courseName: string) {
     const id = getCookie("id")?.toString();
@@ -30,7 +30,7 @@ export class Courses implements ICourses {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ cursBody: this, oldCoursName: courseName }),
+      body: JSON.stringify({ courseBody: this, oldCourseName: courseName }),
     };
     const api = await fetch(
       `/api/handleUpdateCourseApi`,
@@ -46,7 +46,7 @@ export class Courses implements ICourses {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ cursBody: this }),
+      body: JSON.stringify({ courseBody: this }),
     };
     const api = await fetch(
       "/api/handleNewCourseApi",

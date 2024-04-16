@@ -4,7 +4,7 @@ import { ProfessorHandle } from './ProfessorHandle';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { CoursesHandle } from './CoursesHandle';
 
 export class CompilatorHandle extends ProfessorHandle {
@@ -42,7 +42,7 @@ export class CompilatorHandle extends ProfessorHandle {
       model,
       async (
         component: IVideo | IDocumentFormat | ICompilators,
-        course: ICurs,
+        course: ICourses,
       ) => {
         if (component.format === 'Compilator') {
           const compileComponent = component as ICompilators;
@@ -111,7 +111,7 @@ export class CompilatorHandle extends ProfessorHandle {
     for (const c of professor) {
       const cours = await courseHandle.takeCoursId(coursName);
       if (c.toString() === cours.toString()) {
-        return (await courseHandle.takeCours(cours)).curs[id];
+        return (await courseHandle.takeCours(cours)).courses[id];
       }
     }
     return false;

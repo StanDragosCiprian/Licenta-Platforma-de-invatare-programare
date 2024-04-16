@@ -6,6 +6,7 @@ import { useState } from "react";
 import { HiInformationCircle } from "react-icons/hi";
 import { Alert } from "flowbite-react";
 import { getCookie } from "cookies-next";
+import Link from "next/link";
 export const UploadProfessor = () => {
   const [warning, setWarning] = useState([
     `You don&apos;t have the right file format!`,
@@ -14,7 +15,7 @@ export const UploadProfessor = () => {
   const [isExel, setIsExel] = useState(false);
   const handleFileChange = async () => {
     const admin = new AdminsService();
-    await admin.sendProfessor(files, setWarning, setIsExel,getCookie("id"));
+    await admin.sendProfessor(files, setWarning, setIsExel, getCookie("id"));
   };
   const handleSetFiles = (e: any) => {
     const file = e.target.files[0];
@@ -68,6 +69,12 @@ export const UploadProfessor = () => {
                 <span className="font-medium">{warn}</span>
               </Alert>
             ))}
+          <Link
+            href={`/AddProfessorTutorial`}
+            className="mt-4 inline-block font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-600"
+          >
+            Tutorial
+          </Link>
           <button
             type="submit"
             className=" my-4 relative h-12 w-full min-w-[200px] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"

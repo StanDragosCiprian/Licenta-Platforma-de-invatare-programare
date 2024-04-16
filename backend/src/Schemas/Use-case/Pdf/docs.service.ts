@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ProfessorService } from '../professor/professor.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { DocsHandle } from '../HandleControllersEntity/DocsHandle';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 
@@ -10,15 +10,15 @@ import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 export class DocsService {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
-  constructor(@InjectModel('Courses') private docsModel: Model<ICurs>) {}
+  constructor(@InjectModel('Courses') private docsModel: Model<ICourses>) {}
   private docsHandle = new DocsHandle();
-  async takeCoursId(cursName: string): Promise<Types.ObjectId> {
+  async takeCoursId(courseName: string): Promise<Types.ObjectId> {
     try {
-      const curs = await this.docsModel.findOne({ name: cursName });
-      if (!curs) {
+      const courses = await this.docsModel.findOne({ name: courseName });
+      if (!courses) {
         throw new Error('Course not found');
       }
-      return curs._id;
+      return courses._id;
     } catch (error) {
       throw new Error(`Failed to get course ID: ${error}`);
     }
@@ -58,15 +58,15 @@ export class DocsService {
     }
   }
 
-  async addMediaFormat(cursId: Types.ObjectId, media: IDocumentFormat) {
+  async addMediaFormat(courseId: Types.ObjectId, media: IDocumentFormat) {
     try {
-      const curs: ICurs = await this.docsModel.findById(cursId);
-      if (!curs) {
+      const course: ICourses = await this.docsModel.findById(courseId);
+      if (!course) {
         throw new Error('Course not found');
       }
-      curs.curs.push(media);
-      await curs.save();
-      return curs.curs.length - 1;
+      course.courses.push(media);
+      await course.save();
+      return course.courses.length - 1;
     } catch (error) {
       throw new Error(`Failed to add media format: ${error}`);
     }

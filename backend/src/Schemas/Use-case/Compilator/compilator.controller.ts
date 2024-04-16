@@ -46,23 +46,23 @@ export class CompilatorController {
     }
   }
 
-  @Get('/:professor/:coursName/:language/:id/compile')
+  @Get('/:professor/:courseName/:language/:id/compile')
   async chooseCompilerEndPoint(
     @Param('language') language: string,
     @Param('id') id: string,
     @Param('professor') professor: string,
-    @Param('coursName') coursName: string,
+    @Param('courseName') courseName: string,
   ): Promise<string> {
     try {
-      const curs: ICompilators =
+      const course: ICompilators =
         await this.compilatorService.getCoursFromProfessor(
           professor,
-          coursName,
+          courseName,
           id,
         );
 
       const choose = await this.compilatorService.chooseCompiler(
-        this.makeCompilerDto(curs, language, ''),
+        this.makeCompilerDto(course, language, ''),
       );
       return choose;
     } catch (error) {
@@ -72,11 +72,11 @@ export class CompilatorController {
   }
 
   private makeCompilerDto(
-    curs: ICompilators,
+    course: ICompilators,
     language: string,
     scripts: string,
   ) {
-    const test = curs.problemParameter.split(',');
+    const test = course.problemParameter.split(',');
     const j = {};
 
     test.forEach((t: string) => {
@@ -85,39 +85,37 @@ export class CompilatorController {
     });
     const compilerDto: ICompilatorUser = {
       programmingLanguage: language,
-      functionName: curs.funtionProblemModel,
+      functionName: course.funtionProblemModel,
       parameterWithType: JSON.parse(JSON.stringify(j)),
       scripts: scripts,
     };
     return compilerDto;
   }
-  @Post('/:professor/:coursName/:language/:id/execute/script')
+  @Post('/:professor/:courseName/:language/:id/execute/script')
   async executeScripts(
     @Body() scripts: { script: string },
     @Param('language') language: string,
     @Param('id') id: string,
     @Param('professor') professor: string,
-    @Param('coursName') coursName: string,
+    @Param('courseName') courseName: string,
   ) {
     try {
-      const curs: ICompilators =
+      const course: ICompilators =
         await this.compilatorService.getCoursFromProfessor(
           professor,
-          coursName,
+          courseName,
           id,
         );
-      const output = this.takeParameterValue(curs.problemOutputs, 'Output');
+      const output = this.takeParameterValue(course.problemOutputs, 'Output');
 
-      const inputs = this.takeParameterValue(curs.problemInputs, 'Input');
+      const inputs = this.takeParameterValue(course.problemInputs, 'Input');
       for (let index = 0; index < inputs.length; index++) {
         const input = inputs[index];
         const exec = await this.compilatorService.executeScripts(
-          this.makeCompilerDto(curs, language, scripts.script),
+          this.makeCompilerDto(course, language, scripts.script),
           input,
         );
-        console.log(exec);
         const e = exec.toString().replace('\r\n', '');
-        console.log(e);
         if (e.replace('\n', '') !== output[index]) {
           return {
             isAlgorithmOk: false,
@@ -144,39 +142,39 @@ export class CompilatorController {
       return item.replace(`${type}(`, '').replace(')', '');
     });
   }
-  @Post('/:coursName/new/exercices')
+  @Post('/:courseName/new/exercices')
   @UseGuards(ProfessorGuard)
   async newExercies(
     @Body() exercices: ICompilators,
-    @Param('coursName') coursName: string,
+    @Param('courseName') courseName: string,
   ) {
     try {
-      const cursId: Types.ObjectId =
-        await this.compilatorService.takeCoursId(coursName);
-      return await this.compilatorService.addMediaFormat(cursId, exercices);
+      const courseId: Types.ObjectId =
+        await this.compilatorService.takeCoursId(courseName);
+      return await this.compilatorService.addMediaFormat(courseId, exercices);
     } catch (error) {
       console.error(error);
       throw new Error('An error occurred while adding new exercises');
     }
   }
-  @Get('/:professor/:coursName/:id/get/exercices/format')
+  @Get('/:professor/:courseName/:id/get/exercices/format')
   async getCompilerFormat(
-    @Param('coursName') coursName: string,
+    @Param('courseName') courseName: string,
     @Param('professor') professor: string,
     @Param('id') id: string,
   ) {
     try {
-      const curs: ICompilators =
+      const course: ICompilators =
         await this.compilatorService.getCoursFromProfessor(
           professor,
-          coursName,
+          courseName,
           id,
         );
       return {
-        title: curs.title,
-        problemRequire: curs.problemRequire,
-        problemExemples: curs.problemExemples,
-        format: curs.format,
+        title: course.title,
+        problemRequire: course.problemRequire,
+        problemExemples: course.problemExemples,
+        format: course.format,
       };
     } catch (error) {
       console.error(error);

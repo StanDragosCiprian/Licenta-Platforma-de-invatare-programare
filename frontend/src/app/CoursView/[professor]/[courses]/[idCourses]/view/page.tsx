@@ -1,15 +1,16 @@
 import { HandleProfessorWorkout } from "@/app/Entity/HandleProfessorWorkout";
-import { PreviewVideo } from "@/app/PreviwComponents/PreviewVideoComponents/PreviewVideo";
+import { PreviewVideo } from "@/app/CoursView/[professor]/[courses]/PreviewVideo";
 import { urlBackend } from "@/app/UserServer/ServerRequest";
 import { notFound } from "next/navigation";
 import PdfViewer from "../docsView/DocsView";
 import { redirect } from "next/navigation";
 import { CompilerViewComponents } from "../compilerView/CompilorViewComponents";
-const takeCoursVide = async (cursName: string, idCurs: string) => {
-  const curs = await fetch(
-    `${urlBackend}courses/${cursName}/${idCurs}/get/cours`
+import { cookies } from "next/headers";
+const takeCoursVide = async (courseName: string, idCourse: string) => {
+  const courses = await fetch(
+    `${urlBackend}courses/${courseName}/${idCourse}/get/cours`
   );
-  return curs.json();
+  return courses.json();
 };
 const takeVideoPath = async (video: string): Promise<string> => {
   const allVideo = video.split(".");
@@ -17,51 +18,52 @@ const takeVideoPath = async (video: string): Promise<string> => {
 };
 const takeCompilator = async (
   professor: string,
-  cursName: string,
-  idCurs: string
+  courseName: string,
+  idCourse: string
 ) => {
-  const curs = await fetch(
-    `${urlBackend}courses/compilator/${professor}/${cursName}/${idCurs}/get/exercices/format`
+  const courses = await fetch(
+    `${urlBackend}courses/compilator/${professor}/${courseName}/${idCourse}/get/exercices/format`
   );
-  return curs.json();
+  return courses.json();
 };
+
 export default async function View({ params }: any) {
   if (!(await HandleProfessorWorkout.getId())) {
     redirect("http://localhost:3001/account/sign");
   }
-  let curs = await takeCoursVide(params.curs, params.idCurs);
+  let course = await takeCoursVide(params.courses, params.idCourses);
   let media: string = "";
-  if (curs.format === "Video") {
-    media = await takeVideoPath(curs.videoPath);
-  } else if (curs.format === "Pdf") {
+  if (course.format === "Video") {
+    media = await takeVideoPath(course.videoPath);
+  } else if (course.format === "Pdf") {
     media = `${urlBackend}courses/docs/`;
-    media += curs.documentFormatName;
+    media += course.documentFormatName;
     media = media.replace(".", "/");
-  } else if (curs.format === "Compilator") {
-    curs = await takeCompilator(params.professor, params.curs, params.idCurs);
+  } else if (course.format === "Compilator") {
+    course = await takeCompilator(params.professor, params.courses, params.idCourses);
   }
 
   return (
     <>
-      {curs.format === "Video" ? (
+      {course.format === "Video" ? (
         <div className="flex justify-center items-center h-screen w-screen">
           <PreviewVideo
-            title={curs.title}
-            description={curs.description}
+            title={course.title}
+            description={course.description}
             videoPath={media}
           />
         </div>
-      ) : curs.format === "Pdf" ? (
+      ) : course.format === "Pdf" ? (
         <PdfViewer url={media} />
       ) : (
         <CompilerViewComponents
-          title={curs.title}
-          problemRequire={curs.problemRequire}
-          problemExemples={curs.problemExemples}
+          title={course.title}
+          problemRequire={course.problemRequire}
+          problemExemples={course.problemExemples}
           format={"Compilator"}
-          idCurs={params.idCurs}
+          idCourses={params.idCourses}
           professor={params.professor}
-          cursName={params.curs}
+          courseName={params.courses}
         />
       )}
     </>

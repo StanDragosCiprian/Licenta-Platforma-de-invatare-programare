@@ -26,16 +26,16 @@ export class FileHandle implements IFileHandle {
   }
   private destination() {
     return (req: Request, file, cb) => {
-      const coursName = req.params.coursName;
+      const courseName = req.params.courseName;
       const professorName = req.params.professorName;
       const dest = `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${professorName.replace(
         ' ',
         '_',
-      )}\\${coursName}`;
+      )}\\${courseName}`;
       if (!existsSync(dest)) {
         mkdirSync(dest, { recursive: true });
       }
-      req.body.dest = dest; // Add the destination path to the request object
+      req.body.dest = dest;
       cb(null, dest);
     };
   }

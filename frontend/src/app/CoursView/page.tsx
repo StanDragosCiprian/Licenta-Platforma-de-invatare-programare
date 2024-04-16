@@ -4,13 +4,13 @@ import {
   getFromServerCookie,
   urlBackend,
 } from "@/app/UserServer/ServerRequest";
-import { ICourseCard } from "@/app/core/ICursCard";
+import { ICourseCard } from "@/app/core/ICoursesCard";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 async function getData() {
   const courses = await fetch(
-    `${urlBackend}courses/cursProfessor`,
+    `${urlBackend}courses/coursesProfessor`,
     getFromServerCookie(cookies().get("id")?.value)
   );
   const cours: any[] = await courses.json();
@@ -25,14 +25,14 @@ export default async function PreviewCours() {
   return (
     <>
       <div className="flex flex-wrap">
-        {professorCours.map((curs: ICourseCard, index: number) => (
+        {professorCours.map((course: ICourseCard, index: number) => (
           <div key={index}>
-            <Link href={`/CoursView/${curs.professor}/${curs.title}`}>
+            <Link href={`/CoursView/${course.professor}/${course.title}`}>
               <CoursCard
-                title={curs.title}
-                description={curs.description}
-                image={curs.image}
-                professor={curs.professor}
+                title={course.title}
+                description={course.description}
+                image={course.image}
+                professor={course.professor}
               />
             </Link>
           </div>

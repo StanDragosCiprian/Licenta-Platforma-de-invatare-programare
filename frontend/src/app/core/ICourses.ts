@@ -5,5 +5,5 @@ interface ICourses {
   imagePath: string;
   studentId: [];
   colaborationId: [];
-  curs: [];
+  courses: [];
 }

@@ -9,6 +9,7 @@ import ProblemsInput from "./ProblemsInput";
 import { notFound, useRouter } from "next/navigation";
 import { Alert } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
+import Link from "next/link";
 export const ExercicesComponens: FC<{
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>> | undefined;
   courseName: string;
@@ -119,7 +120,7 @@ export const ExercicesComponens: FC<{
       sendToServerCookies(JSON.stringify(exerciesUpdate), id)
     );
     const { ok } = await api.json();
-    console.log('ok: ', ok);
+    console.log("ok: ", ok);
     if (!ok) notFound();
     if (setDialog !== undefined) {
       setDialog(undefined);
@@ -218,6 +219,12 @@ export const ExercicesComponens: FC<{
       ) : (
         <></>
       )}
+      <Link
+        href={`/ExercicesTutorial`}
+        className="mt-4 inline-block font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-red-600"
+      >
+        Tutorial
+      </Link>
       <Button
         color="blue"
         onClick={!isUpdated ? send : sendUpdate}

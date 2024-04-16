@@ -28,9 +28,9 @@ export class CoursManager {
 
     return text;
   }
-  private async dragAndDropFetch(cursName: string, drag: string, drop: string) {
+  private async dragAndDropFetch(courseName: string, drag: string, drop: string) {
     const name = await fetch(
-      `${urlBackend}courses/${cursName}/${drag}/${drop}/dragAndDrop`,
+      `${urlBackend}courses/${courseName}/${drag}/${drop}/dragAndDrop`,
       {
         next: { revalidate: 0 },
       }
@@ -39,7 +39,7 @@ export class CoursManager {
   async getCourse(name: string) {
     return await this.fetchCourse(name);
   }
-  async changeIndexCours(cursName: string, drag: string, drop: string) {
-    this.dragAndDropFetch(cursName, drag, drop);
+  async changeIndexCours(courseName: string, drag: string, drop: string) {
+    this.dragAndDropFetch(courseName, drag, drop);
   }
 }

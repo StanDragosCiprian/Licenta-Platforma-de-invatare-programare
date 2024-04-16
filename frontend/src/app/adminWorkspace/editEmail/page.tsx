@@ -1,6 +1,8 @@
 import { urlBackend } from "@/app/UserServer/ServerRequest";
 import EmailTablr from "../EmailTable";
 import { cookies } from "next/headers";
+import { UserRecever } from "@/app/Entity/UserRecever";
+import { notFound } from "next/navigation";
 const option = () => {
   const cookieStore = cookies();
   return {
@@ -23,6 +25,12 @@ const getAllProfessor = async () => {
 const EditEmail = async () => {
   const student = await getAllStudents();
   const professor = await getAllProfessor();
+  const userManager = new UserRecever();
+  const idIs =
+    cookies().get("id") && (await userManager.isRole("admin/isAdmin"));
+  if (!idIs) {
+    notFound();
+  }
   return (
     <>
       <EmailTablr students={student} professor={professor} />

@@ -46,7 +46,7 @@ export const LogIn = () => {
         >
           <RedirectComponents
             redirectHref={"/account/sign"}
-            name={"You have an account?"}
+            name={"You don't have an account?"}
           />
                  {isEmailExist ? (
           <Alert color="failure" icon={HiInformationCircle}>

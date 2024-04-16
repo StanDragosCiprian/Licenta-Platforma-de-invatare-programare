@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { StudentService } from 'src/Schemas/Use-case/student/student.service';
 
@@ -21,7 +26,7 @@ export class StudentGuard implements CanActivate {
         return false;
       }
     } catch (error) {
-      console.error(error);
+      throw new NotFoundException('Unauthorized access');
     }
   }
 }

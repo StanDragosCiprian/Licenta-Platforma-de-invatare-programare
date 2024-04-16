@@ -5,7 +5,7 @@ import Link from "next/link";
 import { HandleProfessorWorkout } from "../../Entity/HandleProfessorWorkout";
 import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
 export default async function NewCourse({ params }: any) {
-  if (!(await HandleProfessorWorkout.getId())) {
+  if (!(await HandleProfessorWorkout.getProfessorId())) {
     notFound();
   }
 

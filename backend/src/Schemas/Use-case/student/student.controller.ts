@@ -55,7 +55,6 @@ export class StudentController {
         `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Student\\${name}.${format}`,
       );
     } catch (error) {
-      // Handle the exception here
       console.error(error);
       response.status(500).send('Internal Server Error');
     }
@@ -181,6 +180,21 @@ export class StudentController {
     } catch (error) {
       console.error(error);
       throw new Error('Internal Server Error');
+    }
+  }
+  @Get('/isStudent')
+  async verifyAdmin(@Cookies('id') id: string): Promise<boolean> {
+    try {
+      const decodedToken = await this.studentService.decriptJwt(id);
+      const student = await this.studentService.getStudent(decodedToken);
+
+      if (student === null) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 }

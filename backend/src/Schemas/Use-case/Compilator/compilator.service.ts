@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { CompilatorHandle } from '../HandleControllersEntity/CompilatorHandle';
 import { ProfessorService } from '../professor/professor.service';
 import { CoursesHandle } from '../HandleControllersEntity/CoursesHandle';
@@ -18,7 +18,7 @@ import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 export class CompilatorService {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
-  constructor(@InjectModel('Courses') private compilerModel: Model<ICurs>) {}
+  constructor(@InjectModel('Courses') private compilerModel: Model<ICourses>) {}
   private compilatorHandle = new CompilatorHandle();
   async getProfessorCompilator(
     id: string,
@@ -32,9 +32,8 @@ export class CompilatorService {
         this.compilerModel,
       );
     } catch (error) {
-      // Handle the exception here
       console.error(error);
-      throw error; // Rethrow the exception if needed
+      throw error;
     }
   }
   async updateCompilatorFromCourse(
@@ -77,14 +76,14 @@ export class CompilatorService {
     }
   }
   async addMediaFormat(
-    cursId: Types.ObjectId,
+    courseId: Types.ObjectId,
     media: IVideo | IDocumentFormat | ICompilators,
   ) {
     try {
-      const curs: ICurs = await this.compilerModel.findById(cursId);
-      curs.curs.push(media);
-      await curs.save();
-      return curs.curs.length - 1;
+      const course: ICourses = await this.compilerModel.findById(courseId);
+      course.courses.push(media);
+      await course.save();
+      return course.courses.length - 1;
     } catch (error) {
       console.error(error);
       throw error;

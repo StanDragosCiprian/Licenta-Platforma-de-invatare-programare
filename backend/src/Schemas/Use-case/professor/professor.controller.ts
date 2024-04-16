@@ -34,7 +34,6 @@ export class ProfessorController {
         await this.professorService.createProfessor(createProfessorDto);
       return this.professorService.makeJwt(newProfessor._id);
     } catch (error) {
-      // Handle the exception here
       console.error(error);
       throw error;
     }

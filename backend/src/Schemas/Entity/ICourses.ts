@@ -3,7 +3,7 @@ import { IDocumentFormat } from './IPdf';
 import { IVideo } from './IVideo';
 import { ICompilators } from './ICompilators';
 
-export interface ICurs extends Document {
+export interface ICourses extends Document {
   _id: Types.ObjectId;
   name: string;
   vizibility: boolean;
@@ -11,5 +11,5 @@ export interface ICurs extends Document {
   imagePath: string;
   studentId: Types.ObjectId[];
   colaborationId: Types.ObjectId[];
-  curs: [IVideo | IDocumentFormat | ICompilators];
+  courses: [IVideo | IDocumentFormat | ICompilators];
 }

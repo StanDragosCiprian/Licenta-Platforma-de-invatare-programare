@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AdminsService } from 'src/Schemas/Use-case/admins/admins.service';
 
@@ -17,10 +22,11 @@ export class AdminGuard implements CanActivate {
       const admin = await this.studentService.getAdmin(decodedToken.sub);
       if (admin?.role === 'admin' && admin.role !== null) {
         return true;
+      } else {
+        return false;
       }
     } catch (error) {
-      console.error(error);
+      throw new NotFoundException('Unauthorized access');
     }
-    return false;
   }
 }

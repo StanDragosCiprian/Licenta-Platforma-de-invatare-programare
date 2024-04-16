@@ -26,9 +26,9 @@ export class AdminsService {
   async updatePassword(email: string, newName: string) {
     try {
       const username = await this.adminModel.findOneAndUpdate(
-        { email: email }, // filter
-        { password: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { password: newName },
+        { new: true },
       );
 
       if (username === null) {
@@ -37,17 +37,16 @@ export class AdminsService {
         return true;
       }
     } catch (error) {
-      // Handle the exception here
       console.error(error);
-      throw error; // Rethrow the exception to be handled by the caller
+      throw error;
     }
   }
   async updateEmail(email: string, newName: string) {
     try {
       const username = await this.adminModel.findOneAndUpdate(
-        { email: email }, // filter
-        { email: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { email: newName },
+        { new: true },
       );
 
       if (username === null) {
@@ -63,9 +62,9 @@ export class AdminsService {
   async updateUsername(email: string, newName: string) {
     try {
       const username = await this.adminModel.findOneAndUpdate(
-        { email: email }, // filter
-        { username: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { username: newName },
+        { new: true },
       );
 
       if (username === null) {
@@ -100,7 +99,6 @@ export class AdminsService {
         professor2.coursesId.push(c);
       }
       await professor2.save();
-      await this.professorService.deleteProfessor(email1);
     } catch (error) {
       console.error(error);
       throw error;

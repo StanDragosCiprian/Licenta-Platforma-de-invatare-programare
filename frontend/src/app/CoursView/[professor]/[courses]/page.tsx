@@ -1,5 +1,5 @@
 import { CoursManager } from "@/app/Entity/CoursManager";
-import { SelectCourses } from "./SelectCurs";
+import { SelectCourses } from "./SelectCourses";
 import Link from "next/link";
 import { DragDropComponenst } from "./DragDropComponents";
 import {
@@ -12,49 +12,68 @@ import { JoinCours } from "./JoinCours";
 import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
 import { title } from "process";
 const courses = new CoursManager();
-const takeCoursesName = async (cursName: string) => {
-  return await courses.getCourseTitles(cursName);
+const takeCourseName = async (courseName: string) => {
+  return await courses.getCourseTitles(courseName);
 };
-const getCours = async (cursName: string) => {
-  return await courses.getCourse(cursName);
+const getCourse = async (courseName: string) => {
+  return await courses.getCourse(courseName);
 };
-async function verifyProfessorCours(coursName: string): Promise<boolean> {
+async function verifyProfessorCours(courseName: string): Promise<boolean> {
   const response = await fetch(
-    `${urlBackend}courses/professorVerifyCours/${coursName}`,
+    `${urlBackend}courses/professorVerifyCourse/${courseName}`,
     getFromServerCookie(cookies().get("id")?.value)
   );
   const data = await response.json();
   return data;
 }
-const verifyPage = async (id: string, cursName: string) => {
+const verifyPage = async (id: string, courseName: string) => {
   const response = await fetch(
-    `${urlBackend}courses/${id}/${cursName}/vefiy/cours`
+    `${urlBackend}courses/${id}/${courseName}/vefiy/cours`
   );
   return response;
 };
 const verifyIfStudentHaveCours = async (
   professor: string,
-  coursName: string
+  courseName: string
 ) => {
   if (cookies().get("id")?.value !== undefined) {
     const f = await fetch(
-      `${urlBackend}courses/${professor}/${coursName}/isJoin/cours`,
+      `${urlBackend}courses/${professor}/${courseName}/isJoin/cours`,
       getFromServerCookie(cookies().get("id")?.value)
     );
     return await f.json();
   }
   return false;
 };
-export default async function CursViewList({ params }: any) {
-  const courseTitles = await takeCoursesName(params.curs);
-  const course = await getCours(params.curs);
+async function isInCourse() {
+  const courses = await fetch(`${urlBackend}courses/coursesPresentation`, {
+    next: { revalidate: 0 },
+    credentials: "include" as RequestCredentials,
+    headers: {
+      Cookie: `id=${cookies().get("id")?.value}`,
+    },
+  });
+  const cours: any = await courses.json();
+  console.log("cours: ", cours);
+  if (Object.keys(cours).length === 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+export default async function CoursesViewList({ params }: any) {
+  if (!(await isInCourse())) {
+    notFound();
+  }
+  const courseTitles = await takeCourseName(params.courses);
+  const course = await getCourse(params.courses);
 
-  const isProfessorCours: boolean = await verifyProfessorCours(params.curs);
+  const isProfessorCours: boolean = await verifyProfessorCours(params.courses);
   const isPage = await verifyPage(params.professor, course.title);
   const i = await isPage.json();
   const isStudentInCours = await verifyIfStudentHaveCours(
     params.professor,
-    params.curs
+    params.courses
   );
   if (!i.isPageVerify) {
     notFound();
@@ -71,7 +90,7 @@ export default async function CursViewList({ params }: any) {
               {course.description}
             </p>
             {!isStudentInCours && !isProfessorCours ? (
-              <JoinCours professor={params.professor} coursName={params.curs} />
+              <JoinCours professor={params.professor} coursName={params.courses} />
             ) : undefined}
           </div>
           {isStudentInCours || isProfessorCours ? (
@@ -80,7 +99,7 @@ export default async function CursViewList({ params }: any) {
                 courseTitles={courseTitles.map(
                   (title: { title: string; format: string }) => title.title
                 )}
-                coursName={params.curs}
+                coursName={params.courses}
                 coursProfessor={params.professor}
                 isProfessorCours={isProfessorCours}
                 format={courseTitles.map(
@@ -89,7 +108,7 @@ export default async function CursViewList({ params }: any) {
               />
               {isProfessorCours ? (
                 <Link
-                  href={`/professorworkspace/${params.curs}`}
+                  href={`/professorworkspace/${params.courses}`}
                   className="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-300 hover:text-blue-gray-900 focus:text-blue-gray-900 active:text-blue-gray-900 outline-none"
                 >
                   Add Cours

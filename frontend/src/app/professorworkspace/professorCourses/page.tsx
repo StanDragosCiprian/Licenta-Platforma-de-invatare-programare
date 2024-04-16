@@ -4,7 +4,7 @@ import {
   getFromServerCookie,
   urlBackend,
 } from "@/app/UserServer/ServerRequest";
-import { ICoursesAllCard, ICourseCard } from "@/app/core/ICursCard";
+import { ICoursesAllCard, ICourseCard } from "@/app/core/ICoursesCard";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Workbench from "./Workbench";

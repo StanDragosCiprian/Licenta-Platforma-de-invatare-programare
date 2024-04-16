@@ -6,6 +6,7 @@ import { AddToCours } from "./AddToCours";
 import { UserRecever } from "../Entity/UserRecever";
 import { cookies } from "next/headers";
 import EditProfile from "./EditProfile";
+import MyCourses from "./MyCourses";
 const getUser = async () => {
   const id: string | undefined = cookies().get("id")?.value;
   if (id !== undefined) {
@@ -26,6 +27,7 @@ export const Sidebar = async () => {
             {user.role === "admin" ? <ProfessorAdder /> : null}
             {user.role === "admin" ? <EditProfile /> : null}
             {user.role === "professor" ? <AddToCours /> : null}
+            {user.role === "professor"||user.role === "student" ? <MyCourses /> : null}
           </ul>
           <Account />
         </div>

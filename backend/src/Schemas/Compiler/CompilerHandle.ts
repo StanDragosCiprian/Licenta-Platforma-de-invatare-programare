@@ -59,7 +59,6 @@ export class CompilerHandler {
       const child = spawn('javac', [
         'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\JavaFile.java',
       ]);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let result = '';
       child.stdout.on('data', (data) => {
         result += data;

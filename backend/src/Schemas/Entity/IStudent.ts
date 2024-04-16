@@ -1,6 +1,3 @@
 import { IUser } from './IUser';
 
-export interface IStudent extends IUser {
-  enroleCourse: [];
-  finishCourse: [];
-}
+export interface IStudent extends IUser {}

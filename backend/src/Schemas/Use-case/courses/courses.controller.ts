@@ -1,38 +1,39 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CoursesDto } from 'src/Schemas/DTO/courses.dto';
-import { CursService } from './courses.service';
+import { CoursesService } from './courses.service';
 import { Cookies } from 'src/Cookie/cookie';
 import { ProfessorGuard } from 'src/auth/professor.guard';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { Types } from 'mongoose';
 @Controller('courses')
-export class CursController {
-  constructor(private cursService: CursService) {}
+export class CoursesController {
+  constructor(private courseService: CoursesService) {}
   @Post('/new')
   @UseGuards(ProfessorGuard)
-  async createCurs(
+  async createCourse(
     @Cookies('id') id,
-    @Body() createCursDto: CoursesDto,
+    @Body() createCourseDto: CoursesDto,
   ): Promise<string> {
     try {
-      const newCurs = await this.cursService.createNewCourse(createCursDto, id);
-      return newCurs;
+      const newCourse = await this.courseService.createNewCourse(
+        createCourseDto,
+        id,
+      );
+      return newCourse;
     } catch (error) {
-      // Handle the exception here
       console.error(error);
       throw new Error('An error occurred while creating the course.');
     }
   }
   @Get('/:coursName/get/course/name/preview')
-  async getCoursFullCurs(@Param('coursName') coursName: string) {
+  async getCoursFullCourse(@Param('coursName') coursName: string) {
     try {
-      const name = await this.cursService.takeFullCurs(coursName);
-      const m = name.curs.map((cours: any) => {
+      const name = await this.courseService.takeFullCourse(coursName);
+      const m = name.courses.map((cours: any) => {
         return { title: cours.title, format: cours.format };
       });
       return m;
     } catch (error) {
-      // Handle the exception here
       console.error(error);
       throw new Error('An error occurred while fetching the full course.');
     }
@@ -42,8 +43,8 @@ export class CursController {
   async renameFile(@Body() body: { email: string; newValue: string }) {
     try {
       const getProfessorNameByEmail =
-        await this.cursService.getProfessorByEmail(body.email);
-      await this.cursService.renameFile(
+        await this.courseService.getProfessorByEmail(body.email);
+      await this.courseService.renameFile(
         getProfessorNameByEmail.username.replace(' ', '_'),
         body.newValue.replace(' ', '_'),
         getProfessorNameByEmail.coursesId,
@@ -60,7 +61,7 @@ export class CursController {
     @Param('courseName') courseName: string,
   ): Promise<number> {
     try {
-      await this.cursService.deleteCourse(courseName, id);
+      await this.courseService.deleteCourse(courseName, id);
       return 0;
     } catch (error) {
       console.error(error);
@@ -71,10 +72,10 @@ export class CursController {
   @UseGuards(ProfessorGuard)
   async updateCourse(
     @Cookies('id') id,
-    @Body() createCursDto: any,
+    @Body() createCourseDto: any,
   ): Promise<number> {
     try {
-      await this.cursService.updateCourse(createCursDto, id);
+      await this.courseService.updateCourse(createCourseDto, id);
       return 0;
     } catch (error) {
       console.error(error);
@@ -87,7 +88,7 @@ export class CursController {
     @Cookies('id') id: string,
   ) {
     try {
-      await this.cursService.addProfessorToCourses(
+      await this.courseService.addProfessorToCourses(
         id,
         body.studentsEmail,
         body.courseName,
@@ -106,7 +107,7 @@ export class CursController {
     @Cookies('id') id: string,
   ) {
     try {
-      await this.cursService.addStudentsToCourses(
+      await this.courseService.addStudentsToCourses(
         id,
         body.studentsEmail,
         body.courseName,
@@ -117,23 +118,55 @@ export class CursController {
       throw new Error('An error occurred while adding students to the course.');
     }
   }
-  @Get('/cursPresentation')
-  async cursPresentation(@Cookies('id') id: string) {
+  @Get('/coursesPresentation')
+  async coursesPresentation(@Cookies('id') id: string) {
     try {
-      const curses: ICurs[] = await this.cursService.getCoursComponent(id);
-
+      const myCourses: ICourses[] =
+        await this.courseService.getCoursComponent(id);
       const courses = await Promise.all(
-        curses.map(async (curs: ICurs) => {
-          const professorData = await this.cursService.findCourseWithProfessor(
-            curs._id,
-          );
-          const encryptedText = await this.cursService.encryptText(
+        myCourses.map(async (course: ICourses) => {
+          const professorData =
+            await this.courseService.findCourseWithProfessor(course._id);
+          const encryptedText = await this.courseService.encryptText(
             professorData.toString(),
           );
           return {
-            title: curs.name,
-            description: curs.description,
-            image: curs.imagePath,
+            title: course.name,
+            description: course.description,
+            image: course.imagePath,
+            professor: encryptedText,
+          };
+        }),
+      );
+      const coursesObject = courses.reduce((obj, item, index) => {
+        obj[index] = item;
+        return obj;
+      }, {});
+
+      return coursesObject;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        'An error occurred while fetching the course presentation.',
+      );
+    }
+  }
+  @Get('/myCourses')
+  async myCourses(@Cookies('id') id: string) {
+    try {
+      const myCourses: ICourses[] =
+        await this.courseService.getMyCoursComponent(id);
+      const courses = await Promise.all(
+        myCourses.map(async (course: ICourses) => {
+          const professorData =
+            await this.courseService.findCourseWithProfessor(course._id);
+          const encryptedText = await this.courseService.encryptText(
+            professorData.toString(),
+          );
+          return {
+            title: course.name,
+            description: course.description,
+            image: course.imagePath,
             professor: encryptedText,
           };
         }),
@@ -158,7 +191,7 @@ export class CursController {
   ) {
     try {
       return {
-        isPageVerify: await this.cursService.findCoursFromProfessorEmail(
+        isPageVerify: await this.courseService.findCoursFromProfessorEmail(
           id,
           coursName,
         ),
@@ -168,17 +201,17 @@ export class CursController {
       throw new Error('An error occurred while verifying the course.');
     }
   }
-  @Get('/cursProfessor')
-  async cursProfessor(@Cookies('id') id: string) {
+  @Get('/coursesProfessor')
+  async coursesProfessor(@Cookies('id') id: string) {
     try {
-      const curses: ICurs[] =
-        await this.cursService.fetchProfessorVisibleCourses(id);
+      const professorCourses: ICourses[] =
+        await this.courseService.fetchProfessorVisibleCourses(id);
 
-      const courses = curses.map((curs: ICurs) => {
+      const courses = professorCourses.map((course: ICourses) => {
         return {
-          title: curs.name,
-          description: curs.description,
-          image: curs.imagePath,
+          title: course.name,
+          description: course.description,
+          image: course.imagePath,
         };
       });
 
@@ -199,20 +232,21 @@ export class CursController {
   @Get('/coursesProfessor/all')
   async coursesProfessor567all(@Cookies('id') id: string) {
     try {
-      const curses: ICurs[] = await this.cursService.fetchProfessorCourses(id);
-      const courses = curses.map((curs: ICurs) => {
+      const professorCourses: ICourses[] =
+        await this.courseService.fetchProfessorCourses(id);
+      const courses = professorCourses.map((course: ICourses) => {
         if (
-          curs &&
-          'name' in curs &&
-          'description' in curs &&
-          'vizibility' in curs &&
-          'imagePath' in curs
+          course &&
+          'name' in course &&
+          'description' in course &&
+          'vizibility' in course &&
+          'imagePath' in course
         ) {
           return {
-            title: curs.name,
-            description: curs.description,
-            vizibility: curs.vizibility,
-            image: curs.imagePath,
+            title: course.name,
+            description: course.description,
+            vizibility: course.vizibility,
+            image: course.imagePath,
           };
         }
       });
@@ -234,31 +268,31 @@ export class CursController {
   @UseGuards(ProfessorGuard)
   async professorName(@Cookies('id') id: string): Promise<string> {
     try {
-      return await this.cursService.getProfessorNameForCours(id);
+      return await this.courseService.getProfessorNameForCours(id);
     } catch (error) {
       console.error(error);
       throw new Error('An error occurred while fetching the professor name.');
     }
   }
-  @Get('/professorVerifyCours/:nameCours')
-  async professorVerifyCours(
+  @Get('/professorVerifyCourse/:nameCours')
+  async professorVerifyCourse(
     @Cookies('id') id: string,
     @Param('nameCours') nameCours: string,
   ): Promise<boolean> {
     try {
       if (id !== 'undefined') {
-        const cours = await this.cursService.fetchProfessorCourses(id);
+        const cours = await this.courseService.fetchProfessorCourses(id);
         const profesessor =
           cours !== null
-            ? cours.some((c: ICurs) => c.name == nameCours)
+            ? cours.some((c: ICourses) => c.name == nameCours)
             : false;
         if (!profesessor) {
           const colab =
-            await this.cursService.takeColaboratoryByCourseName(nameCours);
+            await this.courseService.takeColaboratoryByCourseName(nameCours);
           const colaboratory = colab.some(
             async (c: Types.ObjectId) =>
               c ==
-              new Types.ObjectId(await this.cursService.decryptProfessor(id)),
+              new Types.ObjectId(await this.courseService.decryptProfessor(id)),
           );
           return colaboratory;
         }
@@ -273,7 +307,7 @@ export class CursController {
   @Get('/:coursName')
   async getCoursName(@Param('coursName') coursId: string) {
     try {
-      const name = await this.cursService.takeName(coursId);
+      const name = await this.courseService.takeName(coursId);
       return name;
     } catch (error) {
       console.error(error);
@@ -283,7 +317,7 @@ export class CursController {
   @Get('/:coursName/fullCours')
   async getFullCours(@Param('coursName') coursId: string) {
     try {
-      return await this.cursService.takeCoursByName(coursId);
+      return await this.courseService.takeCoursByName(coursId);
     } catch (error) {
       console.error(error);
       throw new Error('An error occurred while fetching the full course.');
@@ -296,7 +330,7 @@ export class CursController {
     @Cookies('id') id: string,
   ) {
     try {
-      const user = await this.cursService.isStudentInCours(
+      const user = await this.courseService.isStudentInCours(
         professorId,
         coursName,
         id,
@@ -310,14 +344,13 @@ export class CursController {
     }
   }
   @Post('/:professorId/:coursName/join/cours')
-  // @UseGuards(StudentGuard)
   async addStudentToCours(
     @Param('professorId') professorId: string,
     @Param('coursName') coursName: string,
     @Body() id: { id: { name: string; value: string } },
   ) {
     try {
-      this.cursService.addStudent(id.id.value, professorId, coursName);
+      this.courseService.addStudent(id.id.value, professorId, coursName);
       return { isUpdate: true };
     } catch (error) {
       console.error(error);
@@ -326,14 +359,14 @@ export class CursController {
       );
     }
   }
-  @Get('/:cursName/:drag/:drop/dragAndDrop')
+  @Get('/:courseName/:drag/:drop/dragAndDrop')
   async dragDrop(
     @Param('drag') drag: string,
     @Param('drop') drop: string,
-    @Param('cursName') cursName: string,
+    @Param('courseName') courseName: string,
   ) {
     try {
-      await this.cursService.changeIndex(cursName, drag, drop);
+      await this.courseService.changeIndex(courseName, drag, drop);
     } catch (error) {
       console.error(error);
       throw new Error(
@@ -347,8 +380,8 @@ export class CursController {
     @Param('id') id: string,
   ) {
     try {
-      const name = await this.cursService.takeFullCurs(coursName);
-      return name.curs[id];
+      const name = await this.courseService.takeFullCourse(coursName);
+      return name.courses[id];
     } catch (error) {
       console.error(error);
       throw new Error('An error occurred while fetching the course.');

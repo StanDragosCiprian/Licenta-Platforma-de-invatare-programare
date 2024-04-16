@@ -4,11 +4,11 @@ import { CompilatorService } from './compilator.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ProfessorModule } from '../professor/professor.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CursSchema } from 'src/Schemas/Entity.schema/curs.schema';
+import { CoursesSchema } from 'src/Schemas/Entity.schema/courses.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Courses', schema: CursSchema }]),
+    MongooseModule.forFeature([{ name: 'Courses', schema: CoursesSchema }]),
     ProfessorModule,
     JwtModule.register({
       secret: 'your-secret-key',

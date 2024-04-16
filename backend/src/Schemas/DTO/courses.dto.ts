@@ -10,5 +10,5 @@ export class CoursesDto {
   imagePath: string;
   studentId: Types.ObjectId[];
   colaborationId: Types.ObjectId[];
-  curs: [IVideo | IDocumentFormat | ICompilators];
+  courses: [IVideo | IDocumentFormat | ICompilators];
 }

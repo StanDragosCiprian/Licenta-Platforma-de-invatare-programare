@@ -91,21 +91,21 @@ export class ProfessorService implements OnModuleInit {
     }
   }
 
-  async getAllProfessorsCursId(): Promise<Set<Types.ObjectId>> {
+  async getAllProfessorsCourseNameId(): Promise<Set<Types.ObjectId>> {
     try {
       const professors: IProfessor[] = await this.professorModel.find();
-      const coursId: Set<Types.ObjectId> = professors.reduce(
+      const courseId: Set<Types.ObjectId> = professors.reduce(
         (acc, professor) => {
           if (professor.coursesId.length > 0) {
-            professor.coursesId.forEach((curs: Types.ObjectId) => {
-              acc.add(curs);
+            professor.coursesId.forEach((courses: Types.ObjectId) => {
+              acc.add(courses);
             });
           }
           return acc;
         },
         new Set<Types.ObjectId>(),
       );
-      return coursId;
+      return courseId;
     } catch (error) {
       throw new Error(`Failed to get all professors' course IDs: ${error}`);
     }
@@ -231,9 +231,9 @@ export class ProfessorService implements OnModuleInit {
   async updateUsername(email: string, newName: string) {
     try {
       const username = await this.professorModel.findOneAndUpdate(
-        { email: email }, // filter
-        { username: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { username: newName },
+        { new: true },
       );
 
       if (username === null) {
@@ -249,9 +249,9 @@ export class ProfessorService implements OnModuleInit {
   async updateEmail(email: string, newName: string) {
     try {
       const username = await this.professorModel.findOneAndUpdate(
-        { email: email }, // filter
-        { email: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { email: newName },
+        { new: true },
       );
 
       if (username === null) {
@@ -267,9 +267,9 @@ export class ProfessorService implements OnModuleInit {
   async updatePassword(email: string, newName: string) {
     try {
       const username = await this.professorModel.findOneAndUpdate(
-        { email: email }, // filter
-        { password: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { password: newName },
+        { new: true },
       );
 
       if (username === null) {

@@ -15,7 +15,6 @@ export class StudentService implements OnModuleInit {
       const newStudent = await new this.studentModel(createStudentDto);
       return newStudent.save();
     } catch (error) {
-      // Handle the exception here
       console.error(error);
       throw new Error('Failed to create student');
     }
@@ -92,9 +91,9 @@ export class StudentService implements OnModuleInit {
   async updateUsername(email: string, newName: string) {
     try {
       const username = await this.studentModel.findOneAndUpdate(
-        { email: email }, // filter
-        { username: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { username: newName },
+        { new: true },
       );
 
       if (username === null) {
@@ -129,9 +128,9 @@ export class StudentService implements OnModuleInit {
   async updateEmail(email: string, newName: string) {
     try {
       const username = await this.studentModel.findOneAndUpdate(
-        { email: email }, // filter
-        { email: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { email: newName },
+        { new: true },
       );
 
       if (username === null) {
@@ -148,9 +147,9 @@ export class StudentService implements OnModuleInit {
   async updatePassword(email: string, newName: string) {
     try {
       const username = await this.studentModel.findOneAndUpdate(
-        { email: email }, // filter
-        { password: newName }, // update
-        { new: true }, // options
+        { email: email },
+        { password: newName },
+        { new: true },
       );
 
       if (username === null) {

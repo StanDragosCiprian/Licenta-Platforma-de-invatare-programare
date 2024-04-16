@@ -1,5 +1,5 @@
 "use client";
-import { ICoursesAllCard } from "@/app/core/ICursCard";
+import { ICoursesAllCard } from "@/app/core/ICoursesCard";
 import { FC, useState } from "react";
 import ProfessorWorkbenchComponents from "./ProfessorWorkbenchComponents";
 

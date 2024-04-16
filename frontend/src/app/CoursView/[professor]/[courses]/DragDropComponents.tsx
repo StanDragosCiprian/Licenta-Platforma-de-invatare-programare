@@ -1,7 +1,7 @@
 "use client";
 
 import { CoursManager } from "@/app/Entity/CoursManager";
-import { SelectCourses } from "./SelectCurs";
+import { SelectCourses } from "./SelectCourses";
 import { useState } from "react";
 import { Popover } from "./Popover";
 export const DragDropComponenst = ({

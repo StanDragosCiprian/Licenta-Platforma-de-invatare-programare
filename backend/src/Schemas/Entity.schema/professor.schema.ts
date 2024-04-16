@@ -5,11 +5,7 @@ import { Types } from 'mongoose';
 
 @Schema()
 class Professor extends User {
-  @Prop()
-  studentList: [];
-  @Prop()
-  colaborationId: [];
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Courses' }] })
   coursesId: Types.ObjectId[];
 }
 export const ProfesorSchema = SchemaFactory.createForClass(Professor);

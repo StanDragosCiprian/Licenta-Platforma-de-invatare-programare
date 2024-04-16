@@ -1,5 +1,5 @@
 import { Model, Types } from 'mongoose';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import * as fs from 'fs';
@@ -10,15 +10,15 @@ export class CoursesHandle {
   public setCourseModel(courseModel: Model<any>): void {
     this.courseModel = courseModel;
   }
-  async takeCoursId(cursName: string): Promise<Types.ObjectId> {
-    return (await this.courseModel.findOne({ name: cursName }))._id;
+  async takeCoursId(courseName: string): Promise<Types.ObjectId> {
+    return (await this.courseModel.findOne({ name: courseName }))._id;
   }
-  async takeCours(cursId: Types.ObjectId): Promise<ICurs> {
-    return await this.courseModel.findOne({ _id: cursId });
+  async takeCours(courseId: Types.ObjectId): Promise<ICourses> {
+    return await this.courseModel.findOne({ _id: courseId });
   }
-  async deleteCourse(courseName: string, c: ICurs) {
+  async deleteCourse(courseName: string, c: ICourses) {
     if (c.name === courseName) {
-      for (const cs of c.curs) {
+      for (const cs of c.courses) {
         if (cs.format === 'Video') {
           const video = cs as IVideo;
           const vid = video.videoPath.replace(/\//g, '\\');
@@ -28,7 +28,7 @@ export class CoursesHandle {
           if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
           } else {
-            console.log(`File does not exist: ${filePath}`);
+            throw new Error(`File does not exist: ${filePath}`);
           }
         } else if (cs.format === 'Pdf') {
           const pdf = cs as IDocumentFormat;
@@ -49,8 +49,8 @@ export class CoursesHandle {
     newName: string,
   ) {
     for (const c of courseId) {
-      const courses = await this.courseModel.findOne({ _id: c });
-      for (const cs of courses.curs) {
+      const coursesAll = await this.courseModel.findOne({ _id: c });
+      for (const cs of coursesAll.courses) {
         if (cs.format === 'Video') {
           const video = cs as IVideo;
           if (video.videoPath.includes(oldName)) {
@@ -66,7 +66,7 @@ export class CoursesHandle {
           }
         }
       }
-      const newCourse = await new this.courseModel(courses);
+      const newCourse = await new this.courseModel(coursesAll);
       await newCourse.save();
     }
   }
@@ -80,14 +80,18 @@ export class CoursesHandle {
       ? media[property]
       : mediaComponent[property];
   }
-  async updateCourse(cursBody: any, professorCourses: ICurs[]) {
+  async updateCourse(courseBody: any, professorCourses: ICourses[]) {
     for (const c of professorCourses) {
       if (c !== null && c !== undefined) {
-        if (c.name === cursBody.oldCoursName) {
+        if (c.name === courseBody.oldCoursName) {
           const course = await this.courseModel.findById(c._id);
-          course.name = this.assignProperty(c, cursBody, 'name');
-          course.vizibility = this.assignProperty(c, cursBody, 'vizibility');
-          course.description = this.assignProperty(c, cursBody, 'description');
+          course.name = this.assignProperty(c, courseBody, 'name');
+          course.vizibility = this.assignProperty(c, courseBody, 'vizibility');
+          course.description = this.assignProperty(
+            c,
+            courseBody,
+            'description',
+          );
           await course.save();
         }
       }

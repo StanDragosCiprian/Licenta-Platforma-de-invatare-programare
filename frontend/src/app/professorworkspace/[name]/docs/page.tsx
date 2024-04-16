@@ -18,7 +18,7 @@ export default async function documents({ params }: any) {
   const professorEmail = await takeEcryptedProfessorId();
   const handleProfessor = new HandleProfessor(cookies().get("id")?.value);
   const professorName = await handleProfessor.getProfessorName();
-  if (!(await handleProfessor.isProfessor())) {
+  if (!(await HandleProfessorWorkout.getProfessorId())) {
     notFound();
   }
   return (

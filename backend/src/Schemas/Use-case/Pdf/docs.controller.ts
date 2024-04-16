@@ -64,7 +64,6 @@ export class DocsController {
       };
       await this.docsService.updatePdfFromCourse(pdf, videName, id, coursName);
     } catch (error) {
-      // Handle the exception here
       console.error(error);
       throw new Error(
         'An error occurred while updating the PDF from the course.',
@@ -89,7 +88,7 @@ export class DocsController {
       );
     }
   }
-  @Post('/:professorName/:coursName/:title/add/document/Docs')
+  @Post('/:professorName/:courseName/:title/add/document/Docs')
   @UseGuards(ProfessorGuard)
   @UseInterceptors(
     FileInterceptor('file', {
@@ -97,22 +96,21 @@ export class DocsController {
       fileFilter: fileHandle.filterDocuments(),
     }),
   )
-  async createPdfCurs(
+  async createPdfCourses(
     @Body('filename') filename: string,
-    @Param('coursName') coursName: string,
+    @Param('courseName') courseName: string,
     @Param('professorName') professorName: string,
     @Param('title') title: string,
   ) {
     try {
-      const cursId: Types.ObjectId =
-        await this.docsService.takeCoursId(coursName);
+      const courseId: Types.ObjectId =
+        await this.docsService.takeCoursId(courseName);
       const pdfDto: IDocumentFormat = {
         format: 'Pdf',
         title: `${title}`,
-        documentFormatName: `${professorName}/${coursName}/${filename}`,
+        documentFormatName: `${professorName}/${courseName}/${filename}`,
       };
-      const t = await this.docsService.addMediaFormat(cursId, pdfDto);
-      console.log('t: ', t);
+      const t = await this.docsService.addMediaFormat(courseId, pdfDto);
       return t;
     } catch (error) {
       console.error(error);
@@ -121,16 +119,16 @@ export class DocsController {
       );
     }
   }
-  @Get('/:professorName/:cursName/:pdfName/pdf')
+  @Get('/:professorName/:courseName/:pdfName/pdf')
   async getPdf(
     @Res() response,
     @Param('professorName') professorName: string,
-    @Param('cursName') cursName: string,
+    @Param('courseName') courseName: string,
     @Param('pdfName') videoName: string,
   ) {
     try {
       response.sendFile(
-        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${cursName}\\${videoName}.pdf`,
+        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${professorName}\\${courseName}\\${videoName}.pdf`,
       );
     } catch (error) {
       console.error(error);

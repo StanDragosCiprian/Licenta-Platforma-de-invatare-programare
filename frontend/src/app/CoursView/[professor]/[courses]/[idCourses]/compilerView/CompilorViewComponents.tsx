@@ -18,17 +18,17 @@ export const CompilerViewComponents: FC<{
   title: string;
   problemRequire: string;
   problemExemples: string[];
-  idCurs: number;
+  idCourses: number;
   format: "Compilator";
   professor: string;
-  cursName: string;
+  courseName: string;
 }> = ({
   title,
   problemRequire,
   problemExemples,
-  idCurs,
+  idCourses,
   professor,
-  cursName,
+  courseName,
 }) => {
   const [programingLanguageForrmat, setProgramingLanguageForrmat] =
     useState<string>();
@@ -47,9 +47,9 @@ export const CompilerViewComponents: FC<{
     setProgrammingLanguage(language);
     const option = {
       language: `${language}`,
-      id: `${idCurs}`,
+      id: `${idCourses}`,
       professor: `${professor}`,
-      coursName: `${cursName}`,
+      coursName: `${courseName}`,
     };
     const api = await fetch(
       "/api/handleExercicesApi",
@@ -70,9 +70,9 @@ async function handleCompile(): Promise<void> {
 
   const option = {
     language: `${programmingLanguage}`,
-    id: `${idCurs}`,
+    id: `${idCourses}`,
     professor: `${professor}`,
-    coursName: `${cursName}`,
+    coursName: `${courseName}`,
     script: `${programingLanguageForrmat}`,
   };
 

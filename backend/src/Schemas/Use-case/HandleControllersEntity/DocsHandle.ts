@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
 import { ProfessorService } from '../professor/professor.service';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 
 export class DocsHandle extends ProfessorHandle {
   async updatePdfFromCourse(
@@ -21,7 +21,7 @@ export class DocsHandle extends ProfessorHandle {
       docsModel,
       async (
         component: IVideo | IDocumentFormat | ICompilators,
-        course: ICurs,
+        course: ICourses,
       ) => {
         if (component.format === 'Pdf') {
           const pdfComponent = component as IDocumentFormat;

@@ -1,11 +1,11 @@
 import { CoursCard } from "./CoursCard/CoursCard";
-import { ICourseCard } from "./core/ICursCard";
+import { ICourseCard } from "./core/ICoursesCard";
 import { urlBackend } from "./UserServer/ServerRequest";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { HandleGenericFuntion } from "./Entity/HandleGenericFuntion";
 async function getData() {
-  const courses = await fetch(`${urlBackend}courses/cursPresentation`, {
+  const courses = await fetch(`${urlBackend}courses/coursesPresentation`, {
     next: { revalidate: 0 },
     credentials: "include" as RequestCredentials,
     headers: {
@@ -13,6 +13,7 @@ async function getData() {
     },
   });
   const cours: any[] = await courses.json();
+  console.log('cours: ', cours);
   return Object.values(cours);
 }
 
@@ -22,16 +23,16 @@ export default async function Page() {
   return (
     <>
       <div className="flex flex-wrap">
-        {courses.map((curs: ICourseCard, index: number) => (
+        {courses.map((courses: ICourseCard, index: number) => (
           <div key={index}>
-            <Link href={`/CoursView/${curs.professor}/${curs.title}`}>
+            <Link href={`/CoursView/${courses.professor}/${courses.title}`}>
               <CoursCard
                 title={HandleGenericFuntion.replaceUnderlineWithSpace(
-                  curs.title
+                  courses.title
                 )}
-                description={curs.description}
-                image={curs.image}
-                professor={curs.professor}
+                description={courses.description}
+                image={courses.image}
+                professor={courses.professor}
               />
             </Link>
           </div>

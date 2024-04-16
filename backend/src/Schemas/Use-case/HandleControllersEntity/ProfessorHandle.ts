@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { ProfessorService } from '../professor/professor.service';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { Document, Model, Types } from 'mongoose';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
@@ -10,7 +11,7 @@ import { createCipheriv, createDecipheriv, scrypt } from 'crypto';
 import { CoursesHandle } from './CoursesHandle';
 export interface IProfessorHandle {
   setProfessorService(professorService: ProfessorService): void;
-  fetchProfessorCourses(id: string, model: Model<any>): Promise<ICurs[]>;
+  fetchProfessorCourses(id: string, model: Model<any>): Promise<ICourses[]>;
   iterateToProfessorCourses(
     professorId: string,
     courseName: string,
@@ -25,14 +26,17 @@ export class ProfessorHandle implements IProfessorHandle {
   setProfessorService(professorService: ProfessorService) {
     this.professorService = professorService;
   }
-  async fetchProfessorCourses(id: string, modle: Model<any>): Promise<ICurs[]> {
+  async fetchProfessorCourses(
+    id: string,
+    modle: Model<any>,
+  ): Promise<ICourses[]> {
     const professorCoursId: IProfessor =
       await this.professorService.getProfessorById(id);
 
-    const courses: ICurs[] = [];
+    const courses: ICourses[] = [];
     if (professorCoursId !== null) {
       for (const c of professorCoursId.coursesId) {
-        const cours: ICurs = await modle.findById(c);
+        const cours: ICourses = await modle.findById(c);
         courses.push(cours);
       }
     }
@@ -70,7 +74,7 @@ export class ProfessorHandle implements IProfessorHandle {
     )) as Buffer;
     const decipher = createDecipheriv('aes-256-ctr', key, iv);
 
-    const textToDecrypt = Buffer.from(encryptedText, 'hex'); // or 'base64'
+    const textToDecrypt = Buffer.from(encryptedText, 'hex');
     const decryptedText = Buffer.concat([
       decipher.update(textToDecrypt),
       decipher.final(),
@@ -93,7 +97,7 @@ export class ProfessorHandle implements IProfessorHandle {
       cipher.final(),
     ]);
 
-    return encryptedText.toString('hex'); // or 'base64'
+    return encryptedText.toString('hex');
   }
   public async iterateToProfessorCourses(
     professorId: string,
@@ -102,16 +106,16 @@ export class ProfessorHandle implements IProfessorHandle {
     model: Model<any>,
     callback: (
       component: IVideo | IDocumentFormat | ICompilators,
-      course: ICurs,
+      course: ICourses,
     ) => void,
   ) {
-    const professorCourses: ICurs[] = await this.fetchProfessorCourses(
+    const professorCourses: ICourses[] = await this.fetchProfessorCourses(
       professorId,
       model,
     );
     for (const course of professorCourses) {
       if (course.name === courseName) {
-        for (const component of course.curs) {
+        for (const component of course.courses) {
           if (component.format === format) {
             callback(component, course);
           }
@@ -159,14 +163,14 @@ export class ProfessorHandle implements IProfessorHandle {
   async fetchProfessorVisibleCourses(
     id: string,
     courseModel: Model<any>,
-  ): Promise<ICurs[]> {
+  ): Promise<ICourses[]> {
     const professorCoursId: IProfessor =
       await this.professorService.getProfessorById(id);
 
-    const courses: ICurs[] = [];
+    const courses: ICourses[] = [];
     if (professorCoursId !== null) {
       for (const c of professorCoursId.coursesId) {
-        const cours: ICurs = await courseModel.findById(c);
+        const cours: ICourses = await courseModel.findById(c);
         if (cours?.vizibility === true) {
           courses.push(cours);
         }
@@ -179,9 +183,9 @@ export class ProfessorHandle implements IProfessorHandle {
     professor: string[],
     courseName,
     courseModel: Model<any>,
-    callback: (course: ICurs) => void,
+    callback: (course: ICourses) => void,
   ) {
-    const professorCourses: ICurs[] = await this.fetchProfessorCourses(
+    const professorCourses: ICourses[] = await this.fetchProfessorCourses(
       professorId,
       courseModel,
     );
@@ -189,7 +193,7 @@ export class ProfessorHandle implements IProfessorHandle {
     for (const s of professor) {
       for (const courses of professorCourses) {
         if (courseName === courses.name) {
-          const c: ICurs = await this.findCoursFromProfessorId(
+          const c: ICourses = await this.findCoursFromProfessorId(
             professorId,
             courses.name,
             courseModel,
@@ -210,9 +214,8 @@ export class ProfessorHandle implements IProfessorHandle {
     email: string,
     coursName: string,
     coursModal: Model<any>,
-    callback: (course: ICurs) => any, // Change void to any
+    callback: (course: ICourses) => any,
   ): Promise<any> {
-    // Add Promise<any> as return type
     return new Promise(async (resolve, reject) => {
       try {
         const courseHandle = new CoursesHandle();
@@ -242,9 +245,9 @@ export class ProfessorHandle implements IProfessorHandle {
     student: string[],
     courseName,
     courseModel: Model<any>,
-    callback: (course: ICurs) => void,
+    callback: (course: ICourses) => void,
   ) {
-    const professorCourses: ICurs[] = await this.fetchProfessorCourses(
+    const professorCourses: ICourses[] = await this.fetchProfessorCourses(
       professorId,
       courseModel,
     );
@@ -255,7 +258,7 @@ export class ProfessorHandle implements IProfessorHandle {
     for (const stud of await s) {
       for (const courses of professorCourses) {
         if (courseName === courses.name) {
-          const c: ICurs = await this.findCoursFromProfessorId(
+          const c: ICourses = await this.findCoursFromProfessorId(
             professorId,
             courses.name,
             courseModel,
@@ -274,9 +277,8 @@ export class ProfessorHandle implements IProfessorHandle {
     coursName: string,
     id: string,
     getCourseByName: (courseName: string) => Promise<
-      // eslint-disable-next-line @typescript-eslint/ban-types
-      Document<unknown, {}, ICurs> &
-        ICurs &
+      Document<unknown, {}, ICourses> &
+        ICourses &
         Required<{
           _id: Types.ObjectId;
         }>
@@ -289,9 +291,6 @@ export class ProfessorHandle implements IProfessorHandle {
         return true;
       }
     } else {
-      // const professorId =
-      //   await this.professorService.getProfessorByEmail(email);
-
       for (const p of await (
         await getCourseByName(coursName)
       ).colaborationId) {

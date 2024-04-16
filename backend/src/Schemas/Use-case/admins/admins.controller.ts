@@ -15,7 +15,6 @@ import { Cookies } from 'src/Cookie/cookie';
 import { AdminGuard } from 'src/auth/admin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
-//import { diskStorage } from 'multer';
 import * as Excel from 'exceljs';
 import { Types } from 'mongoose';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
@@ -39,9 +38,8 @@ export class AdminsController {
         return { username: student.username, email: student.email };
       });
     } catch (error) {
-      // Handle the exception here
       console.error(error);
-      throw error; // Rethrow the exception to be handled by the global exception handler
+      throw error;
     }
   }
   @Post('/switch/professor/courses')
@@ -263,8 +261,8 @@ export class AdminsController {
     FileInterceptor('file', {
       fileFilter: (req, file, cb) => {
         const allowedMimeTypes = [
-          'application/vnd.ms-excel', // for older Excel files (xls)
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // for newer Excel files (xlsx)
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ];
         if (allowedMimeTypes.includes(file.mimetype)) {
           cb(null, true);
@@ -303,8 +301,6 @@ export class AdminsController {
             password: 'password',
             profileImage: 'http://localhost:3000/default/img',
             role: 'professor',
-            studentList: [],
-            colaborationId: [],
             coursesId: [],
           };
 

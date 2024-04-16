@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CoursesDto } from 'src/Schemas/DTO/courses.dto';
-import { ICurs } from 'src/Schemas/Entity/ICurs';
+import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { ProfessorService } from '../professor/professor.service';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { FILELOCATION } from 'EnviormentVariable';
@@ -10,17 +10,17 @@ import * as fs from 'fs';
 import { ProfessorHandle } from '../HandleControllersEntity/ProfessorHandle';
 import { CoursesHandle } from '../HandleControllersEntity/CoursesHandle';
 @Injectable()
-export class CursService {
+export class CoursesService {
   @Inject(ProfessorService)
   private readonly professorService: ProfessorService;
-  constructor(@InjectModel('Courses') private cursModel: Model<ICurs>) {}
-  async takeCoursId(cursName: string): Promise<Types.ObjectId> {
+  constructor(@InjectModel('Courses') private coursesModel: Model<ICourses>) {}
+  async takeCoursId(courseName: string): Promise<Types.ObjectId> {
     try {
-      const curs = await this.cursModel.findOne({ name: cursName });
-      if (curs) {
-        return curs._id;
+      const courseId = await this.coursesModel.findOne({ name: courseName });
+      if (courseId) {
+        return courseId._id;
       } else {
-        throw new Error(`Course with name ${cursName} not found`);
+        throw new Error(`Course with name ${courseName} not found`);
       }
     } catch (error) {
       throw new Error(`Error while fetching course ID: ${error}`);
@@ -29,29 +29,33 @@ export class CursService {
   private professorHandle = new ProfessorHandle();
   public async renameFile(
     oldName: string,
-    newCurs: string,
+    newCourse: string,
     courseId: Types.ObjectId[],
   ) {
     try {
       fs.renameSync(
         `${FILELOCATION}\\backend\\src\\VideoTutorial\\${oldName}`,
-        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${newCurs}`,
+        `${FILELOCATION}\\backend\\src\\VideoTutorial\\${newCourse}`,
       );
       const courseHandle = new CoursesHandle();
-      courseHandle.setCourseModel(this.cursModel);
-      await courseHandle.changeDirectoryfromCourse(courseId, oldName, newCurs);
+      courseHandle.setCourseModel(this.coursesModel);
+      await courseHandle.changeDirectoryfromCourse(
+        courseId,
+        oldName,
+        newCourse,
+      );
     } catch (error) {
       throw new Error(`Error while renaming file: ${error}`);
     }
   }
 
-  async updateCourse(createCursDto: any, id: any) {
+  async updateCourse(createCourseDto: any, id: any) {
     try {
-      const { cursBody } = createCursDto;
-      const professorCourses: ICurs[] = await this.fetchProfessorCourses(id);
+      const { courseBody } = createCourseDto;
+      const professorCourses: ICourses[] = await this.fetchProfessorCourses(id);
       const courseHandle = new CoursesHandle();
-      courseHandle.setCourseModel(this.cursModel);
-      await courseHandle.updateCourse(cursBody, professorCourses);
+      courseHandle.setCourseModel(this.coursesModel);
+      await courseHandle.updateCourse(courseBody, professorCourses);
     } catch (error) {
       throw new Error(`Error while updating course: ${error}`);
     }
@@ -64,8 +68,8 @@ export class CursService {
           await this.professorService.decriptJwt(id),
         );
       const courseHandle = new CoursesHandle();
-      courseHandle.setCourseModel(this.cursModel);
-      let course: ICurs;
+      courseHandle.setCourseModel(this.coursesModel);
+      let course: ICourses;
       let index: number = 0;
       for (const c of professorCourses.coursesId) {
         const cours = await this.takeCours(c);
@@ -90,9 +94,9 @@ export class CursService {
     }
   }
 
-  async takeCours(cursId: Types.ObjectId): Promise<ICurs> {
+  async takeCours(courseId: Types.ObjectId): Promise<ICourses> {
     try {
-      return await this.cursModel.findOne({ _id: cursId });
+      return await this.coursesModel.findOne({ _id: courseId });
     } catch (error) {
       throw new Error(`Error while fetching course: ${error}`);
     }
@@ -114,7 +118,7 @@ export class CursService {
     }
   }
   onModuleInit() {
-    this.cursModel.watch().on('change', (change) => {
+    this.coursesModel.watch().on('change', (change) => {
       console.log(change);
     });
   }
@@ -154,7 +158,7 @@ export class CursService {
       return await this.professorHandle.findCoursFromProfessorEmail(
         email,
         coursName,
-        this.cursModel,
+        this.coursesModel,
       );
     } catch (error) {
       throw new Error(
@@ -169,7 +173,7 @@ export class CursService {
       return await this.professorHandle.findCoursFromProfessorId(
         id,
         coursName,
-        this.cursModel,
+        this.coursesModel,
       );
     } catch (error) {
       throw new Error(`Error while finding course from professor ID: ${error}`);
@@ -195,10 +199,10 @@ export class CursService {
         professorId,
         professor,
         courseName,
-        this.cursModel,
-        (c: ICurs) => {
-          const newCurs = new this.cursModel(c);
-          newCurs.save();
+        this.coursesModel,
+        (c: ICourses) => {
+          const newCourse = new this.coursesModel(c);
+          newCourse.save();
         },
       );
     } catch (error) {
@@ -217,10 +221,10 @@ export class CursService {
         professorId,
         student,
         courseName,
-        this.cursModel,
-        (course: ICurs) => {
-          const newCurs = new this.cursModel(course);
-          newCurs.save();
+        this.coursesModel,
+        (course: ICourses) => {
+          const newCourse = new this.coursesModel(course);
+          newCourse.save();
         },
       );
     } catch (error) {
@@ -230,7 +234,7 @@ export class CursService {
 
   async getCourseByName(courseName: string) {
     try {
-      return await this.cursModel.findOne({ name: courseName });
+      return await this.coursesModel.findOne({ name: courseName });
     } catch (error) {
       throw new Error(`Error while getting course by name: ${error}`);
     }
@@ -260,8 +264,8 @@ export class CursService {
       const isStudent = await this.professorHandle.iterateToCourses(
         email,
         coursName,
-        this.cursModel,
-        async (c: ICurs) => {
+        this.coursesModel,
+        async (c: ICourses) => {
           const i = await this.decomprimStudent(id);
           return c.studentId.some((id) => id.toString() === i);
         },
@@ -281,11 +285,11 @@ export class CursService {
       await this.professorHandle.iterateToCourses(
         email,
         coursName,
-        this.cursModel,
-        async (c: ICurs) => {
+        this.coursesModel,
+        async (c: ICourses) => {
           c.studentId.push(new Types.ObjectId(student));
-          const newCurs = await new this.cursModel(c);
-          newCurs.save();
+          const newCourse = await new this.coursesModel(c);
+          newCourse.save();
         },
       );
     } catch (error) {
@@ -302,7 +306,7 @@ export class CursService {
       for (const c of professor) {
         const cours = await this.takeCoursId(coursName);
         if (c.toString() === cours.toString()) {
-          return (await this.takeCours(cours)).curs[id];
+          return (await this.takeCours(cours)).courses[id];
         }
       }
       return false;
@@ -317,12 +321,12 @@ export class CursService {
       throw new Error(`Error while finding course with professor: ${error}`);
     }
   }
-  async fetchProfessorVisibleCourses(id: string): Promise<ICurs[]> {
+  async fetchProfessorVisibleCourses(id: string): Promise<ICourses[]> {
     try {
       this.professorHandle.setProfessorService(this.professorService);
       return await this.professorHandle.fetchProfessorVisibleCourses(
         id,
-        this.cursModel,
+        this.coursesModel,
       );
     } catch (error) {
       throw new Error(
@@ -330,22 +334,22 @@ export class CursService {
       );
     }
   }
-  async fetchProfessorCourses(id: string): Promise<ICurs[]> {
+  async fetchProfessorCourses(id: string): Promise<ICourses[]> {
     try {
       this.professorHandle.setProfessorService(this.professorService);
       return await this.professorHandle.fetchProfessorCourses(
         id,
-        this.cursModel,
+        this.coursesModel,
       );
     } catch (error) {
       throw new Error(`Error while fetching professor courses: ${error}`);
     }
   }
 
-  async getCoursComponent(id: string): Promise<ICurs[]> {
+  async getCoursComponent(id: string): Promise<ICourses[]> {
     try {
-      const professorCoursId = await this.cursModel.find();
-      const courses: ICurs[] = [];
+      const professorCoursId = await this.coursesModel.find();
+      const courses: ICourses[] = [];
       for (const c of professorCoursId) {
         if (id === 'undefined') {
           if (c?.vizibility === true) {
@@ -353,16 +357,21 @@ export class CursService {
           }
         } else {
           try {
-            const isStudent = c.studentId.some(
-              async (student: any) =>
-                student.toString() ===
-                (await this.professorService.decriptJwt(id)),
-            );
-            const isColaborator = c.colaborationId.some(
-              async (student: any) =>
-                student.toString() ===
-                (await this.professorService.decriptJwt(id)),
-            );
+            const entityId = await this.professorService.decriptJwt(id);
+            let isStudent: boolean = false;
+            for (const s of c.studentId) {
+              if (s.toString() === entityId) {
+                isStudent = true;
+                break;
+              }
+            }
+            let isColaborator: boolean = false;
+            for (const col of c.colaborationId) {
+              if (col.toString() === entityId) {
+                isColaborator = true;
+                break;
+              }
+            }
             if (isStudent || isColaborator) {
               courses.push(c);
             } else if (c?.vizibility === true) {
@@ -384,24 +393,68 @@ export class CursService {
       throw new Error(`Error while getting course component: ${error}`);
     }
   }
-
-  async createNewCourse(curse: CoursesDto, professorId: string) {
+  async getMyCoursComponent(id: string): Promise<ICourses[]> {
     try {
-      const newCurs = await new this.cursModel(curse);
-      newCurs.save();
+      const professorCoursId = await this.coursesModel.find();
+      const courses: ICourses[] = [];
+      for (const c of professorCoursId) {
+        if (id === 'undefined') {
+          if (c?.vizibility === true) {
+            courses.push(c);
+          }
+        } else {
+          try {
+            const entityId = await this.professorService.decriptJwt(id);
+            let isStudent: boolean = false;
+            for (const s of c.studentId) {
+              if (s.toString() === entityId) {
+                isStudent = true;
+                break;
+              }
+            }
+            let isColaborator: boolean = false;
+            for (const col of c.colaborationId) {
+              if (col.toString() === entityId) {
+                isColaborator = true;
+                break;
+              }
+            }
+            if (isStudent || isColaborator) {
+              courses.push(c);
+            } else {
+              const professor =
+                await this.professorService.getProfessorById(id);
+              professor.coursesId.forEach((p) => {
+                if (p.toString() === c._id.toString()) {
+                  courses.push(c);
+                }
+              });
+            }
+          } catch (error) {}
+        }
+      }
+      return courses;
+    } catch (error) {
+      throw new Error(`Error while getting course component: ${error}`);
+    }
+  }
+  async createNewCourse(course: CoursesDto, professorId: string) {
+    try {
+      const newCourse = await new this.coursesModel(course);
+      newCourse.save();
       const decryptId = await this.professorService.decriptJwt(professorId);
       const professor = await this.professorService.getProfessor(decryptId);
-      professor.coursesId.push(newCurs._id);
+      professor.coursesId.push(newCourse._id);
       professor.save();
-      return newCurs.name;
+      return newCourse.name;
     } catch (error) {
       throw new Error(`Error while creating new course: ${error}`);
     }
   }
 
-  async takeName(cursId: string): Promise<string> {
+  async takeName(courseId: string): Promise<string> {
     try {
-      const name = await this.cursModel.findById(cursId);
+      const name = await this.coursesModel.findById(courseId);
       return name.name;
     } catch (error) {
       throw new Error(`Error while taking course name: ${error}`);
@@ -409,10 +462,10 @@ export class CursService {
   }
 
   async takeCoursByName(
-    cursName: string,
+    courseName: string,
   ): Promise<{ title: string; description: string }> {
     try {
-      const name = await this.cursModel.findOne({ name: cursName });
+      const name = await this.coursesModel.findOne({ name: courseName });
       return { title: name.name, description: name.description };
     } catch (error) {
       throw new Error(`Error while taking course by name: ${error}`);
@@ -420,10 +473,10 @@ export class CursService {
   }
 
   async takeColaboratoryByCourseName(
-    cursName: string,
+    courseName: string,
   ): Promise<Types.ObjectId[]> {
     try {
-      const name = await this.cursModel.findOne({ name: cursName });
+      const name = await this.coursesModel.findOne({ name: courseName });
       return name.colaborationId;
     } catch (error) {
       throw new Error(
@@ -432,9 +485,9 @@ export class CursService {
     }
   }
 
-  async takeFullCurs(cursId: string): Promise<ICurs> {
+  async takeFullCourse(courseId: string): Promise<ICourses> {
     try {
-      const name = await this.cursModel.findOne({ name: cursId });
+      const name = await this.coursesModel.findOne({ name: courseId });
       return name;
     } catch (error) {
       throw new Error(`Error while taking full course: ${error}`);
@@ -442,16 +495,16 @@ export class CursService {
   }
 
   async changeIndex(
-    cursName: string,
+    courseName: string,
     drag: string,
     drop: string,
   ): Promise<void> {
     try {
-      const curs = await this.cursModel.findOne({ name: cursName });
-      const temp = curs.curs[Number(drag)];
-      curs.curs[Number(drag)] = curs.curs[Number(drop)];
-      curs.curs[Number(drop)] = temp;
-      curs.save();
+      const courses = await this.coursesModel.findOne({ name: courseName });
+      const temp = courses.courses[Number(drag)];
+      courses.courses[Number(drag)] = courses.courses[Number(drop)];
+      courses.courses[Number(drop)] = temp;
+      courses.save();
     } catch (error) {
       throw new Error(`Error while changing index: ${error}`);
     }
