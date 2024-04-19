@@ -9,7 +9,6 @@ const ReverseCourse: FC<{
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>>;
   email: string;
 }> = ({ professor, setDialog, email, myProfessor }) => {
-  console.log(myProfessor);
   const [selected, setSelected] = useState<string>("");
   const handleSwitchProfessorCourse = async (
     email1: string,

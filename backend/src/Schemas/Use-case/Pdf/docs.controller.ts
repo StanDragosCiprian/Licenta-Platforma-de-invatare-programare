@@ -24,7 +24,7 @@ const fileHandle: IFileHandle = new FileHandle();
 export class DocsController {
   constructor(private docsService: DocsService) {}
   @Post(
-    '/:professorName/:videName/:coursName/:newTitle/add/pdf/Update/pdfInput',
+    '/:professorName/:videName/:courseName/:newTitle/add/pdf/Update/pdfInput',
   )
   @UseGuards(ProfessorGuard)
   @UseInterceptors(
@@ -38,13 +38,13 @@ export class DocsController {
     @Body('filename') filename: string,
     @Param('professorName') professorName: string,
     @Param('videName') videName: string,
-    @Param('coursName') coursName: string,
+    @Param('courseName') courseName: string,
     @Param('newTitle') newTitle: string,
   ) {
     try {
       const pdfPath = await this.docsService.getPdfPathFromCourse(
         id,
-        coursName,
+        courseName,
         videName,
       );
       if (filename !== undefined) {
@@ -59,10 +59,10 @@ export class DocsController {
         title: newTitle,
         documentFormatName:
           filename !== undefined
-            ? `${professorName}/${coursName}/${filename}`
+            ? `${professorName}/${courseName}/${filename}`
             : '',
       };
-      await this.docsService.updatePdfFromCourse(pdf, videName, id, coursName);
+      await this.docsService.updatePdfFromCourse(pdf, videName, id, courseName);
     } catch (error) {
       console.error(error);
       throw new Error(

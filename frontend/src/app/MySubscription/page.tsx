@@ -14,7 +14,6 @@ async function getData() {
       },
     });
     const cours: any[] = await courses.json();
-    console.log('cours: ', cours);
     return Object.values(cours);
   }
 const MySubscription =async () => {

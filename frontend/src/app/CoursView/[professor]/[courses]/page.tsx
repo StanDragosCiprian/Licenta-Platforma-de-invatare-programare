@@ -54,7 +54,6 @@ async function isInCourse() {
     },
   });
   const cours: any = await courses.json();
-  console.log("cours: ", cours);
   if (Object.keys(cours).length === 0) {
     return false;
   } else {

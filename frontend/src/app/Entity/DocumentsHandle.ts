@@ -11,11 +11,20 @@ export class DocumentHandle {
     this.courseName = videoName;
   }
   private async getProfessorName(): Promise<string> {
+    const option = {
+      method: "POST",
+      credentials: "include" as RequestCredentials,
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `id=${getCookie("id")}`,
+      },
+    };
     const professor = await fetch(
-      `${urlBackend}courses/professorName`,
-      getFromServerCookie(getCookie("id"))
+      "/api/handleProfessorApi/professorName",
+      option
     );
-    return await professor.text();
+     const n=await professor.json();
+     return n.text;
   }
   private async setDocs(
     filePath: string,

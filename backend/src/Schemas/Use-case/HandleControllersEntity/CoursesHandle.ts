@@ -39,8 +39,8 @@ export class CoursesHandle {
             )}`,
           );
         }
-        await this.courseModel.deleteOne({ _id: c._id });
       }
+      await this.courseModel.deleteOne({ _id: c._id });
     }
   }
   async changeDirectoryfromCourse(

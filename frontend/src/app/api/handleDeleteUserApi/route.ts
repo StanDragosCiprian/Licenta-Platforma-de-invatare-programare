@@ -14,13 +14,19 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify(body),
   };
-  let stats: boolean=false;
+  let stats: boolean = false;
   if (role === "student") {
     const r = await fetch(`${urlBackend}admin/delete/student`, option);
-    stats=r.ok;
+    stats = r.ok;
   } else if (role === "professor") {
+    const t = await fetch(
+      `${urlBackend}courses/delete/professor/courses`,
+      option
+    );
+    console.log(t);
+    console.log(`${urlBackend}courses/delete/professor/courses`);
     const r = await fetch(`${urlBackend}admin/delete/professor`, option);
-    stats=r.ok;
+    stats = r.ok;
   }
 
   return new NextResponse(JSON.stringify({ ok: stats }));

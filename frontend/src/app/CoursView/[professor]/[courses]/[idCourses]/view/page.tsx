@@ -46,7 +46,7 @@ export default async function View({ params }: any) {
   return (
     <>
       {course.format === "Video" ? (
-        <div className="flex justify-center items-center h-screen w-screen">
+        <div className="flex justify-center items-center h-full w-screen overflow-auto">
           <PreviewVideo
             title={course.title}
             description={course.description}

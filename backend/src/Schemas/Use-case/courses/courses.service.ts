@@ -130,7 +130,13 @@ export class CoursesService {
       throw new Error(`Error while encrypting text: ${error}`);
     }
   }
-
+  async encryptProfessorJwt(email: IProfessor) {
+    try {
+      return await this.professorService.makeJwt(email);
+    } catch (error) {
+      throw new Error(`Error while encrypting professor JWT: ${error}`);
+    }
+  }
   async decryptText(encryptedText: string) {
     try {
       this.professorHandle.setProfessorService(this.professorService);

@@ -5,6 +5,7 @@ import { Cookies } from 'src/Cookie/cookie';
 import { ProfessorGuard } from 'src/auth/professor.guard';
 import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { Types } from 'mongoose';
+import { AdminGuard } from 'src/auth/admin.guard';
 @Controller('courses')
 export class CoursesController {
   constructor(private courseService: CoursesService) {}
@@ -200,6 +201,21 @@ export class CoursesController {
       console.error(error);
       throw new Error('An error occurred while verifying the course.');
     }
+  }
+  @Post('/delete/professor/courses')
+  @UseGuards(AdminGuard)
+  async getProfessorCoursesAndDelete(@Body() body: { email: string }) {
+    try {
+      const professor = await this.courseService.getProfessorByEmail(
+        body.email,
+      );
+      const courses = professor.coursesId;
+      const id = await this.courseService.encryptProfessorJwt(professor);
+      for (const course of courses) {
+        const cours = await this.courseService.takeCours(course);
+        await this.courseService.deleteCourse(cours.name, id.access_token);
+      }
+    } catch (error) {}
   }
   @Get('/coursesProfessor')
   async coursesProfessor(@Cookies('id') id: string) {

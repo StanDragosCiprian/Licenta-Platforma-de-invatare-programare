@@ -5,11 +5,13 @@ import { CoursesController } from './courses.controller';
 import { CoursesService } from './courses.service';
 import { ProfessorModule } from '../professor/professor.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AdminsModule } from '../admins/admins.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Courses', schema: CoursesSchema }]),
     ProfessorModule,
+    AdminsModule,
     JwtModule.register({
       secret: 'your-secret-key',
       signOptions: { expiresIn: '24h' },

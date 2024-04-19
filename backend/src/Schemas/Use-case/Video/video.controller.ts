@@ -53,8 +53,6 @@ export class VideoController {
     @Req() req: Request,
     @Cookies('id') id: string,
     @Body('filename') filename: string,
-    @Param('professorName') professorName: string,
-    @Param('courseName') courseName: string,
   ) {
     try {
       const { dest }: any = req.body;
@@ -112,7 +110,7 @@ export class VideoController {
       throw new Error('An error occurred while fetching the professor videos.');
     }
   }
-  @Post('/:professorName/:videName/:coursName/add/video/Update/videoInput')
+  @Post('/:professorName/:videName/:courseName/add/video/Update/videoInput')
   @UseGuards(ProfessorGuard)
   @UseInterceptors(
     FileInterceptor('file', {
@@ -125,11 +123,11 @@ export class VideoController {
     @Body('filename') filename: string,
     @Param('professorName') professorName: string,
     @Param('videName') videName: string,
-    @Param('coursName') coursName: string,
+    @Param('courseName') courseName: string,
   ) {
     const videoPath = await this.videoService.getVideoPathFromCourse(
       id,
-      coursName,
+      courseName,
       videName,
     );
     const videoPathArray = videoPath.split('/');
@@ -138,7 +136,7 @@ export class VideoController {
       fs.unlinkSync(
         `${FILELOCATION}\\backend\\src\\VideoTutorial\\${videoPathString}`,
       );
-      return `${professorName}/${coursName}/${filename}`;
+      return `${professorName}/${courseName}/${filename}`;
     } catch (error) {
       console.error(error);
       throw new Error(

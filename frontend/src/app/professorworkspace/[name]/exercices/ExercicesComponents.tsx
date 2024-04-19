@@ -120,7 +120,6 @@ export const ExercicesComponens: FC<{
       sendToServerCookies(JSON.stringify(exerciesUpdate), id)
     );
     const { ok } = await api.json();
-    console.log("ok: ", ok);
     if (!ok) notFound();
     if (setDialog !== undefined) {
       setDialog(undefined);

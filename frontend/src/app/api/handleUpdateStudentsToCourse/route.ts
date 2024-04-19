@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const bodyCours = await req.json();
   const cookie = req.cookies.get("id");
-  console.log("cookie: ", cookie);
   const { grad } = bodyCours;
   delete bodyCours.grad;
   const option = {
