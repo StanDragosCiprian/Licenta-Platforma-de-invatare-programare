@@ -11,7 +11,7 @@ export const UploadVideoInput: FC<
     if (e?.length) {
       const file = e[0];
       const fileType = file.type;
-      const fileSize = file.size / (1024 * 1024); // size in MB
+      const fileSize = file.size / (1024 * 1024); 
 
       if (fileType !== "video/mp4") {
         setWarning("Please upload an MP4 file.");

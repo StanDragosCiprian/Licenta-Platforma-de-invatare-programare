@@ -44,8 +44,9 @@ export class JavaCompier implements IJavaCompier {
   }
   private makeJavaArray() {
     const value = Object.values(this.parameterWithType);
+    const regex = /\[\]/;
     for (const [index, v] of value.entries()) {
-      if (v.search('[]') === -1) {
+      if (regex.test(v)) {
         if (!this.inputs.includes('],[')) {
           this.inputs = this.inputs.replace('[', '{');
           this.inputs = this.inputs.replace(']', '}');

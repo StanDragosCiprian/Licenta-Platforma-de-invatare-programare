@@ -6,7 +6,6 @@ import {
 import { getCookie } from "cookies-next";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
-  //{ role: 'student', content: 'Dragos', newValue: 'za' }
   let request: any;
   const { role, content, newValue, email, urlApi } = await req.json();
   const cookie: any = await req.cookies.get("id");
@@ -14,7 +13,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Cookie: `id=${cookie.value}`, // Include the cookie in the headers
+      Cookie: `id=${cookie.value}`, 
     },
     body: JSON.stringify({
       content: content,

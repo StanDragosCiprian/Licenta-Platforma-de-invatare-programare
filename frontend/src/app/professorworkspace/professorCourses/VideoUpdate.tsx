@@ -37,7 +37,7 @@ const VideoUpdatePage: FC<{
 
   return (
     <Modal show={true} onClose={() => setDialog(undefined)}>
-      <Modal.Header>Add </Modal.Header>
+      <Modal.Header>Update Video </Modal.Header>
       <Modal.Body>
         {videoUpdate === undefined
           ? Array.isArray(video) && (

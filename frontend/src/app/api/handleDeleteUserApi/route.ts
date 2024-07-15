@@ -23,8 +23,6 @@ export async function POST(req: NextRequest) {
       `${urlBackend}courses/delete/professor/courses`,
       option
     );
-    console.log(t);
-    console.log(`${urlBackend}courses/delete/professor/courses`);
     const r = await fetch(`${urlBackend}admin/delete/professor`, option);
     stats = r.ok;
   }

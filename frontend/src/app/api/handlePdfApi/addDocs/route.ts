@@ -5,13 +5,13 @@ export async function POST(req: NextRequest) {
   const body = await req.formData();
     const professorName = body.get("professorName");
     const courseName = body.get("courseName");
-    const videoName = body.get("title");
+    const pdfName = body.get("title");
     body.delete("professorName");
     body.delete("title");
     const id = await req.cookies.get("id");
     body.delete("data");
     const response = await fetch(
-      `${urlBackend}courses/docs/${professorName}/${courseName}/${videoName}/add/document/Docs`,
+      `${urlBackend}courses/docs/${professorName}/${courseName}/${pdfName}/add/document/Docs`,
       sendFiles(body, id?.value)
     );
     const r = await response.text();

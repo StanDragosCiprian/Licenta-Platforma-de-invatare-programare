@@ -91,6 +91,7 @@ export const ExercicesComponens: FC<{
       final.funtionProblemModel
     ) {
       const id = getCookie("id")?.toString();
+
       const api = await fetch(
         "/api/handleNewExercicesApi",
         sendToServerCookies(JSON.stringify(final), id)
@@ -175,6 +176,7 @@ export const ExercicesComponens: FC<{
         combineParams={funtionInputs}
         setCombineParams={setFuntionInputs}
         nameOfSearch="Funtion name"
+        options={["int", "float", "string", "double", "char"]}
       />
       <div>
         {inputs &&
@@ -185,6 +187,18 @@ export const ExercicesComponens: FC<{
               combineParams={combineParams}
               setCombineParams={setCombineParams}
               nameOfSearch="Parameters"
+              options={[
+                "int",
+                "float",
+                "string",
+                "char",
+                "double",
+                "int[]",
+                "float[]",
+                "string[]",
+                "char[]",
+                "double[]",
+              ]}
             />
           ))}
       </div>

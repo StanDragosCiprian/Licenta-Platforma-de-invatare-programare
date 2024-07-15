@@ -4,8 +4,6 @@ interface IRedirect {
   redirectHref: string;
   name: string;
 }
-//"/account/log"
-//Do you have a account?
 export const RedirectComponents: FC<IRedirect> = ({ redirectHref, name }) => {
   return (
     <Link

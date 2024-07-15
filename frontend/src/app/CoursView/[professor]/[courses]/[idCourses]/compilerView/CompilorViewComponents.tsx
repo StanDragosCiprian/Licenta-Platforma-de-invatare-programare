@@ -39,7 +39,7 @@ export const CompilerViewComponents: FC<{
   };
   useEffect(() => {
     callProgram();
-  }, []); 
+  }, []);
   const handleTextareaChange = (event: any) => {
     setProgramingLanguageForrmat(event.target.value);
   };
@@ -55,40 +55,39 @@ export const CompilerViewComponents: FC<{
       "/api/handleExercicesApi",
       sendToServerCookies(JSON.stringify(option), undefined)
     );
-    const {text,ok} = await api.json();
-    if(ok){
-      return text; 
-    }else{
+    const { text, ok } = await api.json();
+    if (ok) {
+      return text.replace('undefined', '');
+    } else {
       notFound();
     }
-   
   };
   const [statusOfCode, setStatusOfCode] = useState<IStatutCode>();
   const [isStarted, setIsStarted] = useState<boolean>(false);
-async function handleCompile(): Promise<void> {
-  setIsStarted(true);
+  const handleCompile = async (): Promise<void> => {
+    setIsStarted(true);
+    setStatusOfCode(undefined);
+    const option = {
+      language: `${programmingLanguage}`,
+      id: `${idCourses}`,
+      professor: `${professor}`,
+      coursName: `${courseName}`,
+      script: `${programingLanguageForrmat}`,
+    };
 
-  const option = {
-    language: `${programmingLanguage}`,
-    id: `${idCourses}`,
-    professor: `${professor}`,
-    coursName: `${courseName}`,
-    script: `${programingLanguageForrmat}`,
+    try {
+      const api = await fetch(
+        "/api/handleCompileApi",
+        sendToServerCookies(JSON.stringify(option), undefined)
+      );
+      const response = await api.json();
+      setStatusOfCode(response);
+    } catch (error) {
+      notFound();
+    } finally {
+      setIsStarted(false);
+    }
   };
-
-  try {
-    const api = await fetch(
-      "/api/handleCompileApi",
-      sendToServerCookies(JSON.stringify(option), undefined)
-    );
-    const response = await api.json();
-    setStatusOfCode(response);
-  } catch (error) {
-    notFound();
-  } finally {
-    setIsStarted(false);
-  }
-}
   return (
     <div className="flex flex-wrap overflow-hidden flex-row p-8 bg-white border rounded-lg shadow sm:p-12 md:p-16 w-screen h-screen">
       <div className="flex flex-col overflow-auto w-1/2 h-screen">

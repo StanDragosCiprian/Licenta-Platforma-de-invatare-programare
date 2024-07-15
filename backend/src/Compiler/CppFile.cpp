@@ -2,11 +2,12 @@
 #include <string>
 using namespace std;
 
-    int get_first_value(int[]  number_list){
-return number_list[0];
+    int add(int*  array,int  b){
+return array[0]+b;
 }
-    int main() {
-cout<<get_first_value([1, 2, 3])<<endl;
+    int main() {int array[]={386,12,543};
+
+cout<<add(array,150)<<endl;
         
         return 0;
     }

@@ -1,5 +1,6 @@
 import { ChildProcessWithoutNullStreams, exec, spawn } from 'child_process';
 import { writeFileSync } from 'fs';
+
 export interface ICompilerHandler {
   executePythonCode: () => Promise<unknown>;
   executeCppCode: () => Promise<unknown>;
@@ -14,6 +15,7 @@ export class CompilerHandler {
     this.programingLanguage = programingLanguage;
     this.script = script;
   }
+
   public executeCppCode = async () => {
     writeFileSync(
       'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Compiler\\CppFile.cpp',
@@ -27,10 +29,6 @@ export class CompilerHandler {
       ]);
       let result = '';
       compile.on('close', (compileExitStatus) => {
-        if (compileExitStatus != 0) {
-          return;
-        }
-
         const run = spawn('./output');
         run.stdout.on('data', (data) => {
           result += `${data}`;
@@ -41,11 +39,15 @@ export class CompilerHandler {
           result += `${data}`;
           resolve(result);
         });
-
         run.on('close', (runExitStatus) => {
           if (runExitStatus != 0) {
+            resolve(result);
           }
         });
+        if (compileExitStatus != 0) {
+          resolve(result);
+          return;
+        }
       });
     });
   };
@@ -91,6 +93,8 @@ export class CompilerHandler {
           run.stderr.on('data', (data) => {
             resolve(data);
           });
+        } else {
+          resolve('');
         }
       });
     });

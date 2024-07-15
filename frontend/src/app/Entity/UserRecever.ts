@@ -1,10 +1,9 @@
 import { getUserFromServer, urlBackend } from "@/app/UserServer/ServerRequest";
 import { cookies } from "next/headers";
-import { IStudent } from "../core/IStudent";
 import { IProfessor } from "../core/IProfessor";
 import { IAdmin } from "../core/IAdmin";
 export class UserRecever {
-  //: Promise<IStudent | IProfessor | IAdmin>
+
   private id: any = cookies().get("id")?.value;
   private res: any = null;
   private async verifyUser(path: string): Promise<string> {
@@ -21,7 +20,7 @@ export class UserRecever {
     const isRole = await role.json();
     return isRole;
   }
-  //'admin/isAdmin'
+
   public async isRole(path: string) {
     return await this.verifyRole(path);
   }

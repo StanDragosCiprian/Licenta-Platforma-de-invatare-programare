@@ -1,10 +1,7 @@
 import { sendToServer, urlBackend } from "../UserServer/ServerRequest";
-import { IStudent } from "../core/IStudent";
 import { IUser } from "../core/IUser";
 
-export class Student implements IStudent {
-  enroleCourse: any = [];
-  finishCourse: any = [];
+export class Student implements IUser {
   username: string = "";
   email: string = "";
   password: string = "";

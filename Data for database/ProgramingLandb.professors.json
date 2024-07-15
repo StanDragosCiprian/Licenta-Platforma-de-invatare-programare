@@ -1,0 +1,31 @@
+[{
+  "_id": {
+    "$oid": "6627597b9568b0562488b7ec"
+  },
+  "username": "John",
+  "email": "john@university.edu",
+  "password": "1234",
+  "profileImage": "http://localhost:3000/professor/profile/1715870449995_homer2/jpg",
+  "role": "professor",
+  "coursesId": [
+    {
+      "$oid": "66461c7e14fd13b1bece8a8c"
+    },
+    {
+      "$oid": "66461ca914fd13b1bece8a99"
+    },
+    {
+      "$oid": "66461d7c14fd13b1bece8ade"
+    },
+    {
+      "$oid": "66461daa14fd13b1bece8aee"
+    },
+    {
+      "$oid": "66461e2c14fd13b1bece8b1d"
+    },
+    {
+      "$oid": "6646202d14fd13b1bece8b30"
+    }
+  ],
+  "__v": 14
+}]

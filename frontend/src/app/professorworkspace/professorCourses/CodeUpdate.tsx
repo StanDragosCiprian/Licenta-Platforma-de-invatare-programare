@@ -35,7 +35,7 @@ const CodeUpdate: FC<{
   }, []);
   return (
     <Modal show={true} onClose={() => setDialog(undefined)}>
-      <Modal.Header>Update Pdf </Modal.Header>
+      <Modal.Header>Update Code </Modal.Header>
       <Modal.Body>
         {videoUpdate === undefined
           ? Array.isArray(video) && (
@@ -52,7 +52,7 @@ const CodeUpdate: FC<{
                               courseName={courseName}
                               isUpdated={true}
                               exercicesName={c}
-                              professorEmail={""} // Add the missing professorEmail property
+                              professorEmail={""} 
                             />
                           </div>
                         )

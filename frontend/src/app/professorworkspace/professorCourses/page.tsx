@@ -17,7 +17,7 @@ async function getData() {
   return Object.values(cours);
 }
 export default async function ProfessorPreviewCours() {
-  if (!(await HandleProfessorWorkout.getId())) {
+  if (!(await HandleProfessorWorkout.getProfessorId())) {
     notFound();
   }
   const professorCours: ICoursesAllCard[] = await getData();

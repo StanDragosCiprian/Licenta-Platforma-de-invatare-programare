@@ -30,6 +30,9 @@ export class CppCompier implements ICppCompier {
   public generatePythonFuntion() {
     const keys = Object.keys(this.parameterWithType);
     const value = Object.values(this.parameterWithType);
+    value.forEach((v, index) => {
+      value[index] = v.replace('[]', '*');
+    });
     let stringKey: string = '';
     keys.forEach((k: string, index: number) => {
       stringKey += ',' + `${value[index]}  ${k}`;
@@ -42,12 +45,66 @@ export class CppCompier implements ICppCompier {
         return 0;
     }`;
   }
-
+  private makeCArray() {
+    const newValue = Object.values(this.parameterWithType);
+    const regex = /\[\]/;
+    for (const [index, v] of newValue.entries()) {
+      if (regex.test(v)) {
+        if (!this.inputs.includes('],[')) {
+          this.inputs = this.inputs.replace('[', '{');
+          this.inputs = this.inputs.replace(']', '}');
+          this.inputs = this.inputs;
+        } else {
+          const arr = this.inputs.split(/(?<=]),(?=\[)/);
+          let newString = '';
+          for (let a of arr) {
+            a = a.replace('[', '{');
+            a = a.replace(']', '}');
+            newString += 'new ' + newValue[index] + a + ',';
+          }
+          this.inputs = newString.substring(0, newString.length - 1);
+          break;
+        }
+      }
+    }
+  }
+  private transformStringToArray(): string[] {
+    const pattern = /{[^{}]*}|\d+/g;
+    const result = this.inputs.match(pattern);
+    return result || [];
+  }
   public async execute() {
+    this.makeCArray();
     const nameOfFunction = this.funtionName.split('.')[1];
+    const keys = Object.keys(this.parameterWithType);
+    const value = Object.values(this.parameterWithType);
+    let i = 0;
+    let sc = '';
+    const r = this.transformStringToArray();
+    const isArry = [];
+    for (const v of value) {
+      if (v.includes('[]')) {
+        r.forEach((str) => {
+          if (str.includes('{')) {
+            sc += `${v.replace('[]', ' ')}${keys[i]}[]=${str};\n`;
+            isArry.push(keys[i]);
+          } else {
+            isArry.push(str);
+          }
+        });
+        i++;
+      }
+    }
+    if (isArry.length > 0) {
+      this.inputs = '';
+      isArry.forEach((str) => {
+        this.inputs += `${str},`;
+      });
+      this.inputs = this.inputs.substring(0, this.inputs.length - 1);
+    }
     this.script = this.script.replace(
       'int main() {',
-      `int main() {\n\cout<<${nameOfFunction}(${this.inputs})<<endl;`,
+      `int main() {${sc}\n\cout<<${nameOfFunction}(${this.inputs})<<endl;`,
     );
     const compilerHandler: ICompilerHandler = new CompilerHandler(
       this.programingLanguage,

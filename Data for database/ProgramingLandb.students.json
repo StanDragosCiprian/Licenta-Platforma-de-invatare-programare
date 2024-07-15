@@ -1,0 +1,66 @@
+[{
+  "_id": {
+    "$oid": "661d14c34acc582900fa7876"
+  },
+  "username": "Dragos",
+  "email": "dragos@student.edu",
+  "password": "1234",
+  "profileImage": "http://localhost:3000/default/img",
+  "role": "student",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "661d3c21d033212e81b4498c"
+  },
+  "username": "Cipi",
+  "email": "stand07717@gmail.comkjh",
+  "password": "1234",
+  "profileImage": "http://localhost:3000/default/img",
+  "role": "student",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66216d7360210e0d836c6364"
+  },
+  "username": "Dragos",
+  "email": "dragos@gmail.com",
+  "password": "1234",
+  "profileImage": "http://localhost:3000/student/profile/1713466782236_homer2/jpg",
+  "role": "student",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "663ce0c68004cd419a90dfae"
+  },
+  "username": "RetoVord",
+  "email": "retrovord2@gmail.com",
+  "password": "1234",
+  "profileImage": "http://localhost:3000/default/img",
+  "role": "student",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66437388c8e9d91c2da9cb4a"
+  },
+  "username": "Dragos",
+  "email": "dstan07717@gmail.com",
+  "password": "1234",
+  "profileImage": "http://localhost:3000/default/img",
+  "role": "student",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6644db6e20ed127b36b53e3c"
+  },
+  "username": "zz",
+  "email": "zzz@gmail.con",
+  "password": "1234",
+  "profileImage": "http://localhost:3000/default/img",
+  "role": "student",
+  "__v": 0
+}]

@@ -19,7 +19,6 @@ export class CompilatorController {
         await this.compilatorService.getProfessorCompilator(id, courseName);
       return compilator;
     } catch (error) {
-      // Handle the exception here
       console.error(error);
       throw new Error(
         'An error occurred while fetching the professor compilator',

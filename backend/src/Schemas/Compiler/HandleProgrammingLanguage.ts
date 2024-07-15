@@ -1,5 +1,4 @@
 import { ICompilatorUser } from '../Entity/ICompilatorUser';
-
 import { CppCompier, ICppCompier } from './CppCompiler';
 import { IJavaCompier, JavaCompier } from './JavaCompiler';
 import { IJavaScriptCompier, JavaScriptCompier } from './JavaScriptCompiler';

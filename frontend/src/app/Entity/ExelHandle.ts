@@ -41,7 +41,7 @@ export class ExelHandle {
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
-        const firstColumn = data.map((row: any) => row[0]); // Extract the first column
+        const firstColumn = data.map((row: any) => row[0]); 
         const c = firstColumn.filter((value: any) => value !== undefined);
         resolve(c);
       };

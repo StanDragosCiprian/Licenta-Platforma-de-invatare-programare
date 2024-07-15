@@ -4,6 +4,6 @@ public class JavaFile {
 return a+b;
 }
     public static void main(String[] args) {
-System.out.println(add(new intnew int2,4));
+System.out.println(add(50,50));
     }
 }

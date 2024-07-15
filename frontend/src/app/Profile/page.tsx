@@ -2,6 +2,7 @@ import { UserRecever } from "../Entity/UserRecever";
 import { cookies } from "next/headers";
 import { LogOut } from "./LogOut";
 import { ProfileComponent } from "./ProfileComponent";
+import { notFound } from "next/navigation";
 function convertToStars(input: string): string {
   let result = "";
   for (let i = 0; i < input.length; i++) {
@@ -22,8 +23,9 @@ const getUser = async () => {
       profileImage: user.profileImage,
       role: user.role,
     };
+  } else {
+    notFound();
   }
-  return "";
 };
 export default async function Profile() {
   const { username, email, password, role, profileImage }: any =

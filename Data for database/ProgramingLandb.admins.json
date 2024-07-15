@@ -1,0 +1,10 @@
+[{
+  "_id": {
+    "$oid": "655b808d6eaa00126cfafa25"
+  },
+  "username": "Admin",
+  "email": "my@Admin.com",
+  "password": "1234",
+  "profileImage": "http://localhost:3000/professor/profile/1713122141553_homer/jpg",
+  "role": "admin"
+}]

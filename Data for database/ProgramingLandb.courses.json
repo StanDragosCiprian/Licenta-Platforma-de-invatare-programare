@@ -1,0 +1,168 @@
+[{
+  "_id": {
+    "$oid": "66461c7e14fd13b1bece8a8c"
+  },
+  "studentId": [
+    {
+      "$oid": "6627597b9568b0562488b7eb"
+    }
+  ],
+  "name": "The_Complete_2024_Web_Development_Bootcamp",
+  "vizibility": true,
+  "description": "Become a Full-Stack Web Developer with just ONE course. HTML, CSS, Javascript, Node, React, PostgreSQL, Web3 and DApps",
+  "imagePath": "http://localhost:3000/default/cours/4",
+  "colaborationId": [],
+  "courses": [
+    {
+      "title": "Sum",
+      "problemRequire": "add 2 numbers",
+      "problemExemples": [
+        "Input:5,1\nOutput:6"
+      ],
+      "problemInputs": [
+        "Input(2,4)",
+        "Input(4,6)",
+        "Input(4,1)",
+        "Input(50,50)"
+      ],
+      "problemOutputs": [
+        "Output(6)",
+        "Output(10)",
+        "Output(5)",
+        "Output(100)"
+      ],
+      "funtionProblemModel": "int.add",
+      "problemParameter": "int.a,int.b",
+      "format": "Compilator"
+    }
+  ],
+  "__v": 2
+},
+{
+  "_id": {
+    "$oid": "66461ca914fd13b1bece8a99"
+  },
+  "studentId": [],
+  "name": "100 Days of Code: The Complete Python",
+  "vizibility": false,
+  "description": "Master Python by building 100 projects in 100 days. Learn data science, automation, build websites, games and apps!",
+  "imagePath": "http://localhost:3000/default/cours/2",
+  "colaborationId": [],
+  "courses": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66461d7c14fd13b1bece8ade"
+  },
+  "studentId": [],
+  "name": "Machine_Learning_for_Absolute_Beginners_-_Level_1",
+  "vizibility": true,
+  "description": "Learn the Fundamental Concepts of Artificial Intelligence and Machine Learning as the Next Game-Changing Technology",
+  "imagePath": "http://localhost:3000/default/cours/6",
+  "colaborationId": [],
+  "courses": [
+    {
+      "title": "test",
+      "description": "zzz",
+      "videoPath": "John/Machine_Learning_for_Absolute_Beginners_-_Level_1/Tp_1720033645408.mp4",
+      "format": "Video"
+    }
+  ],
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "66461daa14fd13b1bece8aee"
+  },
+  "studentId": [],
+  "name": "Deep_Learning_Prerequisites:_Linear_Regression_in_Python",
+  "vizibility": true,
+  "description": "Data science, machine learning, and artificial intelligence in Python for students and professionals.",
+  "imagePath": "http://localhost:3000/default/cours/2",
+  "colaborationId": [],
+  "courses": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66461e2c14fd13b1bece8b1d"
+  },
+  "studentId": [],
+  "name": "Python_for_Data_Science_and_Machine_Learning_Bootcamp",
+  "vizibility": true,
+  "description": "Learn how to use NumPy, Pandas, Seaborn , Matplotlib , Plotly , Scikit-Learn , Machine Learning, Tensorflow , and more!",
+  "imagePath": "http://localhost:3000/default/cours/3",
+  "colaborationId": [],
+  "courses": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6646202d14fd13b1bece8b30"
+  },
+  "studentId": [],
+  "name": "Learn_to_code_from_zero_to_hero",
+  "vizibility": true,
+  "description": "Learn to code from zero to hero\" is a comprehensive program designed to take beginners with no prior coding experience and transform them into proficient programmers. This course covers fundamental concepts, programming languages, and advanced.",
+  "imagePath": "http://localhost:3000/default/cours/4",
+  "colaborationId": [],
+  "courses": [
+    {
+      "title": "Array sum",
+      "problemRequire": "Write a function that takes an array and an integer as input, and returns the sum of the first element of the array and the given integer.",
+      "problemExemples": [
+        "Input:array=[5,1,3],b=1\nOutput:6"
+      ],
+      "problemInputs": [
+        "Input([5,1,3],1)",
+        "Input([1,2,3,4,5,6],4)",
+        "Input([99,10,32],1)",
+        "Input([386,12,543],150)"
+      ],
+      "problemOutputs": [
+        "Output(6)",
+        "Output(5)",
+        "Output(100)",
+        "Output(536)"
+      ],
+      "funtionProblemModel": "int.add",
+      "problemParameter": "int[].a,int.b",
+      "format": "Compilator"
+    },
+    {
+      "format": "Pdf",
+      "title": "Book",
+      "documentFormatName": "John/Learn_to_code_from_zero_to_hero/typescriptPdf_1715874856754.pdf"
+    },
+    {
+      "title": "Introduction video",
+      "description": "This is an introduction video.",
+      "videoPath": "John/Learn_to_code_from_zero_to_hero/Tp_1715874806821.mp4",
+      "format": "Video"
+    },
+    {
+      "title": "Sum of 2 numbers",
+      "problemRequire": "Create a funtion which return sum of 2 numbers",
+      "problemExemples": [
+        "Input:2,4\nOutput:"
+      ],
+      "problemInputs": [
+        "Input(2,4)",
+        "Input(4,6)",
+        "Input(4,1)",
+        "Input(50,50)"
+      ],
+      "problemOutputs": [
+        "Output(6)",
+        "Output(10)",
+        "Output(5)",
+        "Output(100)"
+      ],
+      "funtionProblemModel": "int.add",
+      "problemParameter": "int.a,int.b,int.c",
+      "format": "Compilator"
+    }
+  ],
+  "__v": 15
+}]

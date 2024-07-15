@@ -21,7 +21,7 @@ export default async function NewCourse({ params }: any) {
             params.name
           )} cours`}
           content={
-            "Discover a specialized hub for effortlessly uploading and managing your course videos. Our platform seamlessly supports a variety of video formats, providing you with a user-friendly interface for easy organization. Elevate your teaching experience as you dive into a world where sharing and presenting video content is intuitive and efficient"
+            "Discover a specialized hub for effortlessly uploading and managing your course videos. Our platform supports MP4 videos with a maximum size of 50MB, providing you with a user-friendly interface for easy organization. Elevate your teaching experience as you dive into a world where sharing and presenting video content is intuitive and efficient. Popular options for creating and editing your videos include OBS Studio, Camtasia, or iMovie."
           }
         />
       </Link>

@@ -18,7 +18,7 @@ export const ProfessorWorkbenchComponents: FC<{
   courseName: string;
   setDialog: Dispatch<SetStateAction<JSX.Element | undefined>>;
   vizibility: boolean;
-  // handleModel: () => void;
+
 }> = ({ courseName, setCourseName, setDialog, vizibility }) => {
   return (
     <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">

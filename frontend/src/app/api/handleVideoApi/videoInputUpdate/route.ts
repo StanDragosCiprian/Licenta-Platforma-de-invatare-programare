@@ -15,6 +15,5 @@ export async function POST(req: NextRequest) {
     sendFiles(body, id?.value)
   );
   const r = await response.text();
-
   return new NextResponse(JSON.stringify({ text: r, ok: response.ok }));
 }
