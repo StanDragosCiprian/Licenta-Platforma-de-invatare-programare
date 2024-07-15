@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { IAdmin } from 'src/Schemas/Entity/IAdmin';
 import { ProfessorService } from '../professor/professor.service';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
+import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 
 @Injectable()
 export class AdminsService {
@@ -91,10 +92,12 @@ export class AdminsService {
   }
   async switchProfessorCourses(email1: string, email2: string) {
     try {
-      const professor1 =
-        await this.professorService.getProfessorByEmail(email1);
-      const professor2 =
-        await this.professorService.getProfessorByEmail(email2);
+      const professor1 = (await this.professorService.getOneUserByCondition({
+        email: email1,
+      })) as IProfessor;
+      const professor2 = (await this.professorService.getOneUserByCondition({
+        email: email2,
+      })) as IProfessor;
       for (const c of professor1.coursesId) {
         professor2.coursesId.push(c);
       }
@@ -153,7 +156,7 @@ export class AdminsService {
   }
   async addNewProfessor(professor: ProfessorDto) {
     try {
-      return await this.professorService.createProfessor(professor);
+      return await this.professorService.createUser(professor);
     } catch (error) {
       console.error(error);
       throw error;

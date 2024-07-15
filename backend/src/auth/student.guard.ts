@@ -19,7 +19,7 @@ export class StudentGuard implements CanActivate {
     try {
       const id = request.cookies['id'];
       const decodedToken = this.jwtService.verify(id);
-      const student = await this.studentService.getStudent(decodedToken.sub);
+      const student = await this.studentService.getUserById(decodedToken.sub);
       if (student?.role === 'student' && student.role !== null) {
         return true;
       } else {

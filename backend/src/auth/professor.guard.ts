@@ -19,7 +19,7 @@ export class ProfessorGuard implements CanActivate {
     try {
       const id = 'id' ? request.cookies?.['id'] : request.cookies;
       const decodedToken = this.jwtService.verify(id);
-      const professor = await this.professorService.getProfessor(
+      const professor = await this.professorService.getUserById(
         decodedToken.sub,
       );
       if (professor?.role === 'professor' && professor.role !== null) {

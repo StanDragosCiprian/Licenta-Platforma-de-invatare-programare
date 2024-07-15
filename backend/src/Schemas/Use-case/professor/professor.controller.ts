@@ -11,8 +11,6 @@ import {
 } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
-import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
-import { LogDto } from 'src/Schemas/DTO/log.dto';
 import { Cookies } from 'src/Cookie/cookie';
 import { ProfessorGuard } from 'src/auth/professor.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -21,33 +19,17 @@ import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { EmailAlreadyExistsException } from '../ErrorInterceptor';
 import { Response } from 'express';
 import * as fs from 'fs';
+import { UserController } from '../Abstact/user.controller';
+import { JwtService } from '@nestjs/jwt';
 @Controller('professor')
-export class ProfessorController {
-  constructor(private readonly professorService: ProfessorService) {}
-  private resp = new ResponseStatus();
-  @Post('/new')
-  async createStudent(
-    @Body() createProfessorDto: ProfessorDto,
-  ): Promise<{ access_token: string }> {
-    try {
-      const newProfessor =
-        await this.professorService.createProfessor(createProfessorDto);
-      return this.professorService.makeJwt(newProfessor._id);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+export class ProfessorController extends UserController {
+  user: ProfessorService;
+  jwt: JwtService;
+  constructor(private readonly professorService: ProfessorService) {
+    super();
+    this.user = this.professorService;
   }
-  @Post('/log')
-  async logProfessor(@Body() log: LogDto): Promise<{ access_token: string }> {
-    try {
-      const user = await this.professorService.logUser(log.email, log.password);
-      return this.professorService.makeJwt(user);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
+
   @Post('/is/email/exist')
   async isEmailExist(@Body() body: { email: string }, @Res() res: Response) {
     try {
@@ -65,7 +47,7 @@ export class ProfessorController {
   @UseGuards(ProfessorGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
     try {
-      const professor = await this.professorService.getProfessor(
+      const professor = await this.professorService.getUserById(
         await this.professorService.decriptJwt(id),
       );
       if (professor.email === body.email) {
@@ -84,7 +66,7 @@ export class ProfessorController {
   @UseGuards(ProfessorGuard)
   async updateEmail(@Body() body: any, @Cookies('id') id: string) {
     try {
-      const professor = await this.professorService.getProfessor(
+      const professor = await this.professorService.getUserById(
         await this.professorService.decriptJwt(id),
       );
       if (professor.email === body.email) {
@@ -103,7 +85,7 @@ export class ProfessorController {
   @UseGuards(ProfessorGuard)
   async updatePassword(@Body() body: any, @Cookies('id') id: string) {
     try {
-      const professor = await this.professorService.getProfessor(
+      const professor = await this.professorService.getUserById(
         await this.professorService.decriptJwt(id),
       );
       if (professor.email === body.email) {
@@ -155,7 +137,7 @@ export class ProfessorController {
   )
   async upload(@UploadedFile() file, @Cookies('id') id: string) {
     try {
-      const professor: IProfessor = await this.getProfessor(id);
+      const professor: IProfessor = await this.getUser(id);
       if (professor.profileImage !== 'http://localhost:3000/default/img') {
         professor.profileImage = professor.profileImage.replace(
           'http://localhost:3000/professor/profile',
@@ -185,23 +167,8 @@ export class ProfessorController {
   @UseGuards(ProfessorGuard)
   async getEmailEncrypted(@Cookies('id') id: string) {
     try {
-      const professor = await this.getProfessor(id);
+      const professor = await this.getUser(id);
       return this.professorService.encryptProfessor(professor.email);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-  @Get('/get')
-  async getProfessor(@Cookies('id') id: string): Promise<any> {
-    try {
-      const decodedToken = await this.professorService.decriptJwt(id);
-      const professor = await this.professorService.getProfessor(decodedToken);
-
-      if (professor === null) {
-        return ' ';
-      }
-      return professor;
     } catch (error) {
       console.error(error);
       throw error;
@@ -212,7 +179,7 @@ export class ProfessorController {
   async verifyAdmin(@Cookies('id') id: string): Promise<boolean> {
     try {
       const decodedToken = await this.professorService.decriptJwt(id);
-      const professor = await this.professorService.getProfessor(decodedToken);
+      const professor = await this.professorService.getUserById(decodedToken);
 
       if (professor === null) {
         return false;

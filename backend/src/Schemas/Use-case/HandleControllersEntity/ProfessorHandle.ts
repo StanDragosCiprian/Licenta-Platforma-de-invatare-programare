@@ -201,7 +201,9 @@ export class ProfessorHandle implements IProfessorHandle {
           c.colaborationId.forEach((st) => set.add(st.toString()));
           c.colaborationId = [];
           set.add(
-            (await this.professorService.getProfessorByEmail(s))._id.toString(),
+            (
+              await this.professorService.getOneUserByCondition({ email: s })
+            )._id.toString(),
           );
           set.forEach((st) => c.colaborationId.push(new Types.ObjectId(st)));
 

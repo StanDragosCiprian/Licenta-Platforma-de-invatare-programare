@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -6,8 +6,11 @@ import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { StudentService } from '../student/student.service';
 import { ProfessorHandle } from '../HandleControllersEntity/ProfessorHandle';
+import { UserService } from '../Abstact/user.service';
 @Injectable()
-export class ProfessorService implements OnModuleInit {
+export class ProfessorService extends UserService {
+  jwt: JwtService;
+  userModule: Model<IProfessor>;
   async isEmailExist(email: string): Promise<boolean> {
     const professor = await this.professorModel.findOne({ email });
     return !!professor;
@@ -17,23 +20,10 @@ export class ProfessorService implements OnModuleInit {
   constructor(
     @InjectModel('Professor') private professorModel: Model<IProfessor>,
     private jwtService: JwtService,
-  ) {}
-  async createProfessor(createProfessorDto: ProfessorDto): Promise<any> {
-    try {
-      const existingProfessor = await this.professorModel.findOne({
-        email: createProfessorDto.email,
-      });
-
-      if (existingProfessor) {
-        return `Professor with email ${createProfessorDto.email} already exists.`;
-      }
-
-      const newProfessor = new this.professorModel(createProfessorDto);
-      await newProfessor.save();
-      return true;
-    } catch (error) {
-      throw new Error(`Failed to create professor: ${error}`);
-    }
+  ) {
+    super();
+    this.userModule = this.professorModel;
+    this.jwt = this.jwtService;
   }
   private async deletCourses(email: string) {
     try {
@@ -111,23 +101,6 @@ export class ProfessorService implements OnModuleInit {
     }
   }
 
-  onModuleInit() {
-    this.professorModel.watch().on('change', (change) => {
-      console.log(change);
-    });
-  }
-  async logUser(email: string, password: string): Promise<IProfessor> {
-    try {
-      const user = await this.professorModel.findOne({
-        email: email,
-        password: password,
-      });
-      return user;
-    } catch (error) {
-      throw new Error(`Failed to log user: ${error}`);
-    }
-  }
-
   async getProfessorByCours(idCours: Types.ObjectId) {
     try {
       const professor = await this.professorModel.findOne({
@@ -152,20 +125,10 @@ export class ProfessorService implements OnModuleInit {
     }
   }
 
-  async getProfessorByEmail(email: string): Promise<IProfessor> {
-    try {
-      return await this.professorModel.findOne({
-        email: email,
-      });
-    } catch (error) {
-      throw new Error(`Failed to get professor by email: ${error}`);
-    }
-  }
-
   async getProfessorName(jwtId: string): Promise<string> {
     try {
       const decriptJwt = await this.decriptJwt(jwtId);
-      const professor = await this.getProfessor(decriptJwt);
+      const professor = await this.getUserById(decriptJwt);
       return professor.username;
     } catch (error) {
       throw new Error(`Failed to get professor name: ${error}`);
@@ -175,7 +138,11 @@ export class ProfessorService implements OnModuleInit {
   async getStudentsId(students: string[]): Promise<Promise<Types.ObjectId>[]> {
     try {
       return await students.map(async (studentEmail: string) => {
-        return await this.studentService.getStudentByEmail(studentEmail);
+        return (
+          await this.studentService.getOneUserByCondition({
+            email: studentEmail,
+          })
+        )._id;
       });
     } catch (error) {
       throw new Error(`Failed to get students ID: ${error}`);
@@ -189,42 +156,6 @@ export class ProfessorService implements OnModuleInit {
       return professor;
     } catch (error) {
       throw new Error(`Failed to get professor by ID: ${error}`);
-    }
-  }
-
-  async getProfessor(id: string): Promise<IProfessor> {
-    try {
-      const professor = await this.professorModel.findOne({
-        _id: id,
-      });
-      return professor;
-    } catch (error) {
-      throw new Error(`Failed to get professor: ${error}`);
-    }
-  }
-
-  async makeJwt(professorId: any) {
-    try {
-      if (professorId !== null) {
-        const payload = { sub: professorId._id };
-        return {
-          access_token: await this.jwtService.signAsync(payload),
-        };
-      }
-      return {
-        access_token: ' ',
-      };
-    } catch (error) {
-      throw new Error(`Failed to make JWT: ${error}`);
-    }
-  }
-
-  async decriptJwt(id: string) {
-    try {
-      const decodedToken = this.jwtService.verify(id);
-      return decodedToken.sub;
-    } catch (error) {
-      throw new Error(`Failed to decrypt JWT: ${error}`);
     }
   }
 

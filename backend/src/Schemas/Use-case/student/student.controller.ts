@@ -10,39 +10,25 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
-import { StudentDto } from '../../DTO/student.dto';
-
-import { ResponseStatus } from 'src/Schemas/Use-case/ResponseStatus';
-import { LogDto } from 'src/Schemas/DTO/log.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Cookies } from 'src/Cookie/cookie';
 import { StudentGuard } from 'src/auth/student.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { IStudent } from 'src/Schemas/Entity/IStudent';
-import { EmailAlreadyExistsException } from '../ErrorInterceptor';
 import * as fs from 'fs';
+import { UserController } from '../Abstact/user.controller';
 @Controller('student')
-export class StudentController {
+export class StudentController extends UserController {
+  user: StudentService;
+  jwt: JwtService;
   constructor(
     private readonly studentService: StudentService,
     private jwtService: JwtService,
-  ) {}
-  private resp = new ResponseStatus();
-  @Post('/new')
-  async createStudent(
-    @Body() createStudentDto: StudentDto,
-  ): Promise<{ access_token: string }> {
-    try {
-      const newStudent =
-        await this.studentService.createStudent(createStudentDto);
-      const payload = { sub: newStudent._id };
-      return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
-    } catch (e) {
-      throw new EmailAlreadyExistsException();
-    }
+  ) {
+    super();
+    this.user = this.studentService;
+    this.jwt = jwtService;
   }
   @Get('profile/:name/:format')
   async studentProfileImage(
@@ -81,7 +67,7 @@ export class StudentController {
   )
   async upload(@UploadedFile() file, @Cookies('id') id: string) {
     try {
-      const student: IStudent = await this.getStudent(id);
+      const student: IStudent = await this.getUser(id);
       if (student.profileImage !== 'http://localhost:3000/default/img') {
         student.profileImage = student.profileImage.replace(
           'http://localhost:3000/student/profile/',
@@ -111,7 +97,7 @@ export class StudentController {
   @UseGuards(StudentGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
     try {
-      const student = await this.getStudent(id);
+      const student = await this.getUser(id);
       if (student.email === body.email) {
         return await this.studentService.updateUsername(
           body.email,
@@ -128,7 +114,7 @@ export class StudentController {
   @UseGuards(StudentGuard)
   async updateEmail(@Body() body: any, @Cookies('id') id: string) {
     try {
-      const student = await this.getStudent(id);
+      const student = await this.getUser(id);
       if (student.email === body.email) {
         return await this.studentService.updateEmail(body.email, body.newValue);
       }
@@ -142,7 +128,7 @@ export class StudentController {
   @UseGuards(StudentGuard)
   async updatePassword(@Body() body: any, @Cookies('id') id: string) {
     try {
-      const student = await this.getStudent(id);
+      const student = await this.getUser(id);
       if (student.email === body.email) {
         return await this.studentService.updatePassword(
           body.email,
@@ -155,38 +141,12 @@ export class StudentController {
       throw new Error('Internal Server Error');
     }
   }
-  @Post('/log')
-  async logStudent(@Body() log: LogDto): Promise<{ access_token: string }> {
-    try {
-      const logStudent = await this.studentService.logUser(
-        log.email,
-        log.password,
-      );
-      return this.studentService.makeJwt(logStudent);
-    } catch (error) {
-      console.error(error);
-      throw new Error('Internal Server Error');
-    }
-  }
-  @Get('get')
-  async getStudent(@Cookies('id') id: string): Promise<any> {
-    try {
-      const decodedToken = await this.studentService.decriptJwt(id);
-      const student = await this.studentService.getStudent(decodedToken);
-      if (student === null) {
-        return ' ';
-      }
-      return student;
-    } catch (error) {
-      console.error(error);
-      throw new Error('Internal Server Error');
-    }
-  }
+
   @Get('/isStudent')
   async verifyAdmin(@Cookies('id') id: string): Promise<boolean> {
     try {
       const decodedToken = await this.studentService.decriptJwt(id);
-      const student = await this.studentService.getStudent(decodedToken);
+      const student = await this.studentService.getUserById(decodedToken);
 
       if (student === null) {
         return false;

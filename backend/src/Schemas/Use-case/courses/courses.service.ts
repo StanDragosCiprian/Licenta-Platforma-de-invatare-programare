@@ -64,9 +64,9 @@ export class CoursesService {
   async deleteCourse(courseName: string, id: string) {
     try {
       const professorCourses: IProfessor =
-        await this.professorService.getProfessor(
+        (await this.professorService.getUserById(
           await this.professorService.decriptJwt(id),
-        );
+        )) as IProfessor;
       const courseHandle = new CoursesHandle();
       courseHandle.setCourseModel(this.coursesModel);
       let course: ICourses;
@@ -88,7 +88,9 @@ export class CoursesService {
 
   async getProfessorByEmail(email: string): Promise<IProfessor> {
     try {
-      return await this.professorService.getProfessorByEmail(email);
+      return (await this.professorService.getOneUserByCondition({
+        email: email,
+      })) as IProfessor;
     } catch (error) {
       throw new Error(`Error while getting professor by email: ${error}`);
     }
@@ -449,7 +451,9 @@ export class CoursesService {
       const newCourse = await new this.coursesModel(course);
       newCourse.save();
       const decryptId = await this.professorService.decriptJwt(professorId);
-      const professor = await this.professorService.getProfessor(decryptId);
+      const professor = (await this.professorService.getUserById(
+        decryptId,
+      )) as IProfessor;
       professor.coursesId.push(newCourse._id);
       professor.save();
       return newCourse.name;
