@@ -17,9 +17,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { IStudent } from 'src/Schemas/Entity/IStudent';
 import * as fs from 'fs';
-import { UserController } from '../Abstact/user.controller';
+import { UserController } from '../Abstact/User/user.controller';
+import { EmptyClass } from '../Abstact/File/File.controller';
 @Controller('student')
-export class StudentController extends UserController {
+export class StudentController extends UserController(EmptyClass) {
   user: StudentService;
   jwt: JwtService;
   constructor(

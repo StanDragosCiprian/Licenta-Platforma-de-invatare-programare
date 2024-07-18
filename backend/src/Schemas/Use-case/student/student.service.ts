@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IStudent } from 'src/Schemas/Entity/IStudent';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../Abstact/user.service';
+import { UserService } from '../Abstact/User/user.service';
 @Injectable()
 export class StudentService extends UserService {
   jwt: JwtService;

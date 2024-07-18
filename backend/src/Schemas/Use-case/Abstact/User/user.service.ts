@@ -2,7 +2,7 @@ import { OnModuleInit } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { StudentDto } from 'src/Schemas/DTO/student.dto';
 import { IStudent } from 'src/Schemas/Entity/IStudent';
-import { ProfessorService } from '../professor/professor.service';
+import { ProfessorService } from '../../professor/professor.service';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { JwtService } from '@nestjs/jwt';
 export abstract class UserService implements OnModuleInit {

@@ -6,7 +6,7 @@ import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { StudentService } from '../student/student.service';
 import { ProfessorHandle } from '../HandleControllersEntity/ProfessorHandle';
-import { UserService } from '../Abstact/user.service';
+import { UserService } from '../Abstact/User/user.service';
 @Injectable()
 export class ProfessorService extends UserService {
   jwt: JwtService;

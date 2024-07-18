@@ -10,7 +10,6 @@ import {
   Param,
 } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
-import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { Cookies } from 'src/Cookie/cookie';
 import { ProfessorGuard } from 'src/auth/professor.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -19,10 +18,13 @@ import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { EmailAlreadyExistsException } from '../ErrorInterceptor';
 import { Response } from 'express';
 import * as fs from 'fs';
-import { UserController } from '../Abstact/user.controller';
+import { UserController } from '../Abstact/User/user.controller';
 import { JwtService } from '@nestjs/jwt';
+import { DataAudit, EmptyClass } from '../Abstact/File/File.controller';
+
 @Controller('professor')
-export class ProfessorController extends UserController {
+export class ProfessorController extends DataAudit(UserController(EmptyClass)) {
+  test: string;
   user: ProfessorService;
   jwt: JwtService;
   constructor(private readonly professorService: ProfessorService) {
