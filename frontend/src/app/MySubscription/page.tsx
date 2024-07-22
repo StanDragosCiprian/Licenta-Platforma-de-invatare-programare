@@ -4,7 +4,7 @@ import { urlBackend } from "../UserServer/ServerRequest";
 import { ICourseCard } from "../core/ICoursesCard";
 import Link from "next/link";
 import { CoursCard } from "../CoursCard/CoursCard";
-import { HandleGenericFuntion } from "../Entity/HandleGenericFuntion";
+import { HandleGenericFunction } from "../Entity/HandleGenericFuntion";
 async function getData() {
     const courses = await fetch(`${urlBackend}courses/myCourses`, {
       next: { revalidate: 0 },
@@ -28,7 +28,7 @@ const MySubscription =async () => {
           <div key={index}>
             <Link href={`/CoursView/${course.professor}/${course.title}`}>
               <CoursCard
-                title={HandleGenericFuntion.replaceUnderlineWithSpace(
+                title={HandleGenericFunction.replaceUnderlineWithSpace(
                   course.title
                 )}
                 description={course.description}

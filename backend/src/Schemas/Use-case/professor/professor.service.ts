@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { ProfessorDto } from 'src/Schemas/DTO/professir.dto';
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { StudentService } from '../student/student.service';
 import { ProfessorHandle } from '../HandleControllersEntity/ProfessorHandle';
@@ -11,6 +10,8 @@ import { UserService } from '../Abstact/User/user.service';
 export class ProfessorService extends UserService {
   jwt: JwtService;
   userModule: Model<IProfessor>;
+  private secretKeyForEmail =
+    '3fa4fb188c1f45c1cb1a8bd80cef4dfce01705d9ea9b151f04eb98aa396fbace';
   async isEmailExist(email: string): Promise<boolean> {
     const professor = await this.professorModel.findOne({ email });
     return !!professor;
@@ -36,6 +37,18 @@ export class ProfessorService extends UserService {
       throw new Error(`Failed to delete professor: ${error}`);
     }
   }
+  async createJWT(text: string): Promise<string> {
+    const payload = { text };
+    return this.jwtService.sign(payload, { secret: this.secretKeyForEmail });
+  }
+
+  async verifyJWT(token: string): Promise<string> {
+    const payload = await this.jwtService.verify(token, {
+      secret: this.secretKeyForEmail,
+    });
+    return payload.text;
+  }
+
   async deleteProfessor(email: string) {
     try {
       await this.deletCourses(email);
@@ -46,7 +59,9 @@ export class ProfessorService extends UserService {
       throw new Error(`Failed to delete professor: ${error}`);
     }
   }
-
+  public async getProfessor(id: string): Promise<IProfessor> {
+    return (await this.getUser(id)) as IProfessor;
+  }
   async encryptProfessor(text: string) {
     try {
       const professorHandle = new ProfessorHandle();
@@ -125,16 +140,6 @@ export class ProfessorService extends UserService {
     }
   }
 
-  async getProfessorName(jwtId: string): Promise<string> {
-    try {
-      const decriptJwt = await this.decriptJwt(jwtId);
-      const professor = await this.getUserById(decriptJwt);
-      return professor.username;
-    } catch (error) {
-      throw new Error(`Failed to get professor name: ${error}`);
-    }
-  }
-
   async getStudentsId(students: string[]): Promise<Promise<Types.ObjectId>[]> {
     try {
       return await students.map(async (studentEmail: string) => {
@@ -146,70 +151,6 @@ export class ProfessorService extends UserService {
       });
     } catch (error) {
       throw new Error(`Failed to get students ID: ${error}`);
-    }
-  }
-
-  async getProfessorById(id: string): Promise<IProfessor> {
-    try {
-      const decriptJwt = await this.decriptJwt(id);
-      const professor = await this.professorModel.findById(decriptJwt);
-      return professor;
-    } catch (error) {
-      throw new Error(`Failed to get professor by ID: ${error}`);
-    }
-  }
-
-  async updateUsername(email: string, newName: string) {
-    try {
-      const username = await this.professorModel.findOneAndUpdate(
-        { email: email },
-        { username: newName },
-        { new: true },
-      );
-
-      if (username === null) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (error) {
-      throw new Error(`Failed to update username: ${error}`);
-    }
-  }
-
-  async updateEmail(email: string, newName: string) {
-    try {
-      const username = await this.professorModel.findOneAndUpdate(
-        { email: email },
-        { email: newName },
-        { new: true },
-      );
-
-      if (username === null) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (error) {
-      throw new Error(`Failed to update email: ${error}`);
-    }
-  }
-
-  async updatePassword(email: string, newName: string) {
-    try {
-      const username = await this.professorModel.findOneAndUpdate(
-        { email: email },
-        { password: newName },
-        { new: true },
-      );
-
-      if (username === null) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (error) {
-      throw new Error(`Failed to update password: ${error}`);
     }
   }
 }

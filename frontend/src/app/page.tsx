@@ -3,7 +3,7 @@ import { ICourseCard } from "./core/ICoursesCard";
 import { urlBackend } from "./UserServer/ServerRequest";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { HandleGenericFuntion } from "./Entity/HandleGenericFuntion";
+import { HandleGenericFunction } from "./Entity/HandleGenericFuntion";
 async function getData() {
   const courses = await fetch(`${urlBackend}courses/coursesPresentation`, {
     next: { revalidate: 0 },
@@ -26,7 +26,7 @@ export default async function Page() {
           <div key={index}>
             <Link href={`/CoursView/${courses.professor}/${courses.title}`}>
               <CoursCard
-                title={HandleGenericFuntion.replaceUnderlineWithSpace(
+                title={HandleGenericFunction.replaceUnderlineWithSpace(
                   courses.title
                 )}
                 description={courses.description}

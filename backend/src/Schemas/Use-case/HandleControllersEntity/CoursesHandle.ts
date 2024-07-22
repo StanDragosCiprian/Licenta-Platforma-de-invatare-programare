@@ -3,7 +3,7 @@ import { ICourses } from 'src/Schemas/Entity/ICourses';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import * as fs from 'fs';
-import { FILELOCATION } from 'EnviormentVariable';
+// import { FILELOCATION } from 'EnviormentVariable';
 import * as path from 'path';
 export class CoursesHandle {
   private courseModel: Model<any>;
@@ -23,7 +23,7 @@ export class CoursesHandle {
           const video = cs as IVideo;
           const vid = video.videoPath.replace(/\//g, '\\');
           const filePath = path.resolve(
-            `${FILELOCATION}\\backend\\src\\VideoTutorial\\${vid}`,
+            `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${vid}`,
           );
           if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
@@ -33,7 +33,7 @@ export class CoursesHandle {
         } else if (cs.format === 'Pdf') {
           const pdf = cs as IDocumentFormat;
           fs.unlinkSync(
-            `${FILELOCATION}\\backend\\src\\VideoTutorial\\${pdf.documentFormatName.replace(
+            `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\VideoTutorial\\${pdf.documentFormatName.replace(
               '/',
               '\\',
             )}`,

@@ -16,24 +16,6 @@ export class StudentService extends UserService {
     this.userModule = this.studentModel;
     this.jwt = this.jwtService;
   }
-  async updateUsername(email: string, newName: string) {
-    try {
-      const username = await this.studentModel.findOneAndUpdate(
-        { email: email },
-        { username: newName },
-        { new: true },
-      );
-
-      if (username === null) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (error) {
-      console.error(error);
-      throw new Error('Failed to update username');
-    }
-  }
 
   async deleteStudent(email: string) {
     try {
@@ -50,44 +32,6 @@ export class StudentService extends UserService {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to get all students');
-    }
-  }
-
-  async updateEmail(email: string, newName: string) {
-    try {
-      const username = await this.studentModel.findOneAndUpdate(
-        { email: email },
-        { email: newName },
-        { new: true },
-      );
-
-      if (username === null) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (error) {
-      console.error(error);
-      throw new Error('Failed to update email');
-    }
-  }
-
-  async updatePassword(email: string, newName: string) {
-    try {
-      const username = await this.studentModel.findOneAndUpdate(
-        { email: email },
-        { password: newName },
-        { new: true },
-      );
-
-      if (username === null) {
-        return false;
-      } else {
-        return true;
-      }
-    } catch (error) {
-      console.error(error);
-      throw new Error('Failed to update password');
     }
   }
 }

@@ -14,13 +14,12 @@ import { JwtService } from '@nestjs/jwt';
 import { Cookies } from 'src/Cookie/cookie';
 import { StudentGuard } from 'src/auth/student.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { IStudent } from 'src/Schemas/Entity/IStudent';
-import * as fs from 'fs';
 import { UserController } from '../Abstact/User/user.controller';
-import { EmptyClass } from '../Abstact/File/File.controller';
+import { EmptyClass, Profile } from '../Abstact/Profile/Profile.controller';
+import { FileHandle, IFileHandle } from '../HandleControllersEntity/FileHandle';
+const fileHandle: IFileHandle = new FileHandle();
 @Controller('student')
-export class StudentController extends UserController(EmptyClass) {
+export class StudentController extends Profile(UserController(EmptyClass)) {
   user: StudentService;
   jwt: JwtService;
   constructor(
@@ -48,99 +47,24 @@ export class StudentController extends UserController(EmptyClass) {
   }
   @Post('/upload/profile/image')
   @UseGuards(StudentGuard)
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination:
-          'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Student',
-        filename: (req, file, cb) => {
-          cb(null, `${Date.now()}_${file.originalname}`);
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        if (file.mimetype === 'image/jpeg') {
-          cb(null, true);
-        } else {
-          cb(new Error('Invalid file type. Only JPEG is allowed.'), false);
-        }
-      },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('image', fileHandle.imageSetting('Student')))
   async upload(@UploadedFile() file, @Cookies('id') id: string) {
-    try {
-      const student: IStudent = await this.getUser(id);
-      if (student.profileImage !== 'http://localhost:3000/default/img') {
-        student.profileImage = student.profileImage.replace(
-          'http://localhost:3000/student/profile/',
-          'E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\Student\\',
-        );
-        student.profileImage = student.profileImage.replace(/[/\\]/g, '\\');
-        const profileImage = student.profileImage.replace(/\\jpg$/, '.jpg');
-
-        fs.unlinkSync(profileImage);
-      }
-      const test = this.extractFilenameParts(file.path);
-      student.profileImage = `http://localhost:3000/student/profile/${test[0]}/${test[1]}`;
-      await student.save();
-      return { path: true };
-    } catch (error) {
-      console.error(error);
-      throw new Error('Internal Server Error');
-    }
-  }
-  private extractFilenameParts(imagePath: string): string[] {
-    const parts = imagePath.split(/\/|\\/);
-    const filename = parts.pop() || '';
-    const filenameParts = filename.split('.');
-    return filenameParts;
+    return this.updateImageBuilder(file, id, 'student');
   }
   @Post('/update/username')
   @UseGuards(StudentGuard)
   async updateUsername(@Body() body: any, @Cookies('id') id: string) {
-    try {
-      const student = await this.getUser(id);
-      if (student.email === body.email) {
-        return await this.studentService.updateUsername(
-          body.email,
-          body.newValue,
-        );
-      }
-      return false;
-    } catch (error) {
-      console.error(error);
-      throw new Error('Internal Server Error');
-    }
+    return await this.updateUsernameLogic(body, id, 'username');
   }
   @Post('/update/email')
   @UseGuards(StudentGuard)
   async updateEmail(@Body() body: any, @Cookies('id') id: string) {
-    try {
-      const student = await this.getUser(id);
-      if (student.email === body.email) {
-        return await this.studentService.updateEmail(body.email, body.newValue);
-      }
-      return false;
-    } catch (error) {
-      console.error(error);
-      throw new Error('Internal Server Error');
-    }
+    return await this.updateUsernameLogic(body, id, 'email');
   }
   @Post('/update/password')
   @UseGuards(StudentGuard)
   async updatePassword(@Body() body: any, @Cookies('id') id: string) {
-    try {
-      const student = await this.getUser(id);
-      if (student.email === body.email) {
-        return await this.studentService.updatePassword(
-          body.email,
-          body.newValue,
-        );
-      }
-      return false;
-    } catch (error) {
-      console.error(error);
-      throw new Error('Internal Server Error');
-    }
+    return await this.updateUsernameLogic(body, id, 'password');
   }
 
   @Get('/isStudent')

@@ -39,6 +39,19 @@ export abstract class UserService implements OnModuleInit {
       throw new Error('Failed to log user');
     }
   }
+  async getUser(id: string) {
+    try {
+      const decodedToken = await this.decriptJwt(id);
+      const user = await this.getUserById(decodedToken);
+      if (user === null) {
+        return ' ';
+      }
+      return user;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Internal Server Error');
+    }
+  }
   async getUserById(id: string): Promise<IStudent | IProfessor> {
     try {
       const student = await this.userModule.findOne({
@@ -82,6 +95,22 @@ export abstract class UserService implements OnModuleInit {
       return decodedToken.sub;
     } catch (error) {
       throw new Error(`Failed to decrypt JWT: ${error}`);
+    }
+  }
+  async updateUserParam(email: string, newName: string, whatToUpdate: string) {
+    try {
+      const username = await this.userModule.findOneAndUpdate(
+        { email: email },
+        { [whatToUpdate]: newName },
+        { new: true },
+      );
+      if (username === null) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      throw new Error(`Failed to update username: ${error}`);
     }
   }
 }

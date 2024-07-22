@@ -1,7 +1,7 @@
 "use client";
 
 import { ExelHandle } from "@/app/Entity/ExelHandle";
-import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
+import { HandleGenericFunction } from "@/app/Entity/HandleGenericFuntion";
 import { getCookie } from "cookies-next";
 import { Alert, Button, FileInput, Label, Modal } from "flowbite-react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
@@ -41,7 +41,7 @@ const EntityAddModal: FC<{
       <Modal show={true} onClose={() => setDialog(undefined)}>
         <Modal.Header>
           Add {EntityName} to{" "}
-          {HandleGenericFuntion.replaceUnderlineWithSpace(courseName)}
+          {HandleGenericFunction.replaceUnderlineWithSpace(courseName)}
         </Modal.Header>
         <Modal.Body>
           <div className="space-y-6">

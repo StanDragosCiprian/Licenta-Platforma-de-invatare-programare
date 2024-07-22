@@ -1,5 +1,4 @@
 import { CoursManager } from "@/app/Entity/CoursManager";
-import { SelectCourses } from "./SelectCourses";
 import Link from "next/link";
 import { DragDropComponenst } from "./DragDropComponents";
 import {
@@ -9,8 +8,7 @@ import {
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { JoinCours } from "./JoinCours";
-import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
-import { title } from "process";
+import { HandleGenericFunction } from "@/app/Entity/HandleGenericFuntion";
 const courses = new CoursManager();
 const takeCourseName = async (courseName: string) => {
   return await courses.getCourseTitles(courseName);
@@ -66,6 +64,7 @@ export default async function CoursesViewList({ params }: any) {
   }
   const courseTitles = await takeCourseName(params.courses);
   const course = await getCourse(params.courses);
+  console.log('course: ', course);
 
   const isProfessorCours: boolean = await verifyProfessorCours(params.courses);
   const isPage = await verifyPage(params.professor, course.title);
@@ -83,7 +82,7 @@ export default async function CoursesViewList({ params }: any) {
         <div className="relative flex bg-clip-border rounded-xl bg-white text-gray-700 shadow-md w-[600px] h-[500px]">
           <div className="flex flex-col flex-1 p-4">
             <h2 className="text-4xl font-extrabold mb-4">
-              {HandleGenericFuntion.replaceUnderlineWithSpace(course.title)}
+              {HandleGenericFunction.replaceUnderlineWithSpace(course.title)}
             </h2>
             <p className="mb-4 text-lg font-normal text-gray-500 break-all dark:text-gray-400 ">
               {course.description}

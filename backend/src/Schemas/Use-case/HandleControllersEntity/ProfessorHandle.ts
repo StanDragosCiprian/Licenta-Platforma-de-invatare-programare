@@ -2,7 +2,7 @@
 import { IProfessor } from 'src/Schemas/Entity/IProfessor';
 import { ProfessorService } from '../professor/professor.service';
 import { ICourses } from 'src/Schemas/Entity/ICourses';
-import { Document, Model, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IVideo } from 'src/Schemas/Entity/IVideo';
 import { IDocumentFormat } from 'src/Schemas/Entity/IPdf';
 import { ICompilators } from 'src/Schemas/Entity/ICompilators';
@@ -22,16 +22,19 @@ export interface IProfessorHandle {
 }
 export class ProfessorHandle implements IProfessorHandle {
   protected professorService: ProfessorService;
+
   constructor() {}
   setProfessorService(professorService: ProfessorService) {
     this.professorService = professorService;
+  }
+  private async getProfessor(id: string): Promise<IProfessor> {
+    return (await this.professorService.getUser(id)) as IProfessor;
   }
   async fetchProfessorCourses(
     id: string,
     modle: Model<any>,
   ): Promise<ICourses[]> {
-    const professorCoursId: IProfessor =
-      await this.professorService.getProfessorById(id);
+    const professorCoursId: IProfessor = await this.getProfessor(id);
 
     const courses: ICourses[] = [];
     if (professorCoursId !== null) {
@@ -66,38 +69,10 @@ export class ProfessorHandle implements IProfessorHandle {
     return a.length === b.length && a.every((val, index) => val === b[index]);
   }
   async decryptText(encryptedText: string) {
-    const iv = Buffer.from('abcdefghijklmnop');
-    const key = (await promisify(scrypt)(
-      'Proffessor email by id',
-      'salt',
-      32,
-    )) as Buffer;
-    const decipher = createDecipheriv('aes-256-ctr', key, iv);
-
-    const textToDecrypt = Buffer.from(encryptedText, 'hex');
-    const decryptedText = Buffer.concat([
-      decipher.update(textToDecrypt),
-      decipher.final(),
-    ]);
-
-    return decryptedText.toString('utf8');
+    return await this.professorService.verifyJWT(encryptedText);
   }
   async encryptText(text: string) {
-    const iv = Buffer.from('abcdefghijklmnop');
-    const key = (await promisify(scrypt)(
-      'Proffessor email by id',
-      'salt',
-      32,
-    )) as Buffer;
-    const cipher = createCipheriv('aes-256-ctr', key, iv);
-
-    const textToEncrypt = text;
-    const encryptedText = Buffer.concat([
-      cipher.update(textToEncrypt, 'utf8'),
-      cipher.final(),
-    ]);
-
-    return encryptedText.toString('hex');
+    return await this.professorService.createJWT(text);
   }
   public async iterateToProfessorCourses(
     professorId: string,
@@ -151,7 +126,7 @@ export class ProfessorHandle implements IProfessorHandle {
   ) {
     const courseHandle = new CoursesHandle();
     courseHandle.setCourseModel(couresModal);
-    const professor = await this.professorService.getProfessorById(id);
+    const professor: IProfessor = await this.getProfessor(id);
     for (const c of professor.coursesId) {
       if (
         c.toString() === (await courseHandle.takeCoursId(coursName)).toString()
@@ -164,8 +139,7 @@ export class ProfessorHandle implements IProfessorHandle {
     id: string,
     courseModel: Model<any>,
   ): Promise<ICourses[]> {
-    const professorCoursId: IProfessor =
-      await this.professorService.getProfessorById(id);
+    const professorCoursId: IProfessor = await this.getProfessor(id);
 
     const courses: ICourses[] = [];
     if (professorCoursId !== null) {
@@ -273,34 +247,5 @@ export class ProfessorHandle implements IProfessorHandle {
         }
       }
     }
-  }
-  async verifyProfessor(
-    email: string,
-    coursName: string,
-    id: string,
-    getCourseByName: (courseName: string) => Promise<
-      Document<unknown, {}, ICourses> &
-        ICourses &
-        Required<{
-          _id: Types.ObjectId;
-        }>
-    >,
-  ): Promise<boolean> {
-    const decryptedEmail = await this.decryptText(email);
-    const professor = await this.professorService.getProfessorById(id);
-    if (professor) {
-      if (professor.email === decryptedEmail) {
-        return true;
-      }
-    } else {
-      for (const p of await (
-        await getCourseByName(coursName)
-      ).colaborationId) {
-        if (p.toString() === id) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 }

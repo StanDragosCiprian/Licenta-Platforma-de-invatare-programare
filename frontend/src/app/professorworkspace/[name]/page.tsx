@@ -3,7 +3,7 @@ import { EditCard } from "../EditCards";
 import { urlBackend } from "@/app/UserServer/ServerRequest";
 import Link from "next/link";
 import { HandleProfessorWorkout } from "../../Entity/HandleProfessorWorkout";
-import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
+import { HandleGenericFunction } from "@/app/Entity/HandleGenericFuntion";
 export default async function NewCourse({ params }: any) {
   if (!(await HandleProfessorWorkout.getProfessorId())) {
     notFound();
@@ -17,7 +17,7 @@ export default async function NewCourse({ params }: any) {
       >
         <EditCard
           imageSrc={`${urlBackend}editcourses/videoImg`}
-          title={`Add video to ${HandleGenericFuntion.replaceUnderlineWithSpace(
+          title={`Add video to ${HandleGenericFunction.replaceUnderlineWithSpace(
             params.name
           )} cours`}
           content={
@@ -31,7 +31,7 @@ export default async function NewCourse({ params }: any) {
       >
         <EditCard
           imageSrc={`${urlBackend}editcourses/pdfImg`}
-          title={`Add pdf to ${HandleGenericFuntion.replaceUnderlineWithSpace(
+          title={`Add pdf to ${HandleGenericFunction.replaceUnderlineWithSpace(
             params.name
           )} cours`}
           content={
@@ -45,7 +45,7 @@ export default async function NewCourse({ params }: any) {
       >
         <EditCard
           imageSrc={`${urlBackend}editcourses/codeImg`}
-          title={`Add code execices to ${HandleGenericFuntion.replaceUnderlineWithSpace(
+          title={`Add code execices to ${HandleGenericFunction.replaceUnderlineWithSpace(
             params.name
           )} cours`}
           content={

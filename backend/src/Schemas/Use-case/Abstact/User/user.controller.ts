@@ -37,17 +37,7 @@ export function UserController<TBase extends Constructor>(Base: TBase) {
     }
     @Get('get')
     async getUser(@Cookies('id') id: string): Promise<any> {
-      try {
-        const decodedToken = await this.user.decriptJwt(id);
-        const user = await this.user.getUserById(decodedToken);
-        if (user === null) {
-          return ' ';
-        }
-        return user;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Internal Server Error');
-      }
+      return await this.user.getUser(id);
     }
   }
   return User;

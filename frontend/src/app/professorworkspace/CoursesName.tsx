@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { SelectVizibility } from "./SelectRole";
 import { TextareaWithLimit } from "./TextareaWithLimit";
 import { urlBackend } from "../UserServer/ServerRequest";
-import { HandleGenericFuntion } from "../Entity/HandleGenericFuntion";
+import { HandleGenericFunction } from "../Entity/HandleGenericFuntion";
 import { Alert } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 export const CoursesName: FC<{
@@ -36,7 +36,7 @@ export const CoursesName: FC<{
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
   const handleUser = async (user: any) => {
-    course.name = HandleGenericFuntion.replaceSpaceWithUnderline(
+    course.name = HandleGenericFunction.replaceSpaceWithUnderline(
       nameCours.Name
     );
 

@@ -1,5 +1,6 @@
 import { Request } from 'express';
 import { existsSync, mkdirSync } from 'fs';
+import { diskStorage } from 'multer';
 export class FileHandle implements IFileHandle {
   filterImage(): (req: any, file: any, cb: any) => void {
     return (req, file, cb) => {
@@ -81,6 +82,23 @@ export class FileHandle implements IFileHandle {
       }
     };
   }
+  public imageSetting(name: string) {
+    return {
+      storage: diskStorage({
+        destination: `E:\\Licenta-Platforma-de-invatare-programare\\backend\\src\\Image\\Profile\\${name}`,
+        filename: (req, file, cb) => {
+          cb(null, `${Date.now()}_${file.originalname}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/jpeg') {
+          cb(null, true);
+        } else {
+          cb(new Error('Invalid file type. Only JPEG is allowed.'), false);
+        }
+      },
+    };
+  }
 }
 
 export interface IFileHandle {
@@ -88,4 +106,5 @@ export interface IFileHandle {
   filterVideo(): (req: any, file: any, cb: any) => void;
   filterDocuments(): (req: any, file: any, cb: any) => void;
   filterImage(): (req: any, file: any, cb: any) => void;
+  imageSetting(name: string);
 }

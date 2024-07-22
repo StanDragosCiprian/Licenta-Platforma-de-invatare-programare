@@ -12,7 +12,7 @@ import PdfUpdate from "./PdfUpdate";
 import IconCode from "@/app/IconsComponents/IconCode";
 import CodeUpdate from "./CodeUpdate";
 import DeleteCourse from "./DeleteCourse";
-import { HandleGenericFuntion } from "@/app/Entity/HandleGenericFuntion";
+import { HandleGenericFunction } from "@/app/Entity/HandleGenericFuntion";
 export const ProfessorWorkbenchComponents: FC<{
   setCourseName: Dispatch<SetStateAction<string>>;
   courseName: string;
@@ -26,7 +26,7 @@ export const ProfessorWorkbenchComponents: FC<{
         scope="row"
         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center align-middle"
       >
-        {HandleGenericFuntion.replaceUnderlineWithSpace(courseName)}
+        {HandleGenericFunction.replaceUnderlineWithSpace(courseName)}
       </th>
       <td className="px-6 py-4 text-center align-middle">
         <p>{vizibility ? "Visible" : "Invisible"}</p>
